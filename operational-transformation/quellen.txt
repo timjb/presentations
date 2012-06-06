@@ -1,0 +1,12 @@
+http://fitzgeraldnick.com/weblog/41/
+http://fitzgeraldnick.com/weblog/42/
+http://www.codecommit.com/blog/java/understanding-and-applying-operational-transformation
+http://en.wikipedia.org/wiki/Operational_transformation
+http://sharejs.org/
+http://www.waveprotocol.org/whitepapers/operational-transform
+http://blog.gomockingbird.com/10-and-real-time-collaboration
+http://techblog.gomockingbird.com/using-real-time-collaboration-to-help-solve-r
+http://cooffice.ntu.edu.sg/otfaq/
+
+Bilder:
+http://pb21.de/files/2010/11/kollaboratives-schreiben-screenshot-etherpad.png
