@@ -1,0 +1,177 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{fix-cm}
+
+\newtranslation[to=ngerman]{Example}{Beispiel}
+
+\usetheme{Frankfurt}
+\usepackage{color,graphicx,overpic}
+\definecolor{DarkBlue}{rgb}{0.098,0.098,0.349} % RGB(25, 25, 89)
+\setbeamercolor{section in head/foot}{fg=white, bg=DarkBlue}
+\definecolor{LighterBlue}{rgb}{0.15,0.2,0.8}
+\setbeamercolor{frametitle}{bg=LighterBlue, fg=white}
+\setbeamercolor{title}{fg=white, bg=LighterBlue}
+\setbeamercolor{structure}{fg=LighterBlue, bg=white}
+
+\newcommand{\E}{\mathrm{E}}
+\newcommand{\fa}[1]{\forall \, {#1} \,:\,}
+\newcommand{\ex}[1]{\exists \, {#1} \,:\,}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+
+% http://tex.stackexchange.com/questions/48381/line-through-two-points-with-offset-in-tikz
+\tikzset{%
+    add/.style args={#1 and #2}{
+        to path={%
+ ($(\tikztostart)!-#1!(\tikztotarget)$)--($(\tikztotarget)!-#2!(\tikztostart)$)%
+  \tikztonodes},add/.default={.2 and .2}}
+}  
+
+% s/Theorem/Satz ?
+% Kirchberger-ähnliche Theoreme?
+% Theoreme vom Kirchberger-Typ?
+% Varianten des Theorems von Kirchberger
+\title{Varianten des Theorems von Kirchberger}
+\author{Tim Baumann}
+\institute{TopMath-Frühlingsschule in Oberschönenfeld}
+\date{4. März 2014}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+\begin{frame}[plain]
+  \begin{theorem}[Kirchberger]
+    % TODO: trennbar oder streng trennbar?
+    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$. \\
+    Dann sind $P$ und $Q$ genau dann durch eine \alert<2>{Hyperebene} trennbar, wenn für jede Menge $T \subset \E^n$ mit maximal $n + 2$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine \alert<2>{Hyperebene} trennbar sind.
+  \end{theorem}
+\end{frame}
+
+\section{Trennung durch Sphären}
+\begin{frame}
+  \frametitle{Übersicht}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}
+  %\frametitle{Sphären}
+  \begin{definition}
+    Sei $p \in \E^n$ und $\alpha > 0$. Dann heißt
+    \[ S_\alpha(p) := \left\{ x \in \E^n \mid \norm{x - p} = \alpha \right\} \]
+    \emph{Sphäre} mit Radius $\alpha$ um den Punkt $p$.
+  \end{definition}
+  \begin{definition}<2->
+    Seien $A$ und $B$ Teilmengen von $\E^n$.\\
+    Die Sphäre $S_\alpha(p)$ \emph{trennt} $A$ und $B$ \emph{streng}, wenn gilt:
+    \begin{minipage}{0.39 \linewidth}
+      \begin{uncoverenv}<3->
+        \vspace{10pt}
+        \begin{center}
+          \colorbox{white}{
+            \begin{tikzpicture}
+              \node (A) at (0, 0) {A};
+              \draw (0, 0) circle (10pt);
+              \node (B) at (1, 0) {B};
+            \end{tikzpicture}
+          }
+        \end{center}
+      \end{uncoverenv}
+      \begin{uncoverenv}<1->
+        \[ \fa{a \in A} \norm{p - a} < \alpha \]
+        \vspace{-30pt}
+
+        \begin{center}
+          und
+        \end{center}
+        \vspace{-34pt}
+
+        \[ \fa{b \in B} \norm{p - a} > \alpha \]
+        \vspace{-20pt}
+      \end{uncoverenv}
+    \end{minipage}
+    \begin{minipage}{0.19 \linewidth}
+      \begin{uncoverenv}<4->
+        \vspace{8pt}
+        \begin{center}
+          oder
+        \end{center}
+      \end{uncoverenv}
+    \end{minipage}
+    \begin{minipage}{0.39 \linewidth}
+      \begin{uncoverenv}<4->
+        \vspace{10pt}
+        \begin{center}
+          \colorbox{white}{
+            \begin{tikzpicture}
+              \node (A) at (0, 0) {A};
+              \draw (1, 0) circle (10pt);
+              \node (B) at (1, 0) {B};
+            \end{tikzpicture}
+          }
+        \end{center}
+      \end{uncoverenv}
+      \begin{uncoverenv}<4->
+        \[ \fa{a \in A} \norm{p - a} > \alpha \]
+        \vspace{-30pt}
+
+        \begin{center}
+          und
+        \end{center}
+        \vspace{-34pt}
+
+        \[ \fa{b \in B} \norm{p - a} < \alpha \]
+        \vspace{-20pt}
+      \end{uncoverenv}
+    \end{minipage}
+  \end{definition}
+\end{frame}
+
+\begin{frame}
+  \begin{theorem}[Kirchberger\only<2->{'}]
+    % TODO: trennbar oder streng trennbar?
+    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$. \\
+    Dann sind $P$ und $Q$ genau dann durch eine \alt<2->{\alert<2>{Sphäre}}{Hyperebene} streng trennbar,
+    wenn für jede Menge $T \subset \E^n$ mit maximal \alt<3->{\alert<3->{$n + 3$}}{$n + 2$} Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine \alt<2->{\alert<2>{Sphäre}}{Hyperebene}\\
+    streng trennbar sind.
+  \end{theorem}
+
+  % Folgendes Beispiel im $\E^2$ zeigt, dass die Trennbarkeit von $n + 2$ Punkten nicht ausreicht:
+
+  \begin{block}<4->{Beispiel im $\E^2$}
+    \colorbox{white}{
+      \begin{tikzpicture}
+        \node (p1) [circle,fill,inner sep=1pt,label=180:$p_1$] at (0, 1) {};
+        \node (p2) [circle,fill,inner sep=1pt,label=-90:$p_2$] at (0, -1) {};
+        \node (p3) [circle,fill,inner sep=1pt,label=-45:$p_3$] at (2, 0) {};
+        \draw [gray] (p1) -- (p2);
+        \draw [gray] (p2) -- (p3);
+        \draw [gray] (p3) -- (p1);
+        \node<5-> (q1) [circle,fill,inner sep=1pt,label=225:$q_1$] at (0, 0) {};
+        \node<6-> (q2) [circle,fill,inner sep=1pt,label=45:$q_2$] at (4, 0) {};
+        \draw<7> [dashed,add= .5 and .5] (q1) to (q2);
+
+      \end{tikzpicture}
+    }
+  \end{block}
+\end{frame}
+
+\section{Trennung durch Zylinder}
+
+\begin{frame}
+  TODO
+\end{frame}
+
+\section{Trennung durch Parallelotope}
+
+\begin{frame}
+  TODO
+\end{frame}
+
+\end{document}
