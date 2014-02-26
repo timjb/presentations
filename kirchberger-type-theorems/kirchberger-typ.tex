@@ -36,12 +36,16 @@
 \setbeamercolor{title}{fg=white, bg=LighterBlue}
 \setbeamercolor{structure}{fg=LighterBlue, bg=white}
 
+%\renewcommand\familydefault{\sfdefault} %comment to see the difference
+%\DeclareMathAlphabet      {\mathup}{OT1}{\familydefault}{m}{n}
+
 \definecolor{DarkGreen}{rgb}{0.15,0.7,0.15}
 
-\newcommand{\E}{\mathrm{E}} % Euklidischer Raum
+\newcommand{\E}{\text{E}} % Euklidischer Raum
 \newcommand{\R}{\mathbb{R}} % Reelle Zahlen
 \newcommand{\fa}[1]{\forall \, {#1} \,:\,}
 \newcommand{\ex}[1]{\exists \, {#1} \,:\,}
+\newcommand{\conv}{\mathop{conv}} % Konvexe Hülle
 \usepackage{mathtools}
 \DeclarePairedDelimiter\norm{\lVert}{\rVert}%
 
@@ -204,7 +208,6 @@
     \end{tikzpicture}
   \end{center}
 \end{frame}
-%\fi
 
 \begin{frame}
   \begin{theorem}[Kirchberger']
@@ -340,6 +343,7 @@
 \end{frame}
 
 \end{changemargin}
+%\fi
 
 \section{Trennung durch Zylinder}
 
@@ -349,25 +353,175 @@
 \end{frame}
 
 \begin{frame}
+  \setbeamercolor{background canvas}{bg=violet}
+
   \begin{definition}
     Sei $A \!\subset\! \E^n$ und $F \!\subset\! \E^n$ ein $k$-dimensionaler Unterraum. Dann heißt
     \[ Z = A + F = \{ a + f \mid a \in A, f \in F \} \]
     von $A$ und $F$ erzeugter \emph{$k$-Zylinder}.
   \end{definition}
 
-  \begin{tikzpicture}
-    \draw (0,0,1) -- (1,0,0) -- (0,0,-1) -- (-1,0,0) -- (0,0,1);
+  \begin{tikzpicture}[color=green!50!black]
+    \path[use as bounding box] (-5.5,-2.75) rectangle (5.5,2.75);
+
+    \only<2->{
+      \draw [dashed] (1,0,0) -- (0,0,-1) -- (-1,0,0);
+      \draw (1,0,0) -- (0,0,1) -- (-1,0,0);
+      \draw (0,1,0) -- (0,0,1) -- (0,-1,0);
+      \draw (0,1,0) -- (1,0,0) -- (0,-1,0);
+      \draw [dashed] (0,1,0) -- (0,0,-1) -- (0,-1,0);
+      \draw (0,1,0) -- (-1,0,0) -- (0,-1,0);
+    }
+
+    \only<2-3>{
+      \fill[opacity=0.15] (0,1,0) -- (1,0,0) -- (0,-1,0) -- (0,0,1) -- (0,1,0);
+      \fill[opacity=0.15] (0,1,0) -- (-1,0,0) -- (0,-1,0) -- (0,0,-1) -- (0,1,0);
+      \fill[opacity=0.25] (0,1,0) -- (1,0,0) -- (0,-1,0) -- (0,0,-1) -- (0,1,0);
+      \fill[opacity=0.25] (0,1,0) -- (-1,0,0) -- (0,-1,0) -- (0,0,1) -- (0,1,0);
+    }
+
+    \node<3> (Z0) [color=DarkGreen] at (0, -1.5, 0) {0-Zylinder};
+
+    \only<4>{
+      \node (Z1) [color=DarkGreen] at (0, -1.5, 0) {1-Zylinder};
+
+      \draw (-5,1,1) -- (-5,0,2) -- (-5,-1,1);
+      \draw [dashed] (-5,1,1) -- (-5,0,0) -- (-5,-1,1);
+      \draw (5,1,-1) -- (5,0,0) -- (5,-1,-1);
+      \draw (5,1,-1) -- (5,0,-2) -- (5,-1,-1);
+      \draw (-5,1,1) -- (5,1,-1);
+      \draw (-5,0,2) -- (5,0,0);
+      \draw (-5,-1,1) -- (5,-1,-1);
+      \draw [dashed] (-5,0,0) -- (5,0,-2);
+
+      \fill[opacity=0.25] (-5,0,2) -- (-5,-1,1) -- (5,-1,-1) -- (5,0,0) -- (-5,0,2);
+      \fill[opacity=0.25] (-5,1,1) -- (-5,0,0) -- (5,0,-2) -- (5,1,-1) -- (-5,1,1);
+      \fill[opacity=0.15] (-5,1,1) -- (-5,0,2) -- (5, 0, 0) -- (5,1,-1) -- (-5,1,1);
+      \fill[opacity=0.15] (-5,0,0) -- (-5,-1,1) -- (5,-1,-1) -- (5,0,-2) -- (-5,0,0);
+    }
+
+    \only<5>{
+      \node (Z2) [color=DarkGreen] at (0, -1.5, 0) {2-Zylinder};
+
+      \draw (-5,2,0) -- (-5,-1,3) -- (-5,-2,2);
+      \draw [dashed] (-5,2,0) -- (-5,1,-1) -- (-5,-2,2);
+      \draw (5,2,-2) -- (5,-1,1) -- (5,-2,0);
+      \draw (5,2,-2) -- (5,1,-3) -- (5,-2,0);
+      \draw (-5,2,0) -- (5,2,-2);
+      \draw (-5,-1,3) -- (5,-1,1);
+      \draw (-5,-2,2) -- (5,-2,0);
+      \draw [dashed] (-5,1,-1) -- (5,1,-3);
+
+      \fill[opacity=0.25] (-5,-1,3) -- (-5,-2,2) -- (5,-2,0) -- (5,-1,1) -- (-5,-1,3);
+      \fill[opacity=0.25] (-5,2,0) -- (-5,1,-1) -- (5,1,-3) -- (5,2,-2) -- (-5,2,0);
+      \fill[opacity=0.15] (-5,2,0) -- (-5,-1,3) -- (5, -1, 1) -- (5,2,-2) -- (-5,2,0);
+      \fill[opacity=0.15] (-5,1,-1) -- (-5,-2,2) -- (5,-2,0) -- (5,1,-3) -- (-5,1,-1);
+    }
+  \end{tikzpicture}
+\end{frame}
+
+\begingroup
+\definecolor{LightGreen}{rgb}{0.7216,0.8667,0.7216}
+\setbeamercolor{background canvas}{bg=LightGreen}
+
+\begin{frame}
+  \begin{definition}
+    Sei $A \!\subset\! \E^n$ und $F \!\subset\! \E^n$ ein $k$-dimensionaler Unterraum. Dann heißt
+    \[ Z = A + F = \{ a + f \mid a \in A, f \in F \} \]
+    von $A$ und $F$ erzeugter \emph{$k$-Zylinder}.
+  \end{definition}
+
+  \begin{tikzpicture}[color=green!50!black]
+    \path[use as bounding box] (-5.5,-2.75) rectangle (5.5,2.75);
+
+    \draw [dashed] (1,0,0) -- (0,0,-1) -- (-1,0,0);
+    \draw (1,0,0) -- (0,0,1) -- (-1,0,0);
     \draw (0,1,0) -- (0,0,1) -- (0,-1,0);
     \draw (0,1,0) -- (1,0,0) -- (0,-1,0);
-    \draw (0,1,0) -- (0,0,-1) -- (0,-1,0);
+    \draw [dashed] (0,1,0) -- (0,0,-1) -- (0,-1,0);
     \draw (0,1,0) -- (-1,0,0) -- (0,-1,0);
 
-    \draw (-5,1,1) -- (-5,0,2) -- (-5,-1,1);
-    \draw (-5,1,1) -- (-5,0,0) -- (-5,-1,1);
-
-    \draw (5,1,-1) -- (5,0,0) -- (5,-1,-1);
-    \draw (5,1,-1) -- (5,0,-2) -- (5,-1,-1);
+    \node (Z3) [color=DarkGreen] at (0, -1.5, 0) {3-Zylinder};
   \end{tikzpicture}
+\end{frame}
+\endgroup
+
+
+\begin{frame}
+  \frametitle{Kirchberger-Theorem für Zylinder?}
+
+  \begin{theorem}[???]
+    % TODO: trennbar oder streng trennbar?
+    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$.\\
+    Dann gibt es einen $k$-Zylinder $Z = (\conv P) + F$ mit $Z \cap Q = \emptyset$ genau dann, wenn es für alle Teilmengen $T \subset P \cup Q$ mit maximal \alert<2>{$f(n,k)$} Punkten einen $k$-Zylinder $Z_T = \conv(T \cap P) + F_T$ mit $Z_T \cap (T \cap Q) = \emptyset$ gibt.
+  \end{theorem}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \begin{tikzpicture}
+      \path[use as bounding box] (-5,-4) rectangle (5,4);
+
+      \node<1-6> at (0,3.5) {Dann gilt $f(2,1) \geq 9$:};
+      \node<7-8> at (0,1.5) {Dann gilt $f(2,1) \geq 15$:};
+
+      \draw [color=DarkGreen] (0,0) circle (0.5);
+      \fill<1,5,7> [color=DarkGreen,opacity=0.20] (0,0) circle (0.5);
+      \node (P) [color=DarkGreen] at (0,0) {P};
+
+      \node<1-4> [point,violet,label=0:$q_1$] at (0:2.25) {};
+      \node<5-6> [point,LightGray,label=0:{\color{LightGray} $q_1$}] at (0:2.25) {};
+      \foreach \num/\angle in {2/40,3/80,4/120,5/160,6/200,7/240,8/280,9/320}
+        \node<1-6> [point,violet,label=\angle:$q_{\num}$] at (\angle:2) {};
+
+      \node<7> [point,violet,label=0:$q_1$] at (0:3.25) {};
+      \node<8> [point,LightGray,label=0:{\color{LightGray} $q_1$}] at (0:3.25) {};
+      \foreach \num/\angle in {2/24,3/48,4/72,5/96,6/120,7/144,8/168,9/192,10/216,11/240,12/264,13/288,14/312,15/336}
+        \node<7-8> [point,violet,label=\angle:$q_{\num}$] at (\angle:3.25) {};
+
+      \begin{scope}[cm={cos(3),-sin(3),sin(3),cos(3), (0,0)}]
+        \fill<2-4,6> [color=DarkGreen,opacity=0.2] (-10,-0.5) -- (10,-0.5) -- (10,0.5) -- (-10, 0.5) -- (-10,-0.5);
+      \end{scope}
+    
+      \begin{scope}[cm={cos(45),-sin(45),sin(45),cos(45), (0,0)}]
+        \fill<3-4> [color=DarkGreen,opacity=0.2] (-10,-0.5) -- (10,-0.5) -- (10,0.5) -- (-10, 0.5) -- (-10,-0.5);
+      \end{scope}
+    
+      \begin{scope}[cm={cos(110),-sin(110),sin(110),cos(110), (0,0)}]
+        \fill<4> [color=DarkGreen,opacity=0.2] (-10,-0.5) -- (10,-0.5) -- (10,0.5) -- (-10, 0.5) -- (-10,-0.5);
+      \end{scope}
+
+      \begin{scope}[cm={cos(1),-sin(1),sin(1),cos(1), (0,0)}]
+        \fill<8> [color=DarkGreen,opacity=0.2] (-10,-0.5) -- (10,-0.5) -- (10,0.5) -- (-10, 0.5) -- (-10,-0.5);
+      \end{scope}
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Kirchberger-Theorem für Zylinder? So nicht!}
+
+  \begin{theorem}[???]
+    % TODO: trennbar oder streng trennbar?
+    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$.\\
+    Dann gibt es einen $k$-Zylinder $Z = (\conv P) + F$ mit $Z \cap Q = \emptyset$ genau dann, wenn es für alle Teilmengen $T$ von $P \cup Q$ mit maximal \alert<1>{$f(n,k)$} Punkten einen $k$-Zylinder $Z_T = \conv(T \cap P) + F_T$ mit $Z_T \cap (T \cap Q) = \emptyset$ gibt.
+  \end{theorem}
+
+  \begin{tikzpicture}[red,ultra thick,line cap=round]
+    \path[use as bounding box] (-0.5,-0.25) rectangle (7.5,-0.25);
+
+    \draw (0,0) -- (10,4);
+    \draw (0.2,0.1) -- (9.8,3.9);
+    \draw (0.1,-0.1) -- (9.9,4.1);
+    \draw (0,-0.1) -- (9.8,4.1);
+    \draw (0,-0.2) -- (9.8,4);
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}
+  \begin{definition}
+    Eine Teilmenge $K \subset S_{\alpha}(p)$ heißt \emph{stark konvex}, wenn $K$ keine antipodalen (gegenüberliegenden) Punkte enthält und zu jedem Paar von Punkten auch den kleineren Bogen des Großkreises zwischen diesen Punkten enthält.
+  \end{definition}
 \end{frame}
 
 \section{Trennung durch Parallelotope}
