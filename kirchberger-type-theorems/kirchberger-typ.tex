@@ -25,6 +25,9 @@
 \newtranslation[to=ngerman]{Example}{Beispiel}
 
 \usetheme{Frankfurt}
+%\beamertemplatenavigationsymbolsempty
+%\setbeamertemplate{mini frames}{}
+\useoutertheme[subsection = false]{miniframes}
 \usepackage{color,graphicx,overpic}
 \definecolor{DarkBlue}{rgb}{0.098,0.098,0.349} % RGB(25, 25, 89)
 \setbeamercolor{section in head/foot}{fg=white, bg=DarkBlue}
@@ -35,7 +38,8 @@
 
 \definecolor{DarkGreen}{rgb}{0.15,0.7,0.15}
 
-\newcommand{\E}{\mathrm{E}}
+\newcommand{\E}{\mathrm{E}} % Euklidischer Raum
+\newcommand{\R}{\mathbb{R}} % Reelle Zahlen
 \newcommand{\fa}[1]{\forall \, {#1} \,:\,}
 \newcommand{\ex}[1]{\exists \, {#1} \,:\,}
 \usepackage{mathtools}
@@ -92,6 +96,7 @@
   \tableofcontents[currentsection]
 \end{frame}
 
+%\iffalse
 \begin{frame}
   %\frametitle{Sphären}
   \begin{definition}
@@ -199,6 +204,7 @@
     \end{tikzpicture}
   \end{center}
 \end{frame}
+%\fi
 
 \begin{frame}
   \begin{theorem}[Kirchberger']
@@ -221,7 +227,7 @@
       [grid/.style={very thin,LightGray},
       axis/.style={->,gray}]
 
-      \path[use as bounding box] (0,2,0) -- (6.5,0,0) -- (0,0,7.5);
+      \path[use as bounding box] (0,1.5,0) -- (6.5,0,0) -- (0,0,7);
 
       % Draw a grid in the x-z plane
       \foreach \x in {0,0.5,...,5}{
@@ -231,9 +237,9 @@
         \draw[grid] (-0.5,0,\z) -- (5.5,0,\z);
       }
 
-      \draw<2->[axis] (0,0,0) -- (0,1.5,0) node[anchor=west]{$\E$};
+      \draw<2->[axis] (0,0,0) -- (0,1,0) node[anchor=east]{$\E$};
       \draw[axis] (0,0,0) -- (6,0,0) node[anchor=south]{$\E^n$};
-      \draw[axis] (0,0,0) -- (0,0,7) node[anchor=north]{};
+      \draw[axis] (0,0,0) -- (0,0,6.5) node[anchor=north]{};
 
       \shade<3->[ball color=blue!20!white,opacity=0.30] (1.5,1,3) circle (1);
 
@@ -264,19 +270,34 @@
       \draw<7> [dashed,gray] (Q') -- (n);
 
       \begin{scope}[canvas is zx plane at y=0]
-        \draw<8-> (5, 1.5) circle (0.5);
+        \draw<10-13> (5, 1.5) circle (0.5);
       \end{scope}
 
       \begin{scope}[canvas is xy plane at z=3.94]
-        \draw<8-> (1.5, 1) circle (0.24);
+        \draw<11-13> (1.5, 1) circle (0.24);
         \begin{scope}
           \clip (1.5, 1) circle (0.24) (-5,-5) rectangle (5,5);
-          \shade<9-> [ball color=blue, opacity=0.25] (0.75,0.25) rectangle (2.25,1.75);
+          \shade<12-13> [ball color=blue, opacity=0.25] (0.75,0.25) rectangle (2.25,1.75);
         \end{scope}
       \end{scope}
 
-      \draw<8-> [gray] (1, 0, 5.05) -- (n);
-      \draw<8-> [gray] (2, 0, 4.9) -- (n);
+      \draw<11-13> [gray] (1, 0, 5.05) -- (n);
+      \draw<11-13> [gray] (2, 0, 4.9) -- (n);
+
+      \begin{scope}[canvas is xy plane at z=3.85]
+        \draw<14-> (1.51, 1.05) circle (0.5);
+        \begin{scope}
+          \clip (1.51, 1.05) circle (0.5) (-5,-5) rectangle (5,5);
+          \shade<14-> [ball color=orange, opacity=0.25] (0.75,0.25) rectangle (2.25,1.75);
+        \end{scope}
+      \end{scope}
+
+      \draw<17-> [gray] (0.2, 0, 5.05) -- (n);
+      \draw<17-> [gray] (2.55, 0, 4.65) -- (n);
+
+      \begin{scope}[canvas is zx plane at y=0]
+        \draw<17-> (5, 1.4) circle (1.2);
+      \end{scope}
     \end{tikzpicture}
   \end{center}
 
@@ -284,15 +305,38 @@
 
   \only<1-7>{
     \begin{enumerate}
-      \item<2-7>{Bette $\E^n$ wie üblich in den $\E^{n+1}$ ein.}\\
-      \item<3-7>{Sei $p \!\in\! \E^n$ und $S \!\subset\! \E^{n+1}$ eine Sphäre, die in $p$ tangential zu $\E^n$ ist.}\\
-      \item<4-7>{Betrachte die stereographische Projektion $\phi : \E^n \to S$.}\\
-      \item<6-7>{Seien ${\color{DarkGreen} P}, {\color{violet} Q} \subset \E^n$ nichtleer und kompakt sodass für jede Menge $T \subset \E^n$ mit maximal $n + 3$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine Sphäre streng trennbar sind.}
-      \item<7-7>{Seien ${\color{DarkGreen} P'}$ und ${\color{violet} Q'}$ die (kompakten) Bilder von ${\color{DarkGreen} P}$ bzw. ${\color{violet} Q}$ unter $\phi$.}
+      \item<2-> Bette $\E^n$ wie üblich in den $\E^{n+1}$ ein.
+      \item<3-> Sei $p \!\in\! \E^n$ und $S \!\subset\! \E^{n+1}$ eine Sphäre, die in $p$ tangential zu $\E^n$ ist.
+      \item<4-> Betrachte die stereographische Projektion $\phi : \E^n \to S$.
+      \item<6-> Seien ${\color{DarkGreen} P}, {\color{violet} Q} \subset \E^n$ nichtleer und kompakt sodass für jede Menge $T \subset \E^n$ mit maximal $n + 3$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine Sphäre streng trennbar sind.
+      \item<7-> Seien ${\color{DarkGreen} P'}$ und ${\color{violet} Q'}$ die (kompakten) Bilder von ${\color{DarkGreen} P}$ bzw. ${\color{violet} Q}$ unter $\phi$.
     \end{enumerate}
   }
 
-  \uncover<8->{\emph{Behauptung:} ${\color{DarkGreen} P'}$ und ${\color{violet} Q'}$ können durch eine Hyperebene im $\E^{n+1}$ streng getrennt werden.}
+  \only<8-13>{
+    \emph{Behauptung:} ${\color{DarkGreen} P'}$ und ${\color{violet} Q'}$ können durch eine Hyperebene ${\color{orange} H_0} \subset \E^{n+1}$ streng getrennt werden.
+    \vspace{-4pt}
+
+    \begin{enumerate}
+      \setcounter{enumi}{5}
+      \item<9-> Sei $T \subset S \subset \E^{n+1}$ eine Menge mit höchstens $n + 3$ Punkten.
+      \item<10-> Nach Voraussetzung werden die Urbilder $\phi^{-1}(T \!\cap\! P') = \phi^{-1}(T) \cap P$ und $\phi^{-1}(T \cap Q') = \phi^{-1}(T) \cap Q$ durch eine Sphäre streng getrennt.
+      \item<11-> Die stereogr. Projektion der Sphäre ist ein Kreis auf $S$ (Kreistreue).
+      \item<12-> Der Kreis auf $S$ ist der Schnitt von $S$ mit einer Hyperebene $H$.
+      \item<13-> Da $H$ dann $T \cap P'$ und $T \cap Q'$ streng trennt, folgt die Behauptung nach dem Satz von Kirchberger.
+    \end{enumerate}
+    \vspace{-22pt}
+  }
+
+  \only<14-17>{
+    \begin{enumerate}
+      \setcounter{enumi}{10}
+      \item<14-> Sei $\alpha \in \E^{n+1}$ und $b \in \R$, sodass $\langle \alpha, p \rangle < b$ für alle $p \in P'$ und $\langle \alpha, q \rangle > b$ für alle $q \in Q'$.
+      \item<15-> Da $P'$ und $Q'$ kompakt sind, gibt es $\epsilon > 0$ mit $\langle \alpha, p \rangle \leq b - \epsilon$ für alle $p \in P'$ und $\langle \alpha, q \rangle \geq b + \epsilon$ für alle $q \in Q'$.
+      \item<16-> Somit können wir annehmen, dass $H_0$ den Nordpol der Sphäre $S$ nicht schneidet.
+      \item<17-> Der Schnitt $H_0 \cap S$ ist ein Kreis und $\phi^{-1}(H_0 \cap S)$ trennt $P$ und $Q$.
+    \end{enumerate}
+  }
 \end{frame}
 
 \end{changemargin}
@@ -300,10 +344,38 @@
 \section{Trennung durch Zylinder}
 
 \begin{frame}
-  TODO
+  \frametitle{Übersicht}
+  \tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}
+  \begin{definition}
+    Sei $A \!\subset\! \E^n$ und $F \!\subset\! \E^n$ ein $k$-dimensionaler Unterraum. Dann heißt
+    \[ Z = A + F = \{ a + f \mid a \in A, f \in F \} \]
+    von $A$ und $F$ erzeugter \emph{$k$-Zylinder}.
+  \end{definition}
+
+  \begin{tikzpicture}
+    \draw (0,0,1) -- (1,0,0) -- (0,0,-1) -- (-1,0,0) -- (0,0,1);
+    \draw (0,1,0) -- (0,0,1) -- (0,-1,0);
+    \draw (0,1,0) -- (1,0,0) -- (0,-1,0);
+    \draw (0,1,0) -- (0,0,-1) -- (0,-1,0);
+    \draw (0,1,0) -- (-1,0,0) -- (0,-1,0);
+
+    \draw (-5,1,1) -- (-5,0,2) -- (-5,-1,1);
+    \draw (-5,1,1) -- (-5,0,0) -- (-5,-1,1);
+
+    \draw (5,1,-1) -- (5,0,0) -- (5,-1,-1);
+    \draw (5,1,-1) -- (5,0,-2) -- (5,-1,-1);
+  \end{tikzpicture}
 \end{frame}
 
 \section{Trennung durch Parallelotope}
+
+\begin{frame}
+  \frametitle{Übersicht}
+  \tableofcontents[currentsection]
+\end{frame}
 
 \begin{frame}
   TODO
