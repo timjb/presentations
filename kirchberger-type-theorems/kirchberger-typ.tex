@@ -2,9 +2,25 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
+
 \usepackage{tikz}
-\usetikzlibrary{calc}
+\usetikzlibrary{3d,calc}
 \usepackage{fix-cm}
+\usepackage{tikz-3dplot}
+
+% http://stackoverflow.com/questions/1670463/latex-change-margins-of-only-a-few-pages
+\newenvironment{changemargin}[2]{%
+  \begin{list}{}{%
+    \setlength{\topsep}{0pt}%
+    \setlength{\leftmargin}{#1}%
+    \setlength{\rightmargin}{#2}%
+    \setlength{\listparindent}{\parindent}%
+    \setlength{\itemindent}{\parindent}%
+    \setlength{\parsep}{\parskip}%
+  }%
+  \item[]}{
+  \end{list}
+}
 
 \newtranslation[to=ngerman]{Example}{Beispiel}
 
@@ -17,6 +33,8 @@
 \setbeamercolor{title}{fg=white, bg=LighterBlue}
 \setbeamercolor{structure}{fg=LighterBlue, bg=white}
 
+\definecolor{DarkGreen}{rgb}{0.15,0.7,0.15}
+
 \newcommand{\E}{\mathrm{E}}
 \newcommand{\fa}[1]{\forall \, {#1} \,:\,}
 \newcommand{\ex}[1]{\exists \, {#1} \,:\,}
@@ -24,12 +42,26 @@
 \DeclarePairedDelimiter\norm{\lVert}{\rVert}%
 
 % http://tex.stackexchange.com/questions/48381/line-through-two-points-with-offset-in-tikz
-\tikzset{%
+\tikzset{
     add/.style args={#1 and #2}{
         to path={%
- ($(\tikztostart)!-#1!(\tikztotarget)$)--($(\tikztotarget)!-#2!(\tikztostart)$)%
+  ($(\tikztostart)!-#1!(\tikztotarget)$)--($(\tikztotarget)!-#2!(\tikztostart)$)%
   \tikztonodes},add/.default={.2 and .2}}
-}  
+}
+
+% http://tex.stackexchange.com/questions/6135/how-to-make-beamer-overlays-with-tikz-node
+\tikzset{onslide/.code args={<#1>#2}{
+  \only<#1>{\pgfkeysalso{#2}} % \pgfkeysalso doesn't change the path
+}}
+\tikzset{temporal/.code args={<#1>#2#3#4}{
+  \temporal<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}{\pgfkeysalso{#4}} % \pgfkeysalso doesn't change the path
+}}
+
+\tikzstyle{point}=[circle,fill,inner sep=1pt]
+\tikzstyle{cover}=[LightGray]
+
+\definecolor{LightGray}{rgb}{0.8,0.8,0.8}
+\newcommand<>{\cover}[1]{\alt#2{{\color{LightGray} {#1}}}{#1}}
 
 % s/Theorem/Satz ?
 % Kirchberger-ähnliche Theoreme?
@@ -77,7 +109,7 @@
           \colorbox{white}{
             \begin{tikzpicture}
               \node (A) at (0, 0) {A};
-              \draw (0, 0) circle (10pt);
+              \draw (0, 0) circle (0.4);
               \node (B) at (1, 0) {B};
             \end{tikzpicture}
           }
@@ -111,7 +143,7 @@
           \colorbox{white}{
             \begin{tikzpicture}
               \node (A) at (0, 0) {A};
-              \draw (1, 0) circle (10pt);
+              \draw (1, 0) circle (0.4);
               \node (B) at (1, 0) {B};
             \end{tikzpicture}
           }
@@ -141,26 +173,129 @@
     wenn für jede Menge $T \subset \E^n$ mit maximal \alt<3->{\alert<3->{$n + 3$}}{$n + 2$} Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine \alt<2->{\alert<2>{Sphäre}}{Hyperebene}\\
     streng trennbar sind.
   \end{theorem}
-
-  % Folgendes Beispiel im $\E^2$ zeigt, dass die Trennbarkeit von $n + 2$ Punkten nicht ausreicht:
-
-  \begin{block}<4->{Beispiel im $\E^2$}
-    \colorbox{white}{
-      \begin{tikzpicture}
-        \node (p1) [circle,fill,inner sep=1pt,label=180:$p_1$] at (0, 1) {};
-        \node (p2) [circle,fill,inner sep=1pt,label=-90:$p_2$] at (0, -1) {};
-        \node (p3) [circle,fill,inner sep=1pt,label=-45:$p_3$] at (2, 0) {};
-        \draw [gray] (p1) -- (p2);
-        \draw [gray] (p2) -- (p3);
-        \draw [gray] (p3) -- (p1);
-        \node<5-> (q1) [circle,fill,inner sep=1pt,label=225:$q_1$] at (0, 0) {};
-        \node<6-> (q2) [circle,fill,inner sep=1pt,label=45:$q_2$] at (4, 0) {};
-        \draw<7> [dashed,add= .5 and .5] (q1) to (q2);
-
-      \end{tikzpicture}
-    }
-  \end{block}
 \end{frame}
+
+\begin{frame}
+  Folgendes Beispiel im $\E^2$ zeigt, dass die Trennbarkeit von $n + 2 = 4$ Punkten aus $P = \{ p_1, p_2, p_3 \}$ und $Q = \{ q_1, q_2 \}$ mit Sphären nicht ausreicht, um Trennbarkeit von $P$ und $Q$ zu folgern:
+
+  \begin{center}
+    \begin{tikzpicture}
+      \path[use as bounding box] (-2,2.5) rectangle (6,0);
+      \draw<4> [gray,dashed,add= .5 and .5] (q1) to (q2);
+
+      \node (p1) [point,DarkGreen,onslide=<5-6>{cover},label=180:\cover<5-6>{$p_1$}] at (0, 2) {};
+      \node (p2) [point,DarkGreen,label=-90:$p_2$] at (0, -2) {};
+      \node (p3) [point,DarkGreen,onslide=<7-8>{cover},label=-45:\cover<7-8>{$p_3$}] at (2, 0) {};
+      \draw [LightGray] (p1) -- (p2);
+      \draw [LightGray] (p2) -- (p3);
+      \draw [LightGray] (p3) -- (p1);
+      \node<2-> (q1) [violet,point,onslide=<9-10>{cover},label=225:\cover<9-10>{$q_1$}] at (0, 0) {};
+      \node<3-> (q2) [violet,point,onslide=<11-12>{cover},label=45:\cover<11-12>{$q_2$}] at (4, 0) {};
+
+      \draw<6,13> (2, -2) [blue,dashed] circle (2.25);
+      \draw<8,13> (2, 0) [blue,dashed] circle (2.25);
+      \draw<10,13> (4, 0) [blue,dashed] circle (1);
+      \draw<12,13> (0, 0) [blue,dashed] circle (1);
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \begin{theorem}[Kirchberger']
+    % TODO: trennbar oder streng trennbar?
+    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$. \\
+    Dann sind $P$ und $Q$ genau dann durch eine Sphäre streng trennbar,
+    wenn für jede Menge $T \subset \E^n$ mit maximal $n + 3$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine Sphäre\\
+    streng trennbar sind.
+  \end{theorem}
+\end{frame}
+
+\setlength{\leftmargin}{-20pt}
+
+\begin{changemargin}{-0.5cm}{-0.5cm}
+
+\begin{frame}
+  \vspace{-16pt}
+  \begin{center}
+    \begin{tikzpicture}
+      [grid/.style={very thin,LightGray},
+      axis/.style={->,gray}]
+
+      \path[use as bounding box] (0,2,0) -- (6.5,0,0) -- (0,0,7.5);
+
+      % Draw a grid in the x-z plane
+      \foreach \x in {0,0.5,...,5}{
+        \draw[grid] (\x,0,-0.5) -- (\x,0,6.5);
+      }
+      \foreach \z in {0,0.5,...,6}{
+        \draw[grid] (-0.5,0,\z) -- (5.5,0,\z);
+      }
+
+      \draw<2->[axis] (0,0,0) -- (0,1.5,0) node[anchor=west]{$\E$};
+      \draw[axis] (0,0,0) -- (6,0,0) node[anchor=south]{$\E^n$};
+      \draw[axis] (0,0,0) -- (0,0,7) node[anchor=north]{};
+
+      \shade<3->[ball color=blue!20!white,opacity=0.30] (1.5,1,3) circle (1);
+
+      \node<3-> (p) [point,label=225:\only<3>{$p$}] at (1.5, 0, 3) {};
+      \node<3-> (n) [point] at (1.5, 2, 3) {};
+
+      % Find stereographic projection of $x$ with Wolfram Alpha:
+      % ||t*{1.5,2,3} + (1-t)*{3,0,5} - {1.5,1,3}|| = 1
+      \node<4-5> (x) [point,label=225:$x$] at (3, 0, 5) {};
+      \node<5-5> (x') [point,label=45:{$x'=\phi(x)$}] at (2.08537, 1.21951, 3.78049) {};
+      \draw<5> [dashed] (x) -- (x');
+      \draw<5> [dashed,gray] (x') -- (n);
+
+      \node<6-> (P) [color=DarkGreen] at (1.5, 0, 5) {P};
+      \node<6-> (Q) [color=violet] at (4, 0, 5) {Q};
+      %\node<3-> (P) [label=225:\cover<9-10>{$p$}] at (1.5, 0, 3) {};
+
+      % Find stereographic projection of $P$ with Wolfram Alpha:
+      % ||t*{1.5,2,3} + (1-t)*{1.5,0,5} - {1.5,1,3}|| = 1
+      \node<7-> (P') [color=DarkGreen,font=\scriptsize] at (1.5, 1, 4) {P'};
+      \draw<7> [dashed] (P) -- (P');
+      \draw<7> [dashed,gray] (P') -- (n);
+
+      % Find stereographic projection of $Q$ with Wolfram Alpha:
+      % ||t*{1.5,2,3} + (1-t)*{4,0,5} - {1.5,1,3}|| = 1
+      \node<7-> (Q') [color=violet,font=\scriptsize] at (2.20176, 1.4386, 3.5614) {Q'};
+      \draw<7> [dashed] (Q) -- (Q');
+      \draw<7> [dashed,gray] (Q') -- (n);
+
+      \begin{scope}[canvas is zx plane at y=0]
+        \draw<8-> (5, 1.5) circle (0.5);
+      \end{scope}
+
+      \begin{scope}[canvas is xy plane at z=3.94]
+        \draw<8-> (1.5, 1) circle (0.24);
+        \begin{scope}
+          \clip (1.5, 1) circle (0.24) (-5,-5) rectangle (5,5);
+          \shade<9-> [ball color=blue, opacity=0.25] (0.75,0.25) rectangle (2.25,1.75);
+        \end{scope}
+      \end{scope}
+
+      \draw<8-> [gray] (1, 0, 5.05) -- (n);
+      \draw<8-> [gray] (2, 0, 4.9) -- (n);
+    \end{tikzpicture}
+  \end{center}
+
+  \vspace{-10pt}
+
+  \only<1-7>{
+    \begin{enumerate}
+      \item<2-7>{Bette $\E^n$ wie üblich in den $\E^{n+1}$ ein.}\\
+      \item<3-7>{Sei $p \!\in\! \E^n$ und $S \!\subset\! \E^{n+1}$ eine Sphäre, die in $p$ tangential zu $\E^n$ ist.}\\
+      \item<4-7>{Betrachte die stereographische Projektion $\phi : \E^n \to S$.}\\
+      \item<6-7>{Seien ${\color{DarkGreen} P}, {\color{violet} Q} \subset \E^n$ nichtleer und kompakt sodass für jede Menge $T \subset \E^n$ mit maximal $n + 3$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine Sphäre streng trennbar sind.}
+      \item<7-7>{Seien ${\color{DarkGreen} P'}$ und ${\color{violet} Q'}$ die (kompakten) Bilder von ${\color{DarkGreen} P}$ bzw. ${\color{violet} Q}$ unter $\phi$.}
+    \end{enumerate}
+  }
+
+  \uncover<8->{\emph{Behauptung:} ${\color{DarkGreen} P'}$ und ${\color{violet} Q'}$ können durch eine Hyperebene im $\E^{n+1}$ streng getrennt werden.}
+\end{frame}
+
+\end{changemargin}
 
 \section{Trennung durch Zylinder}
 
