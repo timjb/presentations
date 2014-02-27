@@ -45,7 +45,8 @@
 \newcommand{\R}{\mathbb{R}} % Reelle Zahlen
 \newcommand{\fa}[1]{\forall \, {#1} \,:\,}
 \newcommand{\ex}[1]{\exists \, {#1} \,:\,}
-\newcommand{\conv}{\mathop{conv}} % Konvexe Hülle
+\newcommand{\conv}{\mathsf{conv}} % Konvexe Hülle
+\newcommand{\dist}{\mathsf{dist}} % Distanz
 \usepackage{mathtools}
 \DeclarePairedDelimiter\norm{\lVert}{\rVert}%
 
@@ -210,7 +211,7 @@
 \end{frame}
 
 \begin{frame}
-  \begin{theorem}[Kirchberger']
+  \begin{theorem}[Kirchberger', 8.2]
     % TODO: trennbar oder streng trennbar?
     Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$. \\
     Dann sind $P$ und $Q$ genau dann durch eine Sphäre streng trennbar,
@@ -231,6 +232,8 @@
       axis/.style={->,gray}]
 
       \path[use as bounding box] (0,1.5,0) -- (6.5,0,0) -- (0,0,7);
+
+      \node [blue] at (-3,1,0) {Beweis:};
 
       % Draw a grid in the x-z plane
       \foreach \x in {0,0.5,...,5}{
@@ -338,6 +341,7 @@
       \item<15-> Da $P'$ und $Q'$ kompakt sind, gibt es $\epsilon > 0$ mit $\langle \alpha, p \rangle \leq b - \epsilon$ für alle $p \in P'$ und $\langle \alpha, q \rangle \geq b + \epsilon$ für alle $q \in Q'$.
       \item<16-> Somit können wir annehmen, dass $H_0$ den Nordpol der Sphäre $S$ nicht schneidet.
       \item<17-> Der Schnitt $H_0 \cap S$ ist ein Kreis und $\phi^{-1}(H_0 \cap S)$ trennt $P$ und $Q$.
+      \hfill $\square$
     \end{enumerate}
   }
 \end{frame}
@@ -522,7 +526,76 @@
   \begin{definition}
     Eine Teilmenge $K \subset S_{\alpha}(p)$ heißt \emph{stark konvex}, wenn $K$ keine antipodalen (gegenüberliegenden) Punkte enthält und zu jedem Paar von Punkten auch den kleineren Bogen des Großkreises zwischen diesen Punkten enthält.
   \end{definition}
+  \begin{center}
+    \begin{tikzpicture}
+      \path[use as bounding box] (0,-2) rectangle (10,1.5);
+
+      \node<2-> at (1,-1.5) {Beispiel};
+      \draw<2-> [dashed,gray] (1,0) circle (1);
+      \draw<2-> [blue, ultra thick, line cap=round] (1,0)++(30:1) arc (30:150:1);
+
+      \node<2-> at (5,-1.5) {Gegenbeispiel};
+      \draw<2-> [dashed,gray] (5,0) circle (1);
+      \draw<2-> [blue, ultra thick, line cap=round] (5,0)++(30:1) arc (30:75:1);
+      \draw<2-> [blue, ultra thick, line cap=round] (5,0)++(105:1) arc (105:150:1);
+
+      \node<2-> at (9,-1.5) {Gegenbeispiel};
+      \draw<2-> [dashed,gray] (9,0) circle (1);
+      \draw<2-> [blue, ultra thick, line cap=round] (9,0)++(-10:1) arc (-10:190:1);
+    \end{tikzpicture}
+  \end{center}
 \end{frame}
+
+\begin{frame}
+  \begin{lemma}[9.4]
+    Sei $S = S_1(0)$ die Einheitssphäre um den Nullpunkt im $\E^n$ und $F = \{ A_i \mid i \in I \}$ eine Familie von kompakten, stark konvexen Teilmengen von $S$. Angenommen, je $n$ (oder weniger) Elemente von $F$ haben einen Punkt gemeinsam. Dann gibt es ein Paar von antipodalen Punkten $\{ p, {-}p \}$, sodass $\{ p, {-}p \} {\cap} A_i \not= \emptyset$ für alle $i {\in} I$.
+  \end{lemma}
+\end{frame}
+
+\begin{frame}
+  \begin{theorem}<2->[Horn, 6.8]
+    Sei $F = \{ A_i \mid i \in I \}$ eine Familie von kompakten, konvexen Teilmengen von $\E^n$ mit mindestens $n$ Elementen. Angenommen, jede Unterfamilie mit $k$ Elementen besitzt einen gemeinsamen Punkt, wobei $1 \leq k \leq n$. Dann gibt es für jeden $(n{-}k)$-dimensionalen Unterraum $F_1$ einen $(n{-}k{+}1)$-dimensionalen Unterraum $F_2$, sodass $F_2 \supset F_1$ und $F_2 \cap A_i \not= \emptyset$ für alle $i \in I$.
+  \end{theorem}
+
+  \begin{proof}
+    \begin{enumerate}
+      \item<1-> Für alle $i \in I$ gilt: Da $A_i \subset S$ kompakt und stark konvex ist, ist $\conv A_i$ kompakt und enthält nicht den Nullpunkt.
+      \item<3-> Aus dem Lemma von Horn folgt mit $k {=} n$, $F_1 {=} \{ 0 \}$, dass ein 1-dimensionaler Unterraum $L$ mit $L \cap \conv A_i \not= \emptyset$ existiert.
+      \item<4-> Da $A_i$ stark konvex ist, gilt auch $L \cap A_i \not= \emptyset$ für alle $i \in I$.
+      \item<5-> Mit $\{ p, {-}p \} \coloneqq L \cap S$ folgt die Aussage.\qedhere
+    \end{enumerate}
+  \end{proof}
+\end{frame}
+
+\begin{frame}
+  \begin{theorem}[9.5]
+    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$.\\
+    Angenommen, für $1 \leq k \leq n$ kann jede Teilmenge von $Q$ mit maximal $k$ Punkten streng von $P$ mit einer Hyperebene getrennt werden. Dann gibt es zu jedem $k$-Zylinder $Z_1 = (\conv P) + F_1$ einen $(k{-}1)$-Zylinder $Z_2 = (\conv P) + F_2$ mit $Z_2 \subset Z_1$ und $Z_2 \cap Q = \emptyset$.
+  \end{theorem}
+\end{frame}
+
+\begin{changemargin}{-0.5cm}{-0.5cm}
+
+\begin{frame}
+  \vspace{-20pt}
+  \begin{align*}
+    \delta \coloneqq \inf \{ \dist(\conv T, \conv P) \mid \, &T \text{ ist Teilmenge von $Q$ mit }\\[-4pt]
+    &\text{maximal $k$ Punkten } \}.
+  \end{align*}
+  Behauptung: $\delta > 0$\\
+  Beweis: Sei $R$ die Menge aller $x \in \E^n$, die Konvexkombination von maximal $k$ Punkten aus $Q$ sind.\\
+  Die Menge $R$ ist kompakt, da sie Bild der stetigen Abbildung
+  \begin{align*}
+    Q^k \times M^k \to \E^n, \qquad &(q_1, ..., q_k, \lambda_1, ..., \lambda_k) \mapsto \lambda_1 q_1 + ... + \lambda_k q_k,\\
+    \text{mit } M^k \coloneqq &\{ (\lambda_1, ..., \lambda_k) \in \left[0,1\right]^k \mid \lambda_1 + ... + \lambda_k = 1 \}
+  \end{align*}
+  mit kompakter Definitionsmenge ist.\\
+  Angenommen, $\dist(R, \conv P) = 0$. Dann gibt es $r = \lambda_1 q_1 + ... + \lambda_k q_k \in R$ mit $\dist(r, \conv P) = 0$, also $r \in \conv P$. Dann können aber $q_1, ..., q_k$ nicht mit einer Hyperebene stark von $\conv P$ getrennt werden. Widerspruch.\\
+  Für alle Mengen $T$ wie oben gilt dann $\conv T \subset R$ und somit $\dist(\conv T, \conv P) \geq \dist(R, \conv P)$.\\
+  Durch Übergang zum Infimum folgt $\delta \geq \dist(R, \conv P) > 0$.
+\end{frame}
+
+\end{changemargin}
 
 \section{Trennung durch Parallelotope}
 
