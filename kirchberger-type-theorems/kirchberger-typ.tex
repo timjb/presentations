@@ -23,8 +23,6 @@
   \end{list}
 }
 
-\newtranslation[to=ngerman]{Example}{Beispiel}
-
 \usetheme{Frankfurt}
 %\beamertemplatenavigationsymbolsempty
 %\setbeamertemplate{mini frames}{}
@@ -101,7 +99,7 @@
   \begin{theorem}[Kirchberger]
     % TODO: trennbar oder streng trennbar?
     Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$. \\
-    Dann sind $P$ und $Q$ genau dann durch eine \alert<2>{Hyperebene} trennbar, wenn für jede Menge $T \subset \E^n$ mit maximal $n + 2$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine \alert<2>{Hyperebene} trennbar sind.
+    Dann sind $P$ und $Q$ genau dann durch eine \alert<2>{Hyperebene} trennbar, wenn für jede Menge $T \subset \E^n$ mit höchstens $n + 2$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine \alert<2>{Hyperebene} trennbar sind.
   \end{theorem}
 \end{frame}
 
@@ -111,7 +109,6 @@
   \tableofcontents[currentsection]
 \end{frame}
 
-%\iffalse
 \begin{frame}
   %\frametitle{Sphären}
   \begin{definition}
@@ -188,11 +185,10 @@
 \end{frame}
 
 \begin{frame}
-  \begin{theorem}[Kirchberger\only<2->{'}]
-    % TODO: trennbar oder streng trennbar?
+  \begin{theorem}[Kirchberger\only<2->{', 8.2}]
     Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$. \\
     Dann sind $P$ und $Q$ genau dann durch eine \alt<2->{\alert<2>{Sphäre}}{Hyperebene} streng trennbar,
-    wenn für jede Menge $T \subset \E^n$ mit maximal \alt<3->{\alert<3->{$n + 3$}}{$n + 2$} Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine \alt<2->{\alert<2>{Sphäre}}{Hyperebene}\\
+    wenn für jede Menge $T \subset \E^n$ mit höchstens \alt<3->{\alert<3->{$n + 3$}}{$n + 2$} Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine \alt<2->{\alert<2>{Sphäre}}{Hyperebene}\\
     streng trennbar sind.
   \end{theorem}
 \end{frame}
@@ -224,10 +220,9 @@
 
 \begin{frame}
   \begin{theorem}[Kirchberger', 8.2]
-    % TODO: trennbar oder streng trennbar?
     Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$. \\
     Dann sind $P$ und $Q$ genau dann durch eine Sphäre streng trennbar,
-    wenn für jede Menge $T \subset \E^n$ mit maximal $n + 3$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine Sphäre\\
+    wenn für jede Menge $T \subset \E^n$ mit höchstens $n + 3$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine Sphäre\\
     streng trennbar sind.
   \end{theorem}
 \end{frame}
@@ -324,7 +319,7 @@
       \item<2-> Bette $\E^n$ wie üblich in den $\E^{n+1}$ ein.
       \item<3-> Sei $p \!\in\! \E^n$ und $S \!\subset\! \E^{n+1}$ eine Sphäre, die in $p$ tangential zu $\E^n$ ist.
       \item<4-> Betrachte die stereographische Projektion $\phi : \E^n \to S$.
-      \item<6-> Seien ${\color{DarkGreen} P}, {\color{violet} Q} \subset \E^n$ nichtleer und kompakt sodass für jede Menge $T \subset \E^n$ mit maximal $n + 3$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine Sphäre streng trennbar sind.
+      \item<6-> Seien ${\color{DarkGreen} P}, {\color{violet} Q} \subset \E^n$ nichtleer und kompakt sodass für jede Menge $T \subset \E^n$ mit höchstens $n + 3$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine Sphäre streng trennbar sind.
       \item<7-> Seien ${\color{DarkGreen} P'}$ und ${\color{violet} Q'}$ die (kompakten) Bilder von ${\color{DarkGreen} P}$ bzw. ${\color{violet} Q}$ unter $\phi$.
     \end{enumerate}
   }
@@ -357,7 +352,6 @@
 \end{frame}
 
 \end{changemargin}
-%\fi
 
 \section{Trennung durch Zylinder}
 
@@ -366,7 +360,6 @@
   \tableofcontents[currentsection]
 \end{frame}
 
-%\iffalse
 \begin{frame}
   \setbeamercolor{background canvas}{bg=violet}
 
@@ -468,7 +461,7 @@
   \begin{theorem}[???]
     % TODO: trennbar oder streng trennbar?
     Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$.\\
-    Dann gibt es einen $k$-Zylinder $Z = (\conv P) + F$ mit $Z \cap Q = \emptyset$ genau dann, wenn es für alle Teilmengen $T \subset P \cup Q$ mit maximal \alert<2>{$f(n,k)$} Punkten einen $k$-Zylinder $Z_T = \conv(T \cap P) + F_T$ mit $Z_T \cap (T \cap Q) = \emptyset$ gibt.
+    Dann gibt es einen $k$-Zylinder $Z = (\conv P) + F$ mit $Z \cap Q = \emptyset$ genau dann, wenn es für alle Teilmengen $T \subset P \cup Q$ mit höchstens \alert<2>{$f(n,k)$} Punkten einen $k$-Zylinder $Z_T = \conv(T \cap P) + F_T$ mit $Z_T \cap (T \cap Q) = \emptyset$ gibt.
   \end{theorem}
 \end{frame}
 
@@ -519,7 +512,7 @@
   \begin{theorem}[???]
     % TODO: trennbar oder streng trennbar?
     Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$.\\
-    Dann gibt es einen $k$-Zylinder $Z = (\conv P) + F$ mit $Z \cap Q = \emptyset$ genau dann, wenn es für alle Teilmengen $T$ von $P \cup Q$ mit maximal \alert<1>{$f(n,k)$} Punkten einen $k$-Zylinder $Z_T = \conv(T \cap P) + F_T$ mit $Z_T \cap (T \cap Q) = \emptyset$ gibt.
+    Dann gibt es einen $k$-Zylinder $Z = (\conv P) + F$ mit $Z \cap Q = \emptyset$ genau dann, wenn es für alle Teilmengen $T$ von $P \cup Q$ mit höchstens \alert<1>{$f(n,k)$} Punkten einen $k$-Zylinder $Z_T = \conv(T \cap P) + F_T$ mit $Z_T \cap (T \cap Q) = \emptyset$ gibt.
   \end{theorem}
 
   \begin{tikzpicture}[red,ultra thick,line cap=round]
@@ -531,6 +524,54 @@
     \draw (0,-0.1) -- (9.8,4.1);
     \draw (0,-0.2) -- (9.8,4);
   \end{tikzpicture}
+\end{frame}
+
+\begin{frame}
+  \begin{theorem}[9.5]
+    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$.\\
+    Angenommen, für $1 \leq k \leq n$ kann jede Teilmenge von $Q$ mit höchstens $k$ Punkten streng von $P$ mit einer Hyperebene getrennt werden. Dann gibt es zu jedem $k$-Zylinder $Z_1 = (\conv P) + F_1$ einen $(k{-}1)$-Zylinder $Z_2 = (\conv P) + F_2$ mit $Z_2 \subset Z_1$ und $Z_2 \cap Q = \emptyset$.
+  \end{theorem}
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Beispiel}
+    Seien $P, Q \subset \E^3$ kompakt.
+    \begin{itemize}
+      \item<2-> Wenn jeder Punkt aus $Q$ mit einer Hyperebene streng von $P$ getrennt werden kann, dann liegt $Q$ außerhalb von $\conv P$.
+      \item<3-> Wenn je zwei Punkte aus $Q$ mit einer Hyperebene streng von $P$ getrennt werden können, dann gibt es einen $1$-Zylinder, der $P$ beinhaltet und disjunkt von $Q$ ist.
+      \item<4-> Wenn je drei Punkte aus $Q$ mit einer Hyperebene streng von $P$ getrennt werden können, dann gibt es zwei parallele Hypereben, sodass $P$ zwichen ihnen und $Q$ außerhalb liegt.
+    \end{itemize}
+  \end{block}
+
+  \begin{center}
+    \begin{tikzpicture}
+      \path[use as bounding box] (-5,-1.5) rectangle (5,1.5);
+
+      % 1. Beispiel
+      \draw<2-> (-3.5,0) ++ (-0.5,0.5) -- ++ (0,-1) arc (180:360:0.5) -- ++ (0,1) arc (0:180:0.5);
+      \node<2-> [color=DarkGreen] at (-3.5,0) {$P$};
+      \node<2-> [color=violet] at (-4.3,0.1) {$Q$};
+      \node<2-> [color=violet] at (-2.7,-0.3) {$Q$};
+      \node<2-> [color=violet] at (-3.6,-1.3) {$Q$};
+      \node<2-> [color=violet] at (-3.7,1.3) {$Q$};
+
+      % 2. Beispiel
+      \draw<3-> (-0.4,0) ++ (80:1.4) -- ++ (80:-2.8);
+      \draw<3-> (0.4,0) ++ (80:1.4) -- ++ (80:-2.8);
+      \draw<3-> (-0.4,0) ++ (80:1.4) ++ (0.4,0) ellipse (0.4 and 0.2);
+      \draw<3-> (-0.4,0) ++ (80:-1.4) ++ (0.4,0) ellipse (0.4 and 0.2);
+      \node<3-> [color=DarkGreen] at (0,0) {$P$};
+      \node<3-> [color=violet] at (-0.8,-0.2) {$Q$};
+      \node<3-> [color=violet] at (0.8,0.2) {$Q$};
+
+      % 3. Beispiel
+      \node<4-> [color=DarkGreen] at (3.5,0) {$P$};
+      \draw<4-> (2.7,-1.5) -- ++ (0,2.4) -- ++ (40:0.6) -- ++ (0,-2.4) -- cycle;
+      \draw<4-> (4.0,-1.5) -- ++ (0,2.4) -- ++ (40:0.6) -- ++ (0,-2.4) -- cycle;
+      \node<4-> [color=violet] at (2.4,0.1) {$Q$};
+      \node<4-> [color=violet] at (4.7,-0.2) {$Q$};
+    \end{tikzpicture}
+  \end{center}
 \end{frame}
 
 \begin{frame}
@@ -568,7 +609,7 @@
     Sei $F = \{ A_i \mid i \in I \}$ eine Familie von kompakten, konvexen Teilmengen von $\E^n$ mit mindestens $n$ Elementen. Angenommen, jede Unterfamilie mit $k$ Elementen besitzt einen gemeinsamen Punkt, wobei $1 \leq k \leq n$. Dann gibt es für jeden $(n{-}k)$-dimensionalen Unterraum $F_1$ einen $(n{-}k{+}1)$-dimensionalen Unterraum $F_2$, sodass $F_2 \supset F_1$ und $F_2 \cap A_i \not= \emptyset$ für alle $i \in I$.
   \end{theorem}
 
-  \begin{proof}
+  \begin{proof}[Beweis von Lemma 9.4]
     \begin{enumerate}
       \item<1-> Für alle $i \in I$ gilt: Da $A_i \subset S$ kompakt und stark konvex ist, ist $\conv A_i$ kompakt und enthält nicht den Nullpunkt.
       \item<3-> Aus dem Lemma von Horn folgt mit $k {=} n$, $F_1 {=} \{ 0 \}$, dass ein 1-dimensionaler Unterraum $L$ mit $L \cap \conv A_i \not= \emptyset$ existiert.
@@ -579,66 +620,177 @@
 \end{frame}
 
 \begin{frame}
-  \begin{theorem}[9.5]
-    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$.\\
-    Angenommen, für $1 \leq k \leq n$ kann jede Teilmenge von $Q$ mit maximal $k$ Punkten streng von $P$ mit einer Hyperebene getrennt werden. Dann gibt es zu jedem $k$-Zylinder $Z_1 = (\conv P) + F_1$ einen $(k{-}1)$-Zylinder $Z_2 = (\conv P) + F_2$ mit $Z_2 \subset Z_1$ und $Z_2 \cap Q = \emptyset$.
-  \end{theorem}
-\end{frame}
+  \small
+  \begin{proof}[Beweis von Theorem 9.5]
+    \renewcommand{\qedsymbol}{}
+    \vspace{-12pt}
+    \begin{flalign*}
+      \text{Sei} \enspace \delta \coloneqq \inf \{ \dist(\conv T, \conv P) \mid \, &T \text{ ist Teilmenge von $Q$ mit } &\\[-4pt]
+      &\text{höchstens $k$ Punkten } \}. &
+    \end{flalign*}
+    \vspace{-16pt}
 
-\begin{changemargin}{-0.5cm}{-0.5cm}
-
-\begin{frame}
-  \vspace{-20pt}
-  \begin{align*}
-    \delta \coloneqq \inf \{ \dist(\conv T, \conv P) \mid \, &T \text{ ist Teilmenge von $Q$ mit }\\[-4pt]
-    &\text{maximal $k$ Punkten } \}.
-  \end{align*}
-  Behauptung: $\delta > 0$\\
-  Beweis: Sei $R$ die Menge aller $x \in \E^n$, die Konvexkombination von maximal $k$ Punkten aus $Q$ sind.\\
-  Die Menge $R$ ist kompakt, da sie Bild der stetigen Abbildung
-  \begin{align*}
-    Q^k \times M^k \to \E^n, \qquad &(q_1, ..., q_k, \lambda_1, ..., \lambda_k) \mapsto \lambda_1 q_1 + ... + \lambda_k q_k,\\
-    \text{mit } M^k \coloneqq &\{ (\lambda_1, ..., \lambda_k) \in \left[0,1\right]^k \mid \lambda_1 + ... + \lambda_k = 1 \}
-  \end{align*}
-  mit kompakter Definitionsmenge ist.\\
-  Angenommen, $\dist(R, \conv P) = 0$. Dann gibt es $r = \lambda_1 q_1 + ... + \lambda_k q_k \in R$ mit $\dist(r, \conv P) = 0$, also $r \in \conv P$. Dann können aber $q_1, ..., q_k$ nicht mit einer Hyperebene stark von $\conv P$ getrennt werden. Widerspruch.\\
-  Für alle Mengen $T$ wie oben gilt dann $\conv T \subset R$ und somit $\dist(\conv T, \conv P) \geq \dist(R, \conv P)$.\\
-  Durch Übergang zum Infimum folgt $\delta \geq \dist(R, \conv P) > 0$.
+    \textbf{Behauptung}: $\delta > 0$\\
+    \vspace{-4pt}
+    \begin{enumerate}
+      \setlength{\itemsep}{0pt}
+      \setlength{\parskip}{0pt}
+      \item<2-> Sei $R$ die Menge aller $x \in \E^n$, die Konvexkombination von höchstens $k$ Punkten aus $Q$ sind.
+      Die Menge $R$ ist kompakt, da sie Bild von
+      \begin{align*}
+        Q^k \times M^k \to \E^n, \qquad &(q_1, ..., q_k, \lambda_1, ..., \lambda_k) \mapsto \lambda_1 q_1 + ... + \lambda_k q_k,\\
+        \text{mit } M^k \coloneqq &\{ (\lambda_1, ..., \lambda_k) \in \left[0,1\right]^k \mid \lambda_1 + ... + \lambda_k = 1 \},
+      \end{align*}
+      einer stetigen Abbildung mit kompakter Definitionsmenge, ist.
+      \item<3-> Angenommen, $\dist(R, \conv P) = 0$.
+        Dann gibt es $r = \lambda_1 q_1 + ... + \lambda_k q_k \in R$ mit $\dist(r, \conv P) = 0$, also $r \in \conv P$.
+      \item<4-> Dann können aber $q_1, ..., q_k$ nicht mit einer Hyperebene stark von $\conv P$ getrennt werden. Widerspruch.\\
+      \item<5-> Für alle Mengen $T$ wie oben gilt dann $\conv T \subset R$ und somit $\dist(\conv T, \conv P) \geq \dist(R, \conv P)$.\\
+      \item<6-> Durch Übergang zum Infimum folgt $\delta \geq \dist(R, \conv P) > 0$.
+    \end{enumerate}
+    \vspace{-16pt}
+  \end{proof}
 \end{frame}
 
 \begin{frame}
   \begin{center}
-    \begin{tikzpicture}
-      \path[use as bounding box] (-5,-3) rectangle (5,3);
-      \draw [color=DarkGreen] (0.5,0)++(90:1.5) arc (90:270:1.5) arc (-90:90:0.5) arc (270:90:0.5) arc (-90:90:0.5) -- cycle;
-      \fill [color=DarkGreen,opacity=0.20] (0.5,0)++(90:1.5) arc (90:270:1.5) arc (-90:90:0.5) arc (270:90:0.5) arc (-90:90:0.5) -- cycle;
-      \node (P) [color=DarkGreen] at (-0.5,0) {P};
+    \scalebox{0.8}{
+      \begin{tikzpicture}
+        \path[use as bounding box] (-5,-2.5) rectangle (5,2.5);
 
-      \fill [color=DarkGreen,opacity=0.20] (1,1) arc (0:-90:0.5) arc (90:270:0.5) arc(90:0:0.5) -- cycle;
+        \draw [color=DarkGreen] (0.5,0)++(90:1.5) arc (90:270:1.5) arc (-90:90:0.5) arc (270:90:0.5) arc (-90:90:0.5) -- cycle;
+        \fill [color=DarkGreen,opacity=0.20] (0.5,0)++(90:1.5) arc (90:270:1.5) arc (-90:90:0.5) arc (270:90:0.5) arc (-90:90:0.5) -- cycle;
+        \fill [color=DarkGreen,opacity=0.20] (1,1) arc (0:-90:0.5) arc (90:270:0.5) arc(90:0:0.5) -- cycle;
+        \node (P) [color=DarkGreen] at (-0.5,0) {P};
 
-      \fill [color=red,opacity=0.20] (0.5,0) ++ (105:1.5) arc (105:270:1.5) arc (270:285:0.5) -- ++ (15:10) -- ++ (105:2.8) -- cycle;
+        %\begin{scope}[cm={cos(-15),-sin(-15),sin(-15),cos(-15), (0,0)}]
+        %  \fill [color=DarkGreen,opacity=0.2] (-10,-1.6) -- (10,-1.6) -- (10,1.38) -- (-10, 1.38) -- cycle;
+        %\end{scope}
+        %\node [color=DarkGreen] at (-3,-1) {$\conv P + F$};
 
-      %\begin{scope}[cm={cos(-15),-sin(-15),sin(-15),cos(-15), (0,0)}]
-      %  \fill [color=DarkGreen,opacity=0.2] (-10,-1.6) -- (10,-1.6) -- (10,1.38) -- (-10, 1.38) -- cycle;
-      %\end{scope}
-      %\node [color=DarkGreen] at (-3,-1) {$\conv P + F$};
+        \draw<3-> (-4, 0.25) circle (1);
+        \node<3-> at (-5, 1.25) {$\Omega$};
+        \draw<4-> (-4, 0.25) ++ (15:0.25) arc (15:105:0.25);
+        \node<4-> [point,inner sep=0.5pt] at (-3.93, 0.38) {};
+        \draw<4-> [->] (-4,0.25) -- + (15:1.25) node[anchor=west] {$r_w$};
+        \draw<4-> (-4,0.25) -- + (105:1.25) node[anchor=south] {$F_w$};
+        \draw<4-> (-4,0.25) -- + (-75:1.25);
 
-      \draw (-4, 2.25) circle (1);
-      \draw (-4, 2.25) ++ (15:0.25) arc (15:105:0.25);
-      \node [point,inner sep=0.5pt] at (-3.93, 2.38) {};
-      \draw [->] (-4,2.25) -- + (15:1.25) node[anchor=west] {$r_w$};
-      \draw (-4,2.25) -- + (105:1.25) node[anchor=south] {$F_w$};
-      \draw (-4,2.25) -- + (-75:1.25);
+        \begin{scope}[cm={cos(75),-sin(75),sin(75),cos(75), (0,0)}]
+          \fill<5-> [color=blue,opacity=0.2] (-20,-1.03) -- (20,-1.03) -- (20,1.25) -- (-20, 1.25) -- cycle;
+          \fill<7-> [color=yellow,opacity=0.3] (20,1.25) -- (-20,1.25) -- (-20,20) -- (20,20) -- cycle;
+        \end{scope}
+        \node<5-> [color=blue] at (0.75,-2.25) {$(\conv P) + F_w$};
 
-      \begin{scope}[cm={cos(75),-sin(75),sin(75),cos(75), (0,0)}]
-        \fill [color=blue,opacity=0.2] (-10,-1.03) -- (10,-1.03) -- (10,1.25) -- (-10, 1.25) -- cycle;
-      \end{scope}
-    \end{tikzpicture}
+        \fill<6-> [color=red,opacity=0.20] (0.5,0) ++ (105:1.5) arc (105:270:1.5) arc (270:285:0.5) -- ++ (15:10) -- ++ (105:2.8) -- cycle;
+        \node<6-> [color=red] at (3,0.8) {$(\conv P) + r_w$};
+
+        \node<7-> at (4,-2) {$G_w$};
+      \end{tikzpicture}
+    }
   \end{center}
+
+  \small
+
+  \begin{proof}[Beweis von Theorem 9.5]
+    \renewcommand{\qedsymbol}{}
+    \begin{enumerate}
+      \item<2->{Sei $Z_1 = (\conv P) + F_1$ ein $k$-Zylinder. Annahme: $Z_1 \cap Q \not= \emptyset$.}
+      \item<3->{Setze $\Omega := S_1(0) \cap F = \{ x \in F \mid \norm{x} = 1 \}$.}
+      \item<4->{Für $w \in \Omega$ sei $F_w$ das orthogonale Komplement zu $\mathsf{span} \{ w \}$ in $F_1$, also $F_1 = \mathsf{span} \{ w \} \perp F_w$ und $r_w := \R_{\geq 0} {\cdot} w$ der Strahl durch $w$.}
+      \item<5->{Für $w \in \Omega$ sei $G_w$ diejenige Komponente von $Z_1 \setminus ((\conv P) + F_w)$, die $(\conv P) + r_w$ schneidet.}
+    \end{enumerate}
+    \vspace{-16pt}
+  \end{proof}
 \end{frame}
 
-\end{changemargin}
-%\fi
+\begin{frame}
+  \begin{center}
+    \scalebox{0.8}{
+      \begin{tikzpicture}
+        \path[use as bounding box] (-8,-3) rectangle (6,2);
+
+        \draw [color=DarkGreen] (0.5,0)++(90:1.5) arc (90:270:1.5) arc (-90:90:0.5) arc (270:90:0.5) arc (-90:90:0.5) -- cycle;
+        \fill [color=DarkGreen,opacity=0.20] (0.5,0)++(90:1.5) arc (90:270:1.5) arc (-90:90:0.5) arc (270:90:0.5) arc (-90:90:0.5) -- cycle;
+        \fill [color=DarkGreen,opacity=0.20] (1,1) arc (0:-90:0.5) arc (90:270:0.5) arc(90:0:0.5) -- cycle;
+        \node (P) [color=DarkGreen] at (-0.5,0) {P};
+
+        \draw (-7, 0) circle (1);
+        \node at (-7.5, 1.25) {$\Omega$};
+
+        \begin{scope}[cm={cos(-27),-sin(-27),sin(-27),cos(-27), (0,0)}]
+          \fill<3-> [color=blue,opacity=0.2] (-20,-1.64) -- (20,-1.64) -- (20,1.28) -- (-20, 1.28) -- cycle;
+        \end{scope}
+        \node<3-> [color=blue] at (-4,-2.25) {$(\conv P) + F_w$};
+
+        \draw<3-> [->] (-7,0) -- + (297:1.25) node[anchor=west] {$r_w$};
+        \draw<3-> (-7,0) -- + (387:1.25) node[anchor=south] {$F_w$};
+        \draw<3-> (-7,0) -- + (207:1.25);
+        
+        \begin{scope}[cm={cos(27),-sin(27),sin(27),cos(27), (0,0)}]
+          \fill<4-> [color=blue,opacity=0.2] (-20,-1.26) -- (20,-1.26) -- (20,1.64) -- (-20, 1.64) -- cycle;
+        \end{scope}
+        \node<4-> [color=blue] at (-4,2.25) {$(\conv P) + F_{w'}$};
+
+        \draw<4-> [->] (-7,0) -- + (63:1.25) node[anchor=south] {$r_{w'}$};
+        \draw<4-> (-7,0) -- + (153:1.25) node[anchor=east] {$F_{w'}$};
+        \draw<4-> (-7,0) -- + (-27:1.25);
+
+        \node (q) [point,label=0:$q$] at (4.96,0) {};
+        \draw<2-> (q) [dashed] circle (0.6);
+        \node<2-> at (5.86,-0.2) {$S_q$};
+
+        \draw<5-> [color=orange,ultra thick] (-7,0) ++ (-63:1) arc (-63:63:1);
+        \node<5-> [color=orange] at (-5.5,0) {$A_q$};
+      \end{tikzpicture}
+    }
+  \end{center}
+
+  \begin{proof}[Beweis von Theorem 9.5]
+    \renewcommand{\qedsymbol}{}
+    \begin{enumerate}
+      \setcounter{enumi}{5}
+      \item Für $q \in Q \cap Z_1$ setze
+        \begin{flalign*}
+          \uncover<2->{S_q &:= B_{\delta/2}(q) \cap Z_1 = \{ x \in Z_1 \mid \norm{x - q} < \delta/2 \}}&\\
+          \uncover<3->{A_q &:= \{ w \in \Omega \mid S_q \subset G_w \}}&
+        \end{flalign*}
+      \item<6-> Man kann zeigen: Für alle $q \in Q \cap Z_1$ ist $A_q$ kompakt und stark konvex.
+    \end{enumerate}
+    \vspace{-16pt}
+  \end{proof}
+\end{frame}
+
+\begin{frame}
+  \begin{proof}[Beweis von Theorem 9.5]
+    \renewcommand{\qedsymbol}{}
+    \textbf{Behauptung:} Seien $q_1, ..., q_m \in Q \cap Z_1$ mit $1 \leq m \leq k$.\\
+    Dann gilt $\bigcap_{i=1}^m A_{q_i} \not= \emptyset$.
+    \begin{enumerate}
+      %\setcounter{enumi}{7}
+      \item<2-> Es gilt $\dist(\conv \{ q_1, ..., q_m \}, \conv P) \geq \delta$.
+      \item<3-> Es folgt $\dist(\conv (S_{q_1} \cup ... \cup S_{q_m}), \conv P) > \delta/2$.
+      \item<4-> Also gibt es eine Hyperebene $H$, die $S_{q_1} \cup ... \cup S_{q_m}$ und $P$ streng trennt. Sei $H'$ der zu $H$ parallele $(n{-}1)$-dimensionale Unterraum.
+      \item<5-> Es gilt $F \not\subset H'$, da sonst $Z_1 \cap Q = \emptyset$.
+      \item<6-> Somit ist $G := H' \cap F$ ein $(k{-}1)$-dimensionaler Unterraum.
+      \item<7-> Dann liegt $S_{q_1} \cup ... \cup S_{q_m}$ in einer der beiden Komponenten von $Z_1 \setminus ((\conv P) + G)$.
+      \item<8-> Wähle $w \in \Omega$, sodass $w \perp G$ und $S_{q_1} \cup ... \cup S_{q_m} \subset G_w$.
+      \item<9-> Folglich gilt $w \in \bigcap_{i=1}^m A_{q_i}$.
+    \end{enumerate}
+    \vspace{-12pt}
+  \end{proof}
+\end{frame}
+
+\begin{frame}
+  \begin{proof}[Beweis von Theorem 9.5]
+    Wir haben gesehen, dass $\{ A_q \mid q \in Q \cap Z_1 \}$ eine Familie kompakter, stark konvexer Mengen ist. Zusammen mit vorheriger Behauptung folgt aus Lemma 9.4:
+
+    \vspace{2pt}
+
+    \uncover<2->{Es gibt ein Paar von antipodalen Punkten $\{ y, {-}y \}$ in $\Omega$, sodass $\fa{q \in Z_1 \cap Q} A_q \cap \{ p, {-}p \} \not= \emptyset$.}
+    \uncover<3->{Somit hat der $(k{-}1)$-Zylinder $Z_2 := (\conv P) + F_y \subset Z_1$ leeren Schnitt mit $Q$.\qedhere}
+  \end{proof}
+\end{frame}
 
 \section{Trennung durch Parallelotope}
 
@@ -688,6 +840,7 @@
     \text{für $i = 1, ..., n$.}
   \]
   Dann ist eine $\beta$-Box gegeben durch reelle Zahlen $m_1, ..., m_n$ und $M_1, ..., M_n$ mit $m_i \leq M_i$ für $i = 1, ..., n$ und besteht aus allen $x \in \E^n$, die folgendes lineare Ungleichungssystem erfüllen:
+
   \begin{align*}
     m_1 \leq &\pi_1(x) \leq M_1 \\
     m_2 \leq &\pi_2(x) \leq M_2 \\
@@ -727,8 +880,8 @@
 \end{frame}
 
 \begin{frame}
-  \begin{theorem}
-    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$ ($n \geq 2$). \\
+  \begin{theorem}[10.2]
+    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$ ($n \geq 2$).\\
     Dann sind für eine Basis $\beta$ von $\E^n$ äquivalent:
     \begin{enumerate}[(a)] %[label={(\alph*)}]
       \item Es gibt eine $\beta$-Box $B$, sodass $P \subset B$ und $Q \cap B = \emptyset$.
@@ -807,10 +960,10 @@
     \uncover<3->{Angenommen, $(a)$ gilt nicht, es gibt also $q \in B_P \cap Q$.}
     \uncover<4->{
       Definiere $f : \E^{n+1} \to E^n$ durch\\
-      \quad\enspace $f(\lambda_1 b_1 + ... + \lambda_{n+1} b_n) = \lambda_1 b_1 + ... + \lambda_n b_n$.
+      $f(\lambda_1 b_1 + ... + \lambda_{n+1} b_n) = \lambda_1 b_1 + ... + \lambda_n b_n$.
     }
     \uncover<5->{Dann ist $\beta' := \{ b_1, ..., b_n \}$ eine Basis von $\E^n$ und $f(B_P)$ die minimale $\beta'$-Box, die $f(P)$ enthält.}
-    \uncover<6->{Da $f(q) \in f(P)$, gibt es nach Induktionsannahme eine Teilmenge $T' \subset f(P)$ mit maximal $n {-} 1$ Punkten, sodass $f(q)$ in der minimalen $\beta'$-Box um $T'$ enthalten ist.}
+    \uncover<6->{Da $f(q) \in f(B_P)$, gibt es nach Induktionsannahme eine Teilmenge $T' \subset f(P)$ mit maximal $n {-} 1$ Punkten, sodass $f(q)$ in der minimalen $\beta'$-Box um $T'$ enthalten ist.}
     \uncover<7->{Sei $T \subset P$ mit maximal $n {-} 1$ Punkten und $f(T) = T'$.}
     \uncover<8->{
       Es gilt
@@ -845,7 +998,7 @@
       \]
     }
     \uncover<5->{Widerspruch zu $(c)$.}
-    \uncover<6->{Der andere Fall folgt analog.}
+    \uncover<6->{Der andere Fall folgt analog.\qedhere}
   \end{proof}
 
   \begin{center}
@@ -897,6 +1050,47 @@
       \end{tikzpicture}
     }
   \end{center}
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Korollar (10.3)}
+    Sei $P \subset \E^n$ ($n \geq 2$) nichtleer und kompakt.\\
+    Angenommen, $q \in \E^n$ erfüllt das System von Ungleichungen
+    \[
+      \inf_{x \in P} \pi_i(x) \,\leq\, \pi_i(q) \,\leq\, \sup_{x \in P} \pi_i(x)
+      \quad \text{für $i \in \{ 1, ..., n \}$.}
+    \]
+    Dann gibt es eine Menge $T \subset P$ mit höchstens $n$ Punkten und
+    \[
+      \inf_{x \in T} \pi_i(x) \,\leq\, \pi_i(q) \,\leq\, \sup_{x \in T} \pi_i(x)
+      \quad \text{für $i \in \{ 1, ..., n \}$.}
+    \]
+  \end{block}
+\end{frame}
+
+% TODO: Ähnlichkeit zu Umformulierung von Carathéodorys Theorem
+
+\begin{frame}
+  \begin{theorem}[Carathéodory, 2.23]
+    TODO: Noch zu ergänzen!
+  \end{theorem}
+
+  \begin{theorem}[Carathéodory, Umformulierung]
+    Sei $P \subset \E^n$ ($n \geq 2$) nichtleer und kompakt und sei $q \in \E^n$.\\
+    Angenommen, für jede Menge $T \subset P$ mit höchstens $n{+}1$ Punkten gibt es eine Hyperebene, die $T$ und $\{ q \}$ streng trennt. Dann ist $q$ nicht in der konvexen Hülle von $P$ enthalten.
+  \end{theorem}
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Korollar (10.4)}
+    Sei $P \subset \E^n$ ($n \geq 2$) nichtleer und kompakt und sei $q \in \E^n$.\\
+    Sei $\beta = \{ b_1, ..., b_n \}$ eine Basis von $\E^n$ und $H_i$ der von $\beta \setminus \{ b_i \}$ aufgespannte Unterraum für $i \in \{ 1, ..., n \}$. Angenommen, für jede Menge $T \subset P$ mit höchstens $n$ Punkten gibt es eine Hyperebene, die parallel zu einem der $H_i$ ist und $T$ und $\{ q \}$ streng trennt. Dann ist $P$ nicht in der konvexen Hülle von $P$ enthalten.
+  \end{block}
+
+  \begin{proof}<2->
+    Wegen Satz 10.4 gibt es eine $\beta$-Box $B_P$, die $P$ enthält und disjunkt zu $\{ q \}$ ist.
+    \uncover<3->{Es folgt $\{ q \} \cap \conv P \subset \{ q \} \cap B_P = \emptyset$, also $q \not\in \conv P$.\qedhere}
+  \end{proof}
 \end{frame}
 
 \begin{frame}[plain]
