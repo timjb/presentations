@@ -1,0 +1,64 @@
+\documentclass[a4paper,english,16pt]{scrartcl}
+
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{framed}
+\usepackage{setspace}
+\usepackage{enumitem}
+
+\newcommand{\E}{\text{E}} % Euklidischer Raum
+\newcommand{\R}{\mathbb{R}} % Reelle Zahlen
+\newcommand{\conv}{\mathsf{conv}} % Konvexe Hülle
+\newcommand{\dist}{\mathsf{dist}} % Distanz
+
+\theoremstyle{definition}
+\newtheorem*{theorem}{Theorem}
+\newtheorem*{lemma}{Lemma}
+
+\renewcommand{\familydefault}{\sfdefault} % Sans-Serif-Schriftart
+\pagestyle{empty} % Keine Seitenzahlen
+
+\begin{document}
+\onehalfspacing
+
+\begin{framed}
+  \begin{theorem}[Kirchberger', 8.2]\mbox{}\\
+    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$. \\
+    Dann sind $P$ und $Q$ genau dann durch eine Sphäre streng trennbar,
+    wenn für jede Menge $T \subset \E^n$ mit höchstens $n + 3$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine Sphäre
+    streng trennbar sind.
+  \end{theorem}
+\end{framed}
+
+\vspace{96pt}
+
+\begin{framed}
+  \begin{theorem}[9.5]\mbox{}\\
+    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$.\\
+    Angenommen, für $1 \leq k \leq n$ kann jede Teilmenge von $Q$ mit höchstens $k$ Punkten streng von $P$ mit einer Hyperebene getrennt werden. Dann gibt es zu jedem $k$-Zylinder $Z_1 = (\conv P) + F_1$ einen $(k{-}1)$-Zylinder $Z_2 = (\conv P) + F_2$ mit $Z_2 \subset Z_1$ und $Z_2 \cap Q = \emptyset$.
+  \end{theorem}
+\end{framed}
+
+\begin{framed}
+  \begin{lemma}[9.4]\mbox{}\\
+    Sei $S = S_1(0)$ die Einheitssphäre um den Nullpunkt im $\E^n$ und $F = \{ A_i \mid i \in I \}$ eine Familie von kompakten, stark konvexen Teilmengen von $S$. Angenommen, je $n$ (oder weniger) Elemente von $F$ haben einen Punkt gemeinsam. Dann gibt es ein Paar von antipodalen Punkten $\{ p, {-}p \}$, sodass $\{ p, {-}p \} \cap A_i \not= \emptyset$ für alle $i \in I$.
+  \end{lemma}
+\end{framed}
+
+\newpage
+
+\begin{framed}
+  \begin{theorem}[10.2]\mbox{}\\
+    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$ ($n \geq 2$).\\
+    Dann sind für eine Basis $\beta$ von $\E^n$ äquivalent:
+    \begin{enumerate}[label=(\alph*)]
+      \item Es gibt eine $\beta$-Box $B$, sodass $P \subset B$ und $Q \cap B = \emptyset$.
+      \item Für jede Teilmenge $S \subset P {\cup} Q$ mit maximal $n{+}1$ Punkten gibt es eine $\beta$-Box $B_S$, sodass $(P \cap S) \subset B_S$ und $(Q \cap S) \cap B_S = \emptyset$.
+      \item Für jede Teilmenge $T \subset P$ mit maximal $n$ Punkten ist die minimale $\beta$-Box $B_T$, die $T$ enthält, disjunkt von $Q$, also \\ $B_T \cap Q = \emptyset$.
+    \end{enumerate}
+  \end{theorem}
+\end{framed}
+
+\end{document}
