@@ -7,6 +7,7 @@
 \usetikzlibrary{3d,calc}
 \usepackage{fix-cm}
 \usepackage{tikz-3dplot}
+\usetikzlibrary{decorations.pathreplacing}
 
 % http://stackoverflow.com/questions/1670463/latex-change-margins-of-only-a-few-pages
 \newenvironment{changemargin}[2]{%
@@ -50,6 +51,10 @@
 \usepackage{mathtools}
 \DeclarePairedDelimiter\norm{\lVert}{\rVert}%
 
+\let\mySum\sum
+\DeclareMathOperator*{\textsum}{{\textstyle \mySum}}
+\renewcommand{\sum}{\textsum\limits}
+
 % http://tex.stackexchange.com/questions/48381/line-through-two-points-with-offset-in-tikz
 \tikzset{
     add/.style args={#1 and #2}{
@@ -82,6 +87,11 @@
 \date{4. März 2014}
 
 \begin{document}
+
+\setlength{\abovedisplayskip}{2pt}
+\setlength{\belowdisplayskip}{2pt}
+\setlength{\abovedisplayshortskip}{2pt}
+\setlength{\belowdisplayshortskip}{2pt}
 
 \begin{frame}[plain]
   \titlepage
@@ -126,16 +136,17 @@
         \end{center}
       \end{uncoverenv}
       \begin{uncoverenv}<1->
+        \vspace{-8pt}
         \[ \fa{a \in A} \norm{p - a} < \alpha \]
-        \vspace{-30pt}
+        \vspace{-26pt}
 
         \begin{center}
           und
         \end{center}
-        \vspace{-34pt}
+        \vspace{-28pt}
 
         \[ \fa{b \in B} \norm{p - a} > \alpha \]
-        \vspace{-20pt}
+        \vspace{-10pt}
       \end{uncoverenv}
     \end{minipage}
     \begin{minipage}{0.19 \linewidth}
@@ -160,16 +171,17 @@
         \end{center}
       \end{uncoverenv}
       \begin{uncoverenv}<4->
+        \vspace{-8pt}
         \[ \fa{a \in A} \norm{p - a} > \alpha \]
-        \vspace{-30pt}
+        \vspace{-26pt}
 
         \begin{center}
           und
         \end{center}
-        \vspace{-34pt}
+        \vspace{-28pt}
 
         \[ \fa{b \in B} \norm{p - a} < \alpha \]
-        \vspace{-20pt}
+        \vspace{-10pt}
       \end{uncoverenv}
     \end{minipage}
   \end{definition}
@@ -190,7 +202,7 @@
 
   \begin{center}
     \begin{tikzpicture}
-      \path[use as bounding box] (-2,2.5) rectangle (6,0);
+      \path[use as bounding box] (-2,2.5) rectangle (6,-1);
       \draw<4> [gray,dashed,add= .5 and .5] (q1) to (q2);
 
       \node (p1) [point,DarkGreen,onslide=<5-6>{cover},label=180:\cover<5-6>{$p_1$}] at (0, 2) {};
@@ -219,8 +231,6 @@
     streng trennbar sind.
   \end{theorem}
 \end{frame}
-
-\setlength{\leftmargin}{-20pt}
 
 \begin{changemargin}{-0.5cm}{-0.5cm}
 
@@ -320,7 +330,7 @@
   }
 
   \only<8-13>{
-    \emph{Behauptung:} ${\color{DarkGreen} P'}$ und ${\color{violet} Q'}$ können durch eine Hyperebene ${\color{orange} H_0} \subset \E^{n+1}$ streng getrennt werden.
+    \textbf{Behauptung:} ${\color{DarkGreen} P'}$ und ${\color{violet} Q'}$ können durch eine Hyperebene ${\color{orange} H_0} \subset \E^{n+1}$ streng getrennt werden.
     \vspace{-4pt}
 
     \begin{enumerate}
@@ -356,6 +366,7 @@
   \tableofcontents[currentsection]
 \end{frame}
 
+%\iffalse
 \begin{frame}
   \setbeamercolor{background canvas}{bg=violet}
 
@@ -378,10 +389,10 @@
     }
 
     \only<2-3>{
-      \fill[opacity=0.15] (0,1,0) -- (1,0,0) -- (0,-1,0) -- (0,0,1) -- (0,1,0);
-      \fill[opacity=0.15] (0,1,0) -- (-1,0,0) -- (0,-1,0) -- (0,0,-1) -- (0,1,0);
-      \fill[opacity=0.25] (0,1,0) -- (1,0,0) -- (0,-1,0) -- (0,0,-1) -- (0,1,0);
-      \fill[opacity=0.25] (0,1,0) -- (-1,0,0) -- (0,-1,0) -- (0,0,1) -- (0,1,0);
+      \fill[opacity=0.15] (0,1,0) -- (1,0,0) -- (0,-1,0) -- (0,0,1) -- cycle;
+      \fill[opacity=0.15] (0,1,0) -- (-1,0,0) -- (0,-1,0) -- (0,0,-1) -- cycle;
+      \fill[opacity=0.25] (0,1,0) -- (1,0,0) -- (0,-1,0) -- (0,0,-1) -- cycle;
+      \fill[opacity=0.25] (0,1,0) -- (-1,0,0) -- (0,-1,0) -- (0,0,1) -- cycle;
     }
 
     \node<3> (Z0) [color=DarkGreen] at (0, -1.5, 0) {0-Zylinder};
@@ -398,10 +409,10 @@
       \draw (-5,-1,1) -- (5,-1,-1);
       \draw [dashed] (-5,0,0) -- (5,0,-2);
 
-      \fill[opacity=0.25] (-5,0,2) -- (-5,-1,1) -- (5,-1,-1) -- (5,0,0) -- (-5,0,2);
-      \fill[opacity=0.25] (-5,1,1) -- (-5,0,0) -- (5,0,-2) -- (5,1,-1) -- (-5,1,1);
-      \fill[opacity=0.15] (-5,1,1) -- (-5,0,2) -- (5, 0, 0) -- (5,1,-1) -- (-5,1,1);
-      \fill[opacity=0.15] (-5,0,0) -- (-5,-1,1) -- (5,-1,-1) -- (5,0,-2) -- (-5,0,0);
+      \fill[opacity=0.25] (-5,0,2) -- (-5,-1,1) -- (5,-1,-1) -- (5,0,0) -- cycle;
+      \fill[opacity=0.25] (-5,1,1) -- (-5,0,0) -- (5,0,-2) -- (5,1,-1) -- cycle;
+      \fill[opacity=0.15] (-5,1,1) -- (-5,0,2) -- (5, 0, 0) -- (5,1,-1) -- cycle;
+      \fill[opacity=0.15] (-5,0,0) -- (-5,-1,1) -- (5,-1,-1) -- (5,0,-2) -- cycle;
     }
 
     \only<5>{
@@ -416,10 +427,10 @@
       \draw (-5,-2,2) -- (5,-2,0);
       \draw [dashed] (-5,1,-1) -- (5,1,-3);
 
-      \fill[opacity=0.25] (-5,-1,3) -- (-5,-2,2) -- (5,-2,0) -- (5,-1,1) -- (-5,-1,3);
-      \fill[opacity=0.25] (-5,2,0) -- (-5,1,-1) -- (5,1,-3) -- (5,2,-2) -- (-5,2,0);
-      \fill[opacity=0.15] (-5,2,0) -- (-5,-1,3) -- (5, -1, 1) -- (5,2,-2) -- (-5,2,0);
-      \fill[opacity=0.15] (-5,1,-1) -- (-5,-2,2) -- (5,-2,0) -- (5,1,-3) -- (-5,1,-1);
+      \fill[opacity=0.25] (-5,-1,3) -- (-5,-2,2) -- (5,-2,0) -- (5,-1,1) -- cycle;
+      \fill[opacity=0.25] (-5,2,0) -- (-5,1,-1) -- (5,1,-3) -- (5,2,-2) -- cycle;
+      \fill[opacity=0.15] (-5,2,0) -- (-5,-1,3) -- (5, -1, 1) -- (5,2,-2) -- cycle;
+      \fill[opacity=0.15] (-5,1,-1) -- (-5,-2,2) -- (5,-2,0) -- (5,1,-3) -- cycle;
     }
   \end{tikzpicture}
 \end{frame}
@@ -484,19 +495,19 @@
         \node<7-8> [point,violet,label=\angle:$q_{\num}$] at (\angle:3.25) {};
 
       \begin{scope}[cm={cos(3),-sin(3),sin(3),cos(3), (0,0)}]
-        \fill<2-4,6> [color=DarkGreen,opacity=0.2] (-10,-0.5) -- (10,-0.5) -- (10,0.5) -- (-10, 0.5) -- (-10,-0.5);
+        \fill<2-4,6> [color=DarkGreen,opacity=0.2] (-10,-0.5) -- (10,-0.5) -- (10,0.5) -- (-10, 0.5) -- cycle;
       \end{scope}
     
       \begin{scope}[cm={cos(45),-sin(45),sin(45),cos(45), (0,0)}]
-        \fill<3-4> [color=DarkGreen,opacity=0.2] (-10,-0.5) -- (10,-0.5) -- (10,0.5) -- (-10, 0.5) -- (-10,-0.5);
+        \fill<3-4> [color=DarkGreen,opacity=0.2] (-10,-0.5) -- (10,-0.5) -- (10,0.5) -- (-10, 0.5) -- cycle;
       \end{scope}
     
       \begin{scope}[cm={cos(110),-sin(110),sin(110),cos(110), (0,0)}]
-        \fill<4> [color=DarkGreen,opacity=0.2] (-10,-0.5) -- (10,-0.5) -- (10,0.5) -- (-10, 0.5) -- (-10,-0.5);
+        \fill<4> [color=DarkGreen,opacity=0.2] (-10,-0.5) -- (10,-0.5) -- (10,0.5) -- (-10, 0.5) -- cycle;
       \end{scope}
 
       \begin{scope}[cm={cos(1),-sin(1),sin(1),cos(1), (0,0)}]
-        \fill<8> [color=DarkGreen,opacity=0.2] (-10,-0.5) -- (10,-0.5) -- (10,0.5) -- (-10, 0.5) -- (-10,-0.5);
+        \fill<8> [color=DarkGreen,opacity=0.2] (-10,-0.5) -- (10,-0.5) -- (10,0.5) -- (-10, 0.5) -- cycle;
       \end{scope}
     \end{tikzpicture}
   \end{center}
@@ -595,7 +606,39 @@
   Durch Übergang zum Infimum folgt $\delta \geq \dist(R, \conv P) > 0$.
 \end{frame}
 
+\begin{frame}
+  \begin{center}
+    \begin{tikzpicture}
+      \path[use as bounding box] (-5,-3) rectangle (5,3);
+      \draw [color=DarkGreen] (0.5,0)++(90:1.5) arc (90:270:1.5) arc (-90:90:0.5) arc (270:90:0.5) arc (-90:90:0.5) -- cycle;
+      \fill [color=DarkGreen,opacity=0.20] (0.5,0)++(90:1.5) arc (90:270:1.5) arc (-90:90:0.5) arc (270:90:0.5) arc (-90:90:0.5) -- cycle;
+      \node (P) [color=DarkGreen] at (-0.5,0) {P};
+
+      \fill [color=DarkGreen,opacity=0.20] (1,1) arc (0:-90:0.5) arc (90:270:0.5) arc(90:0:0.5) -- cycle;
+
+      \fill [color=red,opacity=0.20] (0.5,0) ++ (105:1.5) arc (105:270:1.5) arc (270:285:0.5) -- ++ (15:10) -- ++ (105:2.8) -- cycle;
+
+      %\begin{scope}[cm={cos(-15),-sin(-15),sin(-15),cos(-15), (0,0)}]
+      %  \fill [color=DarkGreen,opacity=0.2] (-10,-1.6) -- (10,-1.6) -- (10,1.38) -- (-10, 1.38) -- cycle;
+      %\end{scope}
+      %\node [color=DarkGreen] at (-3,-1) {$\conv P + F$};
+
+      \draw (-4, 2.25) circle (1);
+      \draw (-4, 2.25) ++ (15:0.25) arc (15:105:0.25);
+      \node [point,inner sep=0.5pt] at (-3.93, 2.38) {};
+      \draw [->] (-4,2.25) -- + (15:1.25) node[anchor=west] {$r_w$};
+      \draw (-4,2.25) -- + (105:1.25) node[anchor=south] {$F_w$};
+      \draw (-4,2.25) -- + (-75:1.25);
+
+      \begin{scope}[cm={cos(75),-sin(75),sin(75),cos(75), (0,0)}]
+        \fill [color=blue,opacity=0.2] (-10,-1.03) -- (10,-1.03) -- (10,1.25) -- (-10, 1.25) -- cycle;
+      \end{scope}
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
 \end{changemargin}
+%\fi
 
 \section{Trennung durch Parallelotope}
 
@@ -605,7 +648,261 @@
 \end{frame}
 
 \begin{frame}
-  TODO
+  \begin{definition}
+    Sei $\beta = \{ b_1, b_2, ..., b_n \}$ eine Basis von $\E^n$. Sei $H_i$ für $i = 1, ..., n$ die Hyperebene $\mathsf{span} (b_1, ..., \widehat{b_i}, ..., b_n)$. Eine \emph{$\beta$-Box} ist ein Parallelotop, in dem jede Seite parallel zu einer Hyperebene $H_i$ ist.
+  \end{definition}
+
+  \begin{tikzpicture}
+    \path[use as bounding box] (-5,-1) rectangle (5,3.75);
+
+    \draw<2> [->] (-3,-0.5) -- + (10:1) node [anchor=west] {$b_1$};
+    \draw<2> [->] (-3,-0.5) -- + (120:2) node [anchor=south] {$b_2$};
+    \draw<2> [->] (-3,-0.5) -- + (70:1.5) node [anchor=south] {$b_2$};
+    \node<2> at (-3,-1.25) {$\beta = \{ b_1, b_2, b_3 \}$};
+
+    \draw<2> (0.5,-0.5) -- ++ (10:4) -- ++ (120:1.5) -- ++ (10:-4) -- cycle;
+    \draw<2> [dashed] (0.5,-0.5) ++ (70:2) -- ++ (10:4);
+    \draw<2> [dashed] (0.5,-0.5) ++ (70:2) -- ++ (120:1.5);
+    \draw<2> (0.5,-0.5) ++ (70:2) ++ (10:4) -- ++ (120:1.5) -- ++ (10:-4);
+    \draw<2> [dashed] (0.5,-0.5) -- ++ (70:2);
+    \draw<2> (0.5,-0.5) ++ (120:1.5) -- ++ (70:2);
+    \draw<2> (0.5,-0.5) ++ (10:4) -- ++ (70:2);
+    \draw<2> (0.5,-0.5) ++ (10:4) ++ (120:1.5) -- ++ (70:2);
+
+    \fill<2> [color=yellow,opacity=0.35] (0.5,-0.5) -- ++ (10:4) -- ++ (120:1.5) -- ++ (10:-4) -- cycle;
+    \fill<2> [color=yellow,opacity=0.2] (0.5,-0.5) ++ (70:2) -- ++ (10:4) -- ++ (120:1.5) -- ++ (10:-4) -- cycle;
+    \fill<2> [color=yellow,opacity=0.2] (0.5,-0.5) -- ++ (10:4) -- ++ (70:2) -- ++ (10:-4) -- cycle;
+    \fill<2> [color=yellow,opacity=0.2] (0.5,-0.5) ++ (120:1.5) -- ++ (10:4) -- ++ (70:2) -- ++ (10:-4) -- cycle;
+    \fill<2> [color=yellow,opacity=0.2] (0.5,-0.5) -- ++ (70:2) -- ++ (120:1.5) -- ++ (70:-2) -- cycle;
+    \fill<2> [color=yellow,opacity=0.4] (0.5,-0.5) ++ (10:4) -- ++ (70:2) -- ++ (120:1.5) -- ++ (70:-2) -- cycle;
+
+    \node<2> at (2.5,-1.25) {Eine $\beta$-Box};
+  \end{tikzpicture}
+\end{frame}
+
+\begin{frame}
+  Die Koordinatenfunktionen dieser Basis sind
+  \[
+    \pi_i : \E^n \to \R, \quad
+    \sum_{j=1}^n \lambda_j b_j \mapsto \lambda_i \qquad
+    \text{für $i = 1, ..., n$.}
+  \]
+  Dann ist eine $\beta$-Box gegeben durch reelle Zahlen $m_1, ..., m_n$ und $M_1, ..., M_n$ mit $m_i \leq M_i$ für $i = 1, ..., n$ und besteht aus allen $x \in \E^n$, die folgendes lineare Ungleichungssystem erfüllen:
+  \begin{align*}
+    m_1 \leq &\pi_1(x) \leq M_1 \\
+    m_2 \leq &\pi_2(x) \leq M_2 \\
+    &\vdots \\
+    m_n \leq &\pi_n(x) \leq M_n \\
+  \end{align*}
+\end{frame}
+
+\begin{frame}
+  Sei $P \subset \E^n$ nichtleer und kompakt. Dann existiert eine eindeutige minimale $\beta$-Box $B_P$, die $P$ enthält. Diese ist gegeben durch
+  \[
+    m_i := \inf_{p \in P} \pi_i(p)
+    \quad \text{und} \quad
+    M_i := \sup_{p \in P} \pi_i(p)
+    \qquad \text{für $i = 1, ..., n$.}
+  \]
+  \begin{center}
+    \begin{tikzpicture}
+      \path[use as bounding box] (-6,-2) rectangle (2,2);
+
+      \draw [->] (-5,-1.5) -- + (15:1) node [anchor=west] {$b_1$};
+      \draw [->] (-5,-1.5) -- + (110:1.2) node [anchor=south] {$b_2$};
+      \node at (-5,-2) {$\beta = \{ b_1, b_2 \}$};
+
+      \draw [color=DarkGreen] (0,1.6) arc (90:240:0.7) arc (-300:0:0.7) arc (180:480:0.7) arc (-60:90:0.7);
+      \fill [color=DarkGreen,opacity=0.20] (0,1.6) arc (90:240:0.7) arc (-300:0:0.7) arc (180:480:0.7) arc (-60:90:0.7);
+      \node [color=DarkGreen] at (0,0) {$P$};
+
+      \draw<2> (-1.02,-1.51) -- ++ (15:2.755) -- ++ (110:2.79) -- ++ (15:-2.755) -- cycle;
+      \begin{scope}
+        \clip (0,1.6) arc (90:240:0.7) arc (-300:0:0.7) arc (180:480:0.7) arc (-60:90:0.7) (-5,-5) rectangle (5,5);
+        \fill<2> [color=yellow,opacity=0.4] (-1.02,-1.51) -- ++ (15:2.755) -- ++ (110:2.79) -- ++ (15:-2.755) -- cycle;
+      \end{scope}
+      \node at (0,-2) {minimale $\beta$-Box um $P$};
+    \end{tikzpicture}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \begin{theorem}
+    Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$ ($n \geq 2$). \\
+    Dann sind für eine Basis $\beta$ von $\E^n$ äquivalent:
+    \begin{enumerate}[(a)] %[label={(\alph*)}]
+      \item Es gibt eine $\beta$-Box $B$, sodass $P \subset B$ und $Q \cap B = \emptyset$.
+      \item Für jede Teilmenge $S \subset P {\cup} Q$ mit maximal $n{+}1$ Punkten gibt es eine $\beta$-Box $B_S$, sodass $(P \cap S) \subset B_S$ und $(Q \cap S) \cap B_S = \emptyset$.
+      \item Für jede Teilmenge $T \subset P$ mit maximal $n$ Punkten ist die minimale $\beta$-Box $B_T$, die $T$ enthält, disjunkt von $Q$, also $B_T \cap Q = \emptyset$.
+    \end{enumerate}
+  \end{theorem}
+
+  \begin{proof}<2->
+    \renewcommand{\qedsymbol}{}
+    $(a) \Rightarrow (b)$ Klar.\\
+    % Beweis aus dem Buch:
+    %$(b) \Rightarrow (c)$
+      %Angenommen, $(c)$ ist falsch. Dann gibt es eine Menge $T \subset P$ mit maximal $n$ Punkten, sodass $B_T \cap Q \not= \emptyset$. Sei $q \in B_T \cap Q$. Dann ist $S := T \cup \{ q \}$ eine Teilmenge von $P \cup Q$, die maximal $n {+} 1$ Punkte enthält. Jede $\beta$-Box, die $S \cap P = T$ enthält, enthält dann auch $q \in S \cap Q$. Damit stimmt $(b)$ nicht.
+    % Besserer, da direkter Beweis:
+    \visible<3->{$(b) \Rightarrow (c)$}
+      \visible<3->{Sei $T \subset P$ eine Menge mit maximal $n$ Punkten und $B_T$ die minimale $\beta$-Box, die $T$ enthält.}
+      \visible<4->{Sei $q \in Q$ beliebig.}
+      \visible<5->{Dann ist die Menge $S_q := T \cup \{ q \}$ eine Teilmenge von $P \cup Q$ mit maximal $n {+} 1$ Punkten.}
+      \visible<6->{Sei $B_{S_q}$ die $\beta$-Box aus $(b)$.}
+      \visible<7->{Dann gilt: $T \subset P \cap S_q \subset B_{S_q}$, also $B_T \subset B_{S_q}$, und $B_T \cap \{ q \} \subset B_{S_q} \cap (S_q \cap Q) = \emptyset$.}
+  \end{proof}
+\end{frame}
+
+\begin{frame}
+  \begin{proof}
+    \renewcommand{\qedsymbol}{}
+    $(c) \Rightarrow (a)$ Durch Induktion über $n$.\\[2pt]
+    \textbf{Induktionsanfang} ($n=2$):\\
+    \uncover<2->{Sei $B_P$ die minimale $\beta$-Box, die $P$ enthält.}
+    \uncover<3->{Da $P$ kompakt ist, können wir einen Punkt aus $P$ auf jeder der vier Seiten des Parallelogramms $B_P$ wählen. Nenne diese Punkte $p_1, p_2, p_3, p_4$.}
+    \uncover<4->{Für jedes Paar von Punkten $p_i$ und $p_j$ mit $i \not= j$ sei $B_{ij}$ die minimale $\beta$-Box, die $p_i$ und $p_j$ enthält.}
+    \uncover<5->{Es gilt $B_P = \bigcup_{i \not= j} B_{ij}$.}
+    \uncover<6->{Angenommen, $(a)$ ist falsch, also $q \in Q \cap B_P = Q \cap ( \bigcup_{i \not= j} B_{ij} )$.}
+    \uncover<7->{Dann gibt es $i, j \in \{ 1, 2, 3, 4 \}$ mit $i \not= j$ und $q \in B_{ij}$.}
+  \end{proof}
+
+  \begin{center}
+    \scalebox{0.95}{
+      \begin{tikzpicture}
+        \path[use as bounding box] (-2,-2) rectangle (2,2.1);
+
+        \draw<1-3> [color=DarkGreen] (0,1.6) arc (90:240:0.7) arc (-300:0:0.7) arc (180:480:0.7) arc (-60:90:0.7);
+        \fill<1-3> [color=DarkGreen,opacity=0.20] (0,1.6) arc (90:240:0.7) arc (-300:0:0.7) arc (180:480:0.7) arc (-60:90:0.7);
+        \node<1-3> [color=DarkGreen] at (0,0) {$P$};
+
+        \draw<2-> (-1.02,-1.51) -- ++ (15:2.755) -- ++ (110:2.79) -- ++ (15:-2.755) -- cycle;
+        \begin{scope}
+          \clip (0,1.6) arc (90:240:0.7) arc (-300:0:0.7) arc (180:480:0.7) arc (-60:90:0.7) (-5,-5) rectangle (5,5);
+          \fill<2-> [color=yellow,opacity=0.4] (-1.02,-1.51) -- ++ (15:2.755) -- ++ (110:2.79) -- ++ (15:-2.755) -- cycle;
+        \end{scope}
+
+        \node<2-> at (-1.5,1.7) {$B_P$};
+
+        \node<3-> (p1) [point,label=270:$p_1$] at (0.9,-1) {};
+        \node<3-> (p2) [point,label=0:$p_2$] at (1.38,-0.1) {};
+        \node<3-> (p3) [point,label=90:$p_3$] at (-0.2,1.6) {};
+        \node<3-> (p4) [point,label=180:$p_4$] at (-1.37,-0.55) {};
+
+        \draw<4-> (p1) -- ++ (110:2.79);
+        \draw<4-> (p2) -- ++ (15:-2.755);
+        \draw<4-> (p3) -- ++ (110:-2.79);
+        \draw<4-> (p4) -- ++ (15:2.755);
+        \node<4-> at (-0.7,0.6) {$B_{34}$};
+      \end{tikzpicture}
+    }
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \begin{proof}
+    \renewcommand{\qedsymbol}{}
+    $(c) \Rightarrow (a)$ Durch Induktion über $n$.\\[2pt]
+    \textbf{Induktionsschritt} ($n \to n {+} 1$):\\
+    \uncover<2->{Sei $B_P$ die minimale $\beta$-Box, die $P$ enthält.}
+    \uncover<3->{Angenommen, $(a)$ gilt nicht, es gibt also $q \in B_P \cap Q$.}
+    \uncover<4->{
+      Definiere $f : \E^{n+1} \to E^n$ durch\\
+      \quad\enspace $f(\lambda_1 b_1 + ... + \lambda_{n+1} b_n) = \lambda_1 b_1 + ... + \lambda_n b_n$.
+    }
+    \uncover<5->{Dann ist $\beta' := \{ b_1, ..., b_n \}$ eine Basis von $\E^n$ und $f(B_P)$ die minimale $\beta'$-Box, die $f(P)$ enthält.}
+    \uncover<6->{Da $f(q) \in f(P)$, gibt es nach Induktionsannahme eine Teilmenge $T' \subset f(P)$ mit maximal $n {-} 1$ Punkten, sodass $f(q)$ in der minimalen $\beta'$-Box um $T'$ enthalten ist.}
+    \uncover<7->{Sei $T \subset P$ mit maximal $n {-} 1$ Punkten und $f(T) = T'$.}
+    \uncover<8->{
+      Es gilt
+      \begin{align*}
+        \inf_{x \in T} \pi_i(x) \leq \pi_i(q) \leq \sup_{x \in T} \pi_i(x)
+        \qquad \text{für } i \in \{1, ..., n\}.
+      \end{align*}
+    }
+    \uncover<9->{Angenommen, obige Ungleichung gilt auch für $i = n {+} 1$. Dann sind wir fertig.}
+    \uncover<10->{
+      Andernfalls gilt
+      \[
+        \pi_{n+1}(q) > \sup_{x \in T} \pi_{n+1}(x)
+        \quad \text{oder} \quad
+        \pi_{n+1}(q) < \inf_{x \in T} \pi_{n+1}(x).
+      \]
+    }
+  \end{proof}
+\end{frame}
+
+\begin{frame}
+  \begin{proof}
+    $(c) \Rightarrow (a)$ Durch Induktion über $n$.\\[2pt]
+    \textbf{Induktionsschritt} (Fortsetzung):\\
+    Angenommen, es gilt $\pi_{n+1}(q) > \sup_{x \in T} \pi_{n+1}(x)$.
+    \uncover<2->{Da $P$ kompakt ist, gibt es $p \in P$ mit $\pi_{n+1}(p) = \sup_{x \in P} \pi_{n+1}(x)$.}
+    \uncover<3->{Aus $q \in B_P$ folgt $\pi_{n+1}(q) \leq \pi_{n+1}(p)$.}
+    \uncover<4->{
+      Somit gilt für $i \in \{ 1, ..., n, n {+} 1 \}$:
+      \[
+        \inf_{x \in T \cup \{ p \}} \pi_i(x) \enspace\leq\enspace \pi_i(q) \enspace\leq \sup_{x \in T \cup \{ p \}} \pi_i(x)
+      \]
+    }
+    \uncover<5->{Widerspruch zu $(c)$.}
+    \uncover<6->{Der andere Fall folgt analog.}
+  \end{proof}
+
+  \begin{center}
+    \scalebox{0.88}{
+      \begin{tikzpicture}
+        \path[use as bounding box] (-3,-2) rectangle (3,1.75);
+
+        \draw [->,gray] (-3.5,0,1) -- ++ (0,1,0) node [anchor=south] {$b_{n+1}$};
+        \draw [->,gray] (-3.5,0,1) -- ++ (1,0,0);
+        \draw [->,gray] (-3.5,0,1) -- ++ (0,0,1.5);
+
+        \draw (-1,0,1) -- ++ (2,0,0) -- ++ (0,0,-1.6);
+        \draw [dashed] (-1,0,1) -- ++ (0,0,-1.6) -- ++ (2,0,0);
+
+        \draw (-1,0,1) ++ (0,0.8,0) -- ++ (2,0,0) -- ++ (0,0,-1.6);
+        \draw [dashed] (-1,0,1) ++ (0,0.8,0) -- ++ (0,0,-1.6) -- ++ (2,0,0);
+
+        \draw<2-> (-1,0,1) ++ (0,1.6,0) -- ++ (2,0,0) -- ++ (0,0,-1.6);
+        \draw<2-> (-1,0,1) ++ (0,1.6,0) -- ++ (0,0,-1.6) -- ++ (2,0,0);
+
+        \draw (-1,0,1) -- ++ (0,0.8,0);
+        \draw (-1,0,1) ++ (2,0,0) -- ++ (0,0.8,0);
+        \draw [dashed] (-1,0,1) ++ (0,0,-1.6) -- ++ (0,0.8,0);
+        \draw (-1,0,1) ++ (2,0,-1.6) -- ++ (0,0.8,0);
+
+        \draw<2-> (-1,0,1) ++ (0,0.8,0) -- ++ (0,0.8,0);
+        \draw<2-> (-1,0,1) ++ (0,0.8,0) ++ (2,0,0) -- ++ (0,0.8,0);
+        \draw<2-> [dashed] (-1,0,1) ++ (0,0.8,0) ++ (0,0,-1.6) -- ++ (0,0.8,0);
+        \draw<2-> (-1,0,1) ++ (0,0.8,0) ++ (2,0,-1.6) -- ++ (0,0.8,0);
+
+        \draw (-1,0,1) ++ (0,-1.6,0) -- ++ (2,0,0) -- ++ (0,0,-1.6);
+        \draw (-1,0,1) ++ (0,-1.6,0) -- ++ (0,0,-1.6) -- ++ (2,0,0);
+
+        \draw [decorate,decoration={brace,amplitude=4pt},xshift=-4pt] (-1,0,1) -- ++ (0,0.8,0) node [black,midway,xshift=-0.4cm] {\footnotesize $B_T$};
+
+        \node<2-> (p) [point,label={[label distance=-2pt]0:$p$}] at (-0.6,1.6,0) {};
+        \node (q) [point,label={[label distance=-2pt]0:$q$}] at (0.8,1.2,-0.2) {};
+
+        \draw [blue,thick] (q) -- (0.8,0.8,-0.2);
+        \draw [blue,thick] (0.8,0.6,-0.2) -- (0.8,0,-0.2);
+        \draw [blue,thick] (0.8,-0.2,-0.2) -- (0.8,-1.6,-0.2);
+
+        \draw [->,thick,orange] (0.1,-0.15,1) -- ++ (0,-0.7,0);
+        \node (f) at (-0.1,-0.5,1) {$f$};
+
+        \node (fq) [point,label={[label distance=4pt]0:$f(q)$}] at (0.8,-1.6,-0.2) {};
+
+        \node at (0.1,-1.9,1) {$B_{T'}$};
+      \end{tikzpicture}
+    }
+  \end{center}
+\end{frame}
+
+\begin{frame}[plain]
+  \begin{center}
+    \huge Danke für die Aufmerksamkeit!
+  \end{center}
 \end{frame}
 
 \end{document}
