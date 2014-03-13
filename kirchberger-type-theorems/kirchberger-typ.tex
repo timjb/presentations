@@ -97,9 +97,8 @@
 
 \begin{frame}[plain]
   \begin{theorem}[Kirchberger]
-    % TODO: trennbar oder streng trennbar?
     Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$. \\
-    Dann sind $P$ und $Q$ genau dann durch eine \alert<2>{Hyperebene} trennbar, wenn für jede Menge $T \subset \E^n$ mit höchstens $n + 2$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine \alert<2>{Hyperebene} trennbar sind.
+    Dann sind $P$ und $Q$ genau dann durch eine \alert<2>{Hyperebene} streng trennbar, wenn für jede Menge $T \subset \E^n$ mit höchstens $n + 2$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine \alert<2>{Hyperebene} streng trennbar sind.
   \end{theorem}
 \end{frame}
 
@@ -110,7 +109,6 @@
 \end{frame}
 
 \begin{frame}
-  %\frametitle{Sphären}
   \begin{definition}
     Sei $p \in \E^n$ und $\alpha > 0$. Dann heißt
     \[ S_\alpha(p) := \left\{ x \in \E^n \mid \norm{x - p} = \alpha \right\} \]
@@ -320,7 +318,7 @@
       \item<3-> Sei $p \!\in\! \E^n$ und $S \!\subset\! \E^{n+1}$ eine Sphäre, die in $p$ tangential zu $\E^n$ ist.
       \item<4-> Betrachte die stereographische Projektion $\phi : \E^n \to S$.
       \item<6-> Seien ${\color{DarkGreen} P}, {\color{violet} Q} \subset \E^n$ nichtleer und kompakt sodass für jede Menge $T \subset \E^n$ mit höchstens $n + 3$ Punkten die Mengen $P \cap T$ und $Q \cap T$ durch eine Sphäre streng trennbar sind.
-      \item<7-> Seien ${\color{DarkGreen} P'}$ und ${\color{violet} Q'}$ die (kompakten) Bilder von ${\color{DarkGreen} P}$ bzw. ${\color{violet} Q}$ unter $\phi$.
+      \item<7-> Seien ${\color{DarkGreen} P' = \phi(P)}$ und ${\color{violet} Q' = \phi(Q)}$ die (kompakten) Bilder von ${\color{DarkGreen} P}$ bzw. ${\color{violet} Q}$ unter $\phi$.
     \end{enumerate}
   }
 
@@ -459,7 +457,6 @@
   \frametitle{Kirchberger-Theorem für Zylinder?}
 
   \begin{theorem}[???]
-    % TODO: trennbar oder streng trennbar?
     Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$.\\
     Dann gibt es einen $k$-Zylinder $Z = (\conv P) + F$ mit $Z \cap Q = \emptyset$ genau dann, wenn es für alle Teilmengen $T \subset P \cup Q$ mit höchstens \alert<2>{$f(n,k)$} Punkten einen $k$-Zylinder $Z_T = \conv(T \cap P) + F_T$ mit $Z_T \cap (T \cap Q) = \emptyset$ gibt.
   \end{theorem}
@@ -510,7 +507,6 @@
   \frametitle{Kirchberger-Theorem für Zylinder? So nicht!}
 
   \begin{theorem}[???]
-    % TODO: trennbar oder streng trennbar?
     Seien $P$ und $Q$ nichtleere, kompakte Teilmengen von $\E^n$.\\
     Dann gibt es einen $k$-Zylinder $Z = (\conv P) + F$ mit $Z \cap Q = \emptyset$ genau dann, wenn es für alle Teilmengen $T$ von $P \cup Q$ mit höchstens \alert<1>{$f(n,k)$} Punkten einen $k$-Zylinder $Z_T = \conv(T \cap P) + F_T$ mit $Z_T \cap (T \cap Q) = \emptyset$ gibt.
   \end{theorem}
@@ -696,7 +692,7 @@
     \renewcommand{\qedsymbol}{}
     \begin{enumerate}
       \item<2->{Sei $Z_1 = (\conv P) + F_1$ ein $k$-Zylinder. Annahme: $Z_1 \cap Q \not= \emptyset$.}
-      \item<3->{Setze $\Omega := S_1(0) \cap F = \{ x \in F \mid \norm{x} = 1 \}$.}
+      \item<3->{Setze $\Omega := S_1(0) \cap F_1 = \{ x \in F \mid \norm{x} = 1 \}$.}
       \item<4->{Für $w \in \Omega$ sei $F_w$ das orthogonale Komplement zu $\mathsf{span} \{ w \}$ in $F_1$, also $F_1 = \mathsf{span} \{ w \} \perp F_w$ und $r_w := \R_{\geq 0} {\cdot} w$ der Strahl durch $w$.}
       \item<5->{Für $w \in \Omega$ sei $G_w$ diejenige Komponente von $Z_1 \setminus ((\conv P) + F_w)$, die $(\conv P) + r_w$ schneidet.}
     \end{enumerate}
@@ -772,7 +768,7 @@
       \item<3-> Es folgt $\dist(\conv (S_{q_1} \cup ... \cup S_{q_m}), \conv P) > \delta/2$.
       \item<4-> Also gibt es eine Hyperebene $H$, die $S_{q_1} \cup ... \cup S_{q_m}$ und $P$ streng trennt. Sei $H'$ der zu $H$ parallele $(n{-}1)$-dimensionale Unterraum.
       \item<5-> Es gilt $F \not\subset H'$, da sonst $Z_1 \cap Q = \emptyset$.
-      \item<6-> Somit ist $G := H' \cap F$ ein $(k{-}1)$-dimensionaler Unterraum.
+      \item<6-> Somit ist $G := H' \cap F_1$ ein $(k{-}1)$-dimensionaler Unterraum.
       \item<7-> Dann liegt $S_{q_1} \cup ... \cup S_{q_m}$ in einer der beiden Komponenten von $Z_1 \setminus ((\conv P) + G)$.
       \item<8-> Wähle $w \in \Omega$, sodass $w \perp G$ und $S_{q_1} \cup ... \cup S_{q_m} \subset G_w$.
       \item<9-> Folglich gilt $w \in \bigcap_{i=1}^m A_{q_i}$.
@@ -1068,28 +1064,27 @@
   \end{block}
 \end{frame}
 
-% TODO: Ähnlichkeit zu Umformulierung von Carathéodorys Theorem
-
 \begin{frame}
   \begin{theorem}[Carathéodory, 2.23]
-    TODO: Noch zu ergänzen!
+    Sei $P \subset \E^n$ nichtleer und sei $q \in \E^n$.\\
+    Dann ist jeder Punkt $p \in P$ eine Konvexkombination von maximal $n{+}1$ Punkten aus $P$.
   \end{theorem}
 
   \begin{theorem}[Carathéodory, Umformulierung]
-    Sei $P \subset \E^n$ ($n \geq 2$) nichtleer und kompakt und sei $q \in \E^n$.\\
+    Sei $P \subset \E^n$ nichtleer und sei $q \in \E^n$.\\
     Angenommen, für jede Menge $T \subset P$ mit höchstens $n{+}1$ Punkten gibt es eine Hyperebene, die $T$ und $\{ q \}$ streng trennt. Dann ist $q$ nicht in der konvexen Hülle von $P$ enthalten.
   \end{theorem}
 \end{frame}
 
 \begin{frame}
   \begin{block}{Korollar (10.4)}
-    Sei $P \subset \E^n$ ($n \geq 2$) nichtleer und kompakt und sei $q \in \E^n$.\\
-    Sei $\beta = \{ b_1, ..., b_n \}$ eine Basis von $\E^n$ und $H_i$ der von $\beta \setminus \{ b_i \}$ aufgespannte Unterraum für $i \in \{ 1, ..., n \}$. Angenommen, für jede Menge $T \subset P$ mit höchstens $n$ Punkten gibt es eine Hyperebene, die parallel zu einem der $H_i$ ist und $T$ und $\{ q \}$ streng trennt. Dann ist $P$ nicht in der konvexen Hülle von $P$ enthalten.
+    Sei $P \subset \E^n$ \alert<2->{($n \geq 2$)} nichtleer und \alert<2->{kompakt} und sei $q \in \E^n$.\\
+    Sei $\beta = \{ b_1, ..., b_n \}$ eine Basis von $\E^n$ und $H_i$ der von $\beta \setminus \{ b_i \}$ aufgespannte Unterraum für $i \in \{ 1, ..., n \}$. Angenommen, für jede Menge $T \subset P$ mit höchstens \alert<2->{$n$} Punkten gibt es eine Hyperebene, die \alert<2->{parallel} zu einem der $H_i$ ist und $T$ und $\{ q \}$ streng trennt. Dann ist $P$ nicht in der konvexen Hülle von $P$ enthalten.
   \end{block}
 
-  \begin{proof}<2->
+  \begin{proof}<3->
     Wegen Satz 10.4 gibt es eine $\beta$-Box $B_P$, die $P$ enthält und disjunkt zu $\{ q \}$ ist.
-    \uncover<3->{Es folgt $\{ q \} \cap \conv P \subset \{ q \} \cap B_P = \emptyset$, also $q \not\in \conv P$.\qedhere}
+    \uncover<4->{Es folgt $\{ q \} \cap \conv P \subset \{ q \} \cap B_P = \emptyset$, also $q \not\in \conv P$.\qedhere}
   \end{proof}
 \end{frame}
 
