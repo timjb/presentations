@@ -24,6 +24,10 @@
 \newcommand{\ex}[1]{\exists \, {#1} \,:\,} % Schöner Existenzquantor
 \newcommand{\dist}{\mathsf{dist}} % Distanz
 
+% Färbe \emph{} dunkelgrün
+\definecolor{Emph}{rgb}{0.05,0.5,0.2}
+\renewcommand{\emph}[1]{\textcolor{Emph}{#1}}
+
 % Platzhalter
 \newcommand{\blank}{\text{--}}
 
@@ -36,6 +40,7 @@
 \theoremstyle{definition}
 
 \newtheorem*{bspe}{Beispiele}
+\newtheorem*{bsp}{Beispiel}
 \newtheorem*{satz}{Satz}
 \newtheorem*{lem}{Lemma}
 \newtheorem*{bem}{Bemerkung}
@@ -290,8 +295,6 @@
 
 % Alexandrovs Lemma
 % Zusammenkleben von CAT-Dreiecken
-% Beispiele: Stern, $\R^2 \setminus B_1(0)$
-% Definition einfach Zusammenhängend
 
 \framedgraphic{bilder/Picture15.jpg}
 
@@ -317,7 +320,7 @@
 
 \begin{frame}
   \begin{definition}
-    Sei $X$ ein topologischer Raum, $\gamma_1, \gamma_2 : \left[ 0, 1 \right] \to X$ stetige Kurven mit $p = \gamma_1(0) = \gamma_2(0)$ und $q = \gamma_1(1) = \gamma_2(1)$. Eine \emph{Homotopie} zwischen $\gamma_1$ und $\gamma_2$ ist eine stetige Abbildung
+    Sei $X$ ein topologischer Raum, $\gamma_1, \gamma_2 : \left[ 0, 1 \right] \to X$ stetige Kurven mit $p = \gamma_1(0) = \gamma_2(0)$ und $q = \gamma_1(1) = \gamma_2(1)$. Eine \emph{Homotopie} der Wege $\gamma_1$ und $\gamma_2$ relativ der Endpunkte ist eine stetige Abbildung
     \[ H : \left[0,1\right] \times \left[0,1\right] \to X \]
     mit
     \begin{itemize}
@@ -332,7 +335,7 @@
     Ein topologischer Raum $X$ heißt \emph{einfach zusammenhängend}, falls
     \begin{itemize}
       \item er wegzusammenhängend ist und
-      \item jeder geschlossene Weg $\gamma : \left[0,1\right] \to X$ (d.\,h. $\gamma(0) = \gamma(1) =: p$) homotop zum konstanten Weg $t \mapsto p$ ist.
+      \item jeder geschlossene Weg $\gamma : \left[0,1\right] \to X$ (d.\,h. $\gamma(0) = \gamma(1) =: p$) homotop relativ der Endpunkte zum konstanten Weg $t \mapsto p$ ist.
     \end{itemize}
   \end{definition}
 \end{frame}

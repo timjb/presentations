@@ -1,0 +1,256 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\usetheme{Frankfurt}
+\useoutertheme[subsection=false]{miniframes}
+\usepackage{color,graphicx,overpic,tikz}
+\definecolor{DarkBlue}{rgb}{0.098,0.098,0.349} % RGB(25, 25, 89)
+\setbeamercolor{section in head/foot}{fg=white, bg=DarkBlue}
+\definecolor{LighterBlue}{rgb}{0.15,0.2,0.8}
+\setbeamercolor{frametitle}{bg=LighterBlue, fg=white}
+\setbeamercolor{title}{fg=white, bg=LighterBlue}
+\setbeamercolor{structure}{fg=LighterBlue, bg=white}
+\setbeamertemplate{headline}{}
+
+\definecolor{LightBlue}{rgb}{0.5,0.65,1}
+
+\newcommand{\E}{\mathbb{E}} % Euklidischer Raum
+\newcommand{\R}{\mathbb{R}} % Reelle Zahlen
+\newcommand{\I}{\left[0,1\right]} % Kompaktes Einheitsintervall
+\newcommand{\HH}{\mathbb{H}} % Hyperbolischer Raum
+\newcommand{\Bild}{\mathrm{Bild}} % Bild
+\newcommand{\fa}[1]{\forall \, {#1} \,:\,} % Schöner Allquantor
+\newcommand{\ex}[1]{\exists \, {#1} \,:\,} % Schöner Existenzquantor
+\newcommand{\dist}{\mathsf{dist}} % Distanz
+
+% Färbe \emph{} dunkelgrün
+\definecolor{Emph}{rgb}{0.05,0.5,0.2}
+\renewcommand{\emph}[1]{\textcolor{Emph}{#1}}
+
+% Platzhalter
+\newcommand{\blank}{\text{--}}
+
+% Absolutwert, Norm
+% siehe http://tex.stackexchange.com/questions/43008/absolute-value-symbols
+\usepackage{mathtools}
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+
+\theoremstyle{definition}
+
+\newtheorem*{bspe}{Beispiele}
+\newtheorem*{bsp}{Beispiel}
+\newtheorem*{satz}{Satz}
+\newtheorem*{lem}{Lemma}
+\newtheorem*{bem}{Bemerkung}
+\newtheorem*{kor}{Korollar}
+\newtheorem*{prop}{Proposition}
+
+% copied from http://tex.stackexchange.com/questions/11954/automatically-scale-big-and-small-graphics-for-beamer-presentations
+\newcommand{\framedgraphic}[1] {
+  \begin{frame}
+    \begin{center}
+      \vspace{-10pt}
+      \includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{#1}
+    \end{center}
+  \end{frame}
+}
+
+\title{Alexandrov-Krümmung, Hadamard-Räume und der Satz von Cartan-Hadamard}
+\author{Tim Baumann}
+\institute{Seminar Metrische Geometrie}
+\date{3. Juni 2014}
+
+\begin{document}
+
+\setlength{\abovedisplayskip}{2pt}
+\setlength{\belowdisplayskip}{2pt}
+\setlength{\abovedisplayshortskip}{2pt}
+\setlength{\belowdisplayshortskip}{2pt}
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+\framedgraphic{bilder/Picture15.jpg}
+
+\begin{frame}
+  \frametitle{Wiederholung}
+
+  Sei $(X, d)$ ein Längenraum.
+
+  \begin{definition}
+    Eine Teilmenge $U \subseteq X$ heißt \emph{CAT($0$)-Gebiet}, falls gilt:
+    \begin{itemize}
+      \item Für alle $x, y \in U$ gibt es eine Geodäte $\sigma_{xy} : \I \to U$ der Länge $d(x, y)$.
+      \item Alle Dreiecke $\Delta abc$ mit Eckpunkten und Seiten in $U$ erfüllen die CAT($0$)-Vergleichseigenschaft:\\
+      Für alle $d \in \Bild(\sigma_{ac})$ mit Vergleichspunkt $\overline{d}$ in $\Delta \overline{abc}$ gilt
+      \[ d(b, d) \leq d_{\E^2}(\overline{b}, \overline{d}). \]
+      und analog für $d' \in \sigma_{ab}$, $d'' \in \sigma_{bc}$.
+    \end{itemize}
+  \end{definition}
+
+  \begin{definition}<2->
+    Der Längenraum $X$ heißt \emph{CAT($0$)-Raum}, falls $X$ eine Überdeckung mit offenen CAT($0$)-Gebieten besitzt.\\
+    Man sagt auch, der Raum habe \emph{Alexandrov-Krümmung $\leq 0$}.
+  \end{definition}
+\end{frame}
+
+\begin{frame}
+  \begin{lem}[BBI, 9.2.3]
+    Sei $(X, d)$ ein Längenraum, $U \subseteq X$ ein CAT($0$)-Gebiet und $\alpha, \beta : I \to U$ zwei durch dasselbe Intervall $I$ parametrisierte und mit jeweils konstanter Geschwindigkeit durchlaufene Geodäten in $U$. Dann ist die Distanzfunktion
+    \[ \delta : I \to \R_{\geq 0}, \quad t \mapsto d(\alpha(t), \beta(t)) \]
+    konvex.
+  \end{lem}
+\end{frame}
+
+\begin{frame}
+  \begin{definition}
+    Sei $X$ ein topologischer Raum, $\gamma_1, \gamma_2 : \left[ 0, 1 \right] \to X$ stetige Wege mit $p = \gamma_1(0) = \gamma_2(0)$ und $q = \gamma_1(1) = \gamma_2(1)$. Eine \emph{Homotopie} der Wege $\gamma_1$ und $\gamma_2$ relativ der Endpunkte ist eine stetige Abbildung
+    \[ H : \I \times \I \to X \]
+    mit
+    \begin{itemize}
+      \item $H(\blank, 0) = \gamma_1$,
+      \item $H(\blank, 1) = \gamma_2$,
+      \item $H(0, t) = p$ für alle $t \in \I$,
+      \item $H(1, t) = q$ für alle $t \in \I$.
+    \end{itemize}
+  \end{definition}
+
+  \begin{definition}<2->
+    Ein topologischer Raum $X$ heißt \emph{einfach zusammenhängend}, falls
+    \begin{itemize}
+      \item er wegzusammenhängend ist und
+      \item jeder geschlossene Weg $\gamma : \I \to X$ (d.\,h. $\gamma(0) = \gamma(1)$) homotop relativ der Endpunkte zum konstanten Weg $t \mapsto \gamma(0)$ ist.
+    \end{itemize}
+  \end{definition}
+\end{frame}
+
+\begin{frame}
+  \begin{definition}
+    
+  % TODO: Surjektivität fordern oder folgern?
+    Eine \emph{Überlagerung} eines topologischen Raumes $X$ ist ein Tupel $(\tilde{X}, \pi)$ bestehend aus einem topolischen Raum $\tilde{X}$ und einer surjektiven Überlagerungsabbildung $\pi : \tilde{X} \to X$, für die gilt:
+
+    Für alle $x \in X$ gibt es eine Umgebung $U_x \subseteq X$, sodass
+    \[ \pi^{-1}(U_x) = \bigcup_{i \in I} V_i \]
+    für disjunkte offene Mengen $(V_i)_{i \in I}$, für die jeweils gilt:
+    \[ \pi|_{V_i} : V_i \to U \]
+    ist ein Homöomorphismus.
+  \end{definition}
+
+  \begin{bsp}<2->
+    Jeder Homöomorphismus ist auch eine Überlagerung.
+  \end{bsp}
+\end{frame}
+
+% Standardbeispiel: Überlagerung $\R \to S^1$ texen? (tikZ?)
+
+\begin{frame}
+  Überlagerungsabbildungen $\pi : \tilde{X} \to X$ besitzen folgende Hochhebungseigenschaften:
+
+  % Faserschreibweise verwenden?
+  \begin{lem}[Hochheben von Wegen]
+    Sei $\gamma : \I \to X$ ein stetiger Weg und $z \in \tilde{X}$ mit $\pi(z) = \gamma(0)$.
+    % (kurz: $z \in p^{-1}(\gamma(0))$).
+    Dann gibt es genau einen Weg $\tilde{\gamma} : \I \to \tilde{X}$ mit
+    \[
+      \tilde{\gamma}(0) = z
+      \quad \text{und} \quad
+      p \circ \tilde{\gamma} = \gamma.
+    \]
+  \end{lem}
+
+  \begin{lem}<2->[Hochheben von Weghomotopien]
+    Seien $\gamma_1, \gamma_2 : \I \to X$ zwei stetige Wege mit $p := \gamma_1(0) = \gamma_2(0)$ und $\gamma_1(1) = \gamma_2(1)$ zusammen mit einer Homotopie $H : \I \times \I \to X$ zwischen $\gamma_1$ und $\gamma_2$ relativ der Endpunkte. Sei $z \in \tilde{X}$ mit $\pi(z) = p$ und $\tilde{\gamma_1}, \tilde{\gamma_2} : \I \to \tilde{X}$ die Hochhebungen von $\gamma_1$ bzw. $\gamma_2$ wie in obigem Lemma. Dann gibt es genau eine Homotopie
+    \[ \tilde{H} : \I \times \I \to \tilde{X} \]
+    von $\tilde{\gamma_1}$ und $\tilde{\gamma_2}$ relativ der Endpunkte.
+  \end{lem}
+\end{frame}
+
+\begin{frame}
+  \begin{definition}
+    Ein \emph{lokaler Homöomorphismus} ist eine stetige Abbildung $f : Y \to Z$ zwischen topologischen Räumen, für die gilt:
+
+    Für alle $y \in Y$ eine Umgebung $U_y \subseteq Y$ von $y$ existiert, sodass $f(U_y)$ offen und
+    \[ f|_{U_y} : U_y \to f(U_y) \]
+    ein Homöomorphismus ist.
+  \end{definition}
+
+  \begin{bem}<2->
+    Jeder Überlagerungsabbildung $p : \tilde{X} \to X$ ist ein lokaler Homöomorphismus, aber nicht jeder lokale Homöomorphismus ist eine Überlagerungsabbildung.
+  \end{bem}
+\end{frame}
+
+\begin{frame}
+  \begin{definition}
+    Ein vollständiger, einfach zusammenhängender Längenraum mit Alexandrov-Krümmung $\leq 0$ (kurz: ein CAT($0$)-Raum) heißt \emph{Hadamard-Raum}.
+  \end{definition}
+\end{frame}
+
+\begin{frame}
+  % BH = Martin Bridson, André Haefliger
+  \begin{lem}[BH, 4.3]
+    Sei $(X, d)$ ein vollständiger CAT($0$)-Raum und $c : \I \to X$ eine Geodäte von $x \coloneqq c(0)$ nach $y \coloneqq c(1)$. Sei $\epsilon > 0$ so klein, dass $\overline{B_{2 \epsilon}(c(t))}$ für alle $t \in \I$ eine CAT($0$)-Umgebung ist. Dann gilt:
+    \begin{enumerate}
+      \item Für alle $\overline{x} \in B_\epsilon(x)$ und $\overline{y} \in B_\epsilon(y)$ gibt es genau eine Geodäte $\overline{c} : \I \to X$ von $\overline{x}$ nach $\overline{y}$, sodass
+      \[ t \mapsto d(c(t), \overline{c}(t)) \]
+      konvex ist.
+      \item Außerdem gilt: $L(\overline{c}) \leq d(x, \overline{x}) + L(c) + d(\overline{y}, y)$
+    \end{enumerate}
+  \end{lem}
+
+  \begin{bem}<2->
+    Solch ein $\epsilon > 0$ existiert aufgrund der Kompaktheit von $c(\I)$.
+  \end{bem}
+\end{frame}
+
+\begin{frame}
+  \begin{definition}
+    Sei $X$ ein metrischer Raum und $p \in X$. Dann wird
+    \begin{align*}
+      \tilde{X}_p \coloneqq \{ &\text{Geodäten } \gamma : \I \to X \text{ mit } \gamma(0) = p\\
+      &\text{und $\gamma$ mit konstanter Geschwindigkeit parametrisiert} \}
+    \end{align*}
+    \emph{Raum der Geodäten mit Startpunkt $p$} genannt. Mit der Metrik
+    \[ d(\alpha, \beta) \coloneqq \max_{t \in \I} \abs{\alpha(t) - \beta(t)} \]
+    wird $(\tilde{X}_p, d)$ zu einem metrischen Raum.\\
+    Der Punkt $\overline{p} \in \tilde{X}_p$ sei die Konstante Geodäte $t \mapsto p$.
+  \end{definition}
+
+  \begin{definition}<2->
+    Die \emph{Exponentialabbildung} ist die Abbildung
+    \[ \exp_p : \tilde{X}_p \to X, \quad \gamma \mapsto \gamma(1), \]
+    welche jede Geodäte auf ihren Endpunkt abbildet.
+  \end{definition}
+\end{frame}
+
+\begin{frame}
+  % Wie sehr ist dieses Lemma notwendig?
+  \begin{lem}[BH, 4.5]
+    Sei $X$ ein vollständiger CAT($0$)-Raum. Dann gilt:
+    \begin{enumerate}
+      \item $\tilde{X}_p$ ist zusammenziehbar.
+      \item $\exp_p$ ist eine lokale Isometrie. % Was ist damit genau gemeint?
+      \item Für alle $c {\in} \tilde{X}_p$ gibt es genau eine Geodäte in $\tilde{X}_p$ von $\tilde{p}$ nach $c$.
+    \end{enumerate}
+  \end{lem}
+\end{frame}
+
+\begin{frame}
+  \begin{lem}[BH, 4.6]
+    Sei $X$ ein vollständiger CAT($0$)-Raum und $p \in X$. Dann ist auch $\tilde{X}_p$ vollständig.
+  \end{lem}
+\end{frame}
+
+% Induzierte Längenstrukturen. Notwendig?
+% Lemma BH, 4.7.
+% Hilfslemma (1.108 bzw. BH, I.3.28)
+% Letztendliche Formulierung des Satzes von Cartan-Hadamard?
+% Eindeutigkeit von Geodäten
+% "Alexandrov's patchwork": CAT(0)-Vergleichseigenschaft auch im Großen.
+% Dazu: Alexandrovs Lemma, "Verklebelemma"
+
+\end{document}
