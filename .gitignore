@@ -1,0 +1,8 @@
+texput.log
+.DS_Store
+*.aux
+*.nav
+*.out
+*.toc
+*.snm
+*.log
