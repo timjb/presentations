@@ -12,12 +12,14 @@
 \setbeamercolor{frametitle}{bg=LighterBlue, fg=white}
 \setbeamercolor{title}{fg=white, bg=LighterBlue}
 \setbeamercolor{structure}{fg=LighterBlue, bg=white}
+\setbeamercovered{transparent}
 \setbeamertemplate{headline}{}
 
 \definecolor{LightBlue}{rgb}{0.5,0.65,1}
 
 \newcommand{\E}{\mathbb{E}} % Euklidischer Raum
 \newcommand{\R}{\mathbb{R}} % Reelle Zahlen
+\newcommand{\N}{\mathbb{N}} % Natürliche Zahlen
 \newcommand{\I}{\left[0,1\right]} % Kompaktes Einheitsintervall
 \newcommand{\HH}{\mathbb{H}} % Hyperbolischer Raum
 \newcommand{\Bild}{\mathrm{Bild}} % Bild
@@ -99,11 +101,55 @@
 \end{frame}
 
 \begin{frame}
-  \begin{lem}[BBI, 9.2.3]
-    Sei $(X, d)$ ein Längenraum, $U \subseteq X$ ein CAT($0$)-Gebiet und $\alpha, \beta : I \to U$ zwei durch dasselbe Intervall $I$ parametrisierte und mit jeweils konstanter Geschwindigkeit durchlaufene Geodäten in $U$. Dann ist die Distanzfunktion
+  \begin{definition}
+    Sei $(X, d)$ ein Längenraum. Eine Geodäte $\gamma : \left[a, b\right] \to X$ heißt \emph{linear parametrisiert}, wenn für alle $a \leq s < t \leq b$ gilt:
+    \[ \frac{L(\gamma|_{\left[s,t\right]})}{\gamma} = \frac{t-s}{b-a} \]
+  \end{definition}
+
+  \begin{lem}<2->[BBI, 9.2.3]
+    Sei $(X, d)$ ein Längenraum, $U \subseteq X$ ein CAT($0$)-Gebiet und $\alpha, \beta : I \to U$ zwei durch dasselbe Intervall $I$ und linear parametrisierte Geodäten in $U$. Dann ist die Distanzfunktion
     \[ \delta : I \to \R_{\geq 0}, \quad t \mapsto d(\alpha(t), \beta(t)) \]
     konvex.
   \end{lem}
+
+  \begin{kor}<3->[Eindeutigkeit]
+    Sei oben $I = \left[t_1, t_2\right]$ und $\alpha(t_1) = \beta(t_1)$, $\alpha(t_2) = \beta(t_2)$. Dann gilt $\alpha \equiv \beta$.
+  \end{kor}
+\end{frame}
+
+\begin{frame}
+  \begin{lem}
+    Sei $X$ ein vollständiger CAT($0$)-Raum und $(\gamma_n : \I \to X)_{n \in \N}$ eine Cauchy-Folge bestehend linear parametrisierten Geodäten bzgl. der Maximumsmetrik
+    \[ d(\alpha, \beta) \coloneqq \max_{t \in \I} d(\alpha(t), \beta(t)). \]
+    Dann ist die Grenzfunktion
+    \[ \gamma : \I \to X, \quad t \mapsto \lim_{n \to \infty} \gamma_n(t) \]
+    eine linear parametrisierte Geodäte.
+  \end{lem}
+\end{frame}
+
+\begin{frame}
+  % BH = Martin Bridson, André Haefliger
+  \begin{lem}[BH, 4.3]
+    Sei $(X, d)$ ein vollständiger CAT($0$)-Raum und $c : \I \to X$ eine Geodäte von $x \coloneqq c(0)$ nach $y \coloneqq c(1)$. Sei $\epsilon > 0$ so klein, dass $\overline{B_{2 \epsilon}(c(t))}$ für alle $t \in \I$ eine CAT($0$)-Umgebung ist. Dann gilt:
+    \begin{enumerate}
+      \item Seien $\alpha, \beta : \I \to X$ linear parametrisierte Geodäten mit
+      \[
+        d(\alpha(t), c(t)) < \epsilon
+        \quad \text{und} \quad
+        d(\beta(t), c(t)) < \epsilon
+        \quad \text{f.\,a. $t \in \I$}.
+      \]
+      Dann ist die Abstandsfunktion $\delta(t) \coloneqq d(\alpha(t), \beta(t))$ konvex.
+      \item \uncover<3->{Für alle $\overline{x} \in B_\epsilon(x)$ und $\overline{y} \in B_\epsilon(y)$ gibt es genau eine Geodäte $\overline{c} : \I \to X$ von $\overline{x}$ nach $\overline{y}$, sodass
+      \[ t \mapsto d(c(t), \overline{c}(t)) \]
+      konvex ist.}
+      \item \uncover<4->{Außerdem gilt: $L(\overline{c}) \leq d(x, \overline{x}) + L(c) + d(\overline{y}, y)$}
+    \end{enumerate}
+  \end{lem}
+
+  \begin{bem}<2->
+    Solch ein $\epsilon > 0$ existiert aufgrund der Kompaktheit von $c(\I)$.
+  \end{bem}
 \end{frame}
 
 \begin{frame}
@@ -191,33 +237,16 @@
 \end{frame}
 
 \begin{frame}
-  % BH = Martin Bridson, André Haefliger
-  \begin{lem}[BH, 4.3]
-    Sei $(X, d)$ ein vollständiger CAT($0$)-Raum und $c : \I \to X$ eine Geodäte von $x \coloneqq c(0)$ nach $y \coloneqq c(1)$. Sei $\epsilon > 0$ so klein, dass $\overline{B_{2 \epsilon}(c(t))}$ für alle $t \in \I$ eine CAT($0$)-Umgebung ist. Dann gilt:
-    \begin{enumerate}
-      \item Für alle $\overline{x} \in B_\epsilon(x)$ und $\overline{y} \in B_\epsilon(y)$ gibt es genau eine Geodäte $\overline{c} : \I \to X$ von $\overline{x}$ nach $\overline{y}$, sodass
-      \[ t \mapsto d(c(t), \overline{c}(t)) \]
-      konvex ist.
-      \item Außerdem gilt: $L(\overline{c}) \leq d(x, \overline{x}) + L(c) + d(\overline{y}, y)$
-    \end{enumerate}
-  \end{lem}
-
-  \begin{bem}<2->
-    Solch ein $\epsilon > 0$ existiert aufgrund der Kompaktheit von $c(\I)$.
-  \end{bem}
-\end{frame}
-
-\begin{frame}
   \begin{definition}
     Sei $X$ ein metrischer Raum und $p \in X$. Dann wird
     \begin{align*}
       \tilde{X}_p \coloneqq \{ &\text{Geodäten } \gamma : \I \to X \text{ mit } \gamma(0) = p\\
-      &\text{und $\gamma$ mit konstanter Geschwindigkeit parametrisiert} \}
+      &\text{und $\gamma$ linear parametrisiert} \}
     \end{align*}
     \emph{Raum der Geodäten mit Startpunkt $p$} genannt. Mit der Metrik
     \[ d(\alpha, \beta) \coloneqq \max_{t \in \I} \abs{\alpha(t) - \beta(t)} \]
     wird $(\tilde{X}_p, d)$ zu einem metrischen Raum.\\
-    Der Punkt $\overline{p} \in \tilde{X}_p$ sei die Konstante Geodäte $t \mapsto p$.
+    Der Punkt $\tilde{p} \in \tilde{X}_p$ sei die konstante Geodäte $t \mapsto p$.
   \end{definition}
 
   \begin{definition}<2->
@@ -230,7 +259,7 @@
 \begin{frame}
   % Wie sehr ist dieses Lemma notwendig?
   \begin{lem}[BH, 4.5]
-    Sei $X$ ein vollständiger CAT($0$)-Raum. Dann gilt:
+    Sei $X$ ein vollständiger CAT($0$)-Raum und $p \in X$. Dann gilt:
     \begin{enumerate}
       \item $\tilde{X}_p$ ist zusammenziehbar.
       \item $\exp_p$ ist eine lokale Isometrie. % Was ist damit genau gemeint?
@@ -252,5 +281,7 @@
 % Eindeutigkeit von Geodäten
 % "Alexandrov's patchwork": CAT(0)-Vergleichseigenschaft auch im Großen.
 % Dazu: Alexandrovs Lemma, "Verklebelemma"
+
+\framedgraphic{bilder/cat.jpg}
 
 \end{document}
