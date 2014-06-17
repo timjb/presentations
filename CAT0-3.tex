@@ -6,6 +6,7 @@
 \usetheme{Frankfurt}
 \useoutertheme[subsection=false]{miniframes}
 \usepackage{color,graphicx,overpic,tikz}
+\usetikzlibrary{matrix,shapes,arrows,positioning}
 \definecolor{DarkBlue}{rgb}{0.098,0.098,0.349} % RGB(25, 25, 89)
 \setbeamercolor{section in head/foot}{fg=white, bg=DarkBlue}
 \definecolor{LighterBlue}{rgb}{0.15,0.2,0.8}
@@ -65,7 +66,7 @@
 \title{Alexandrov-Krümmung, Hadamard-Räume und der Satz von Cartan-Hadamard}
 \author{Tim Baumann}
 \institute{Seminar Metrische Geometrie}
-\date{3. Juni 2014}
+\date{17. Juni 2014}
 
 \begin{document}
 
@@ -78,28 +79,7 @@
   \titlepage
 \end{frame}
 
-\begin{frame}
-  \frametitle{Wiederholung}
-
-  Sei $(X, d)$ ein Längenraum.
-
-  \begin{definition}
-    Eine Teilmenge $U \subseteq X$ heißt \emph{CAT($0$)-Gebiet}, falls gilt:
-    \begin{itemize}
-      \item Für alle $x, y \in U$ gibt es eine Geodäte $\sigma_{xy} : \I \to U$ der Länge $d(x, y)$.
-      \item Alle Dreiecke $\Delta abc$ mit Eckpunkten und Seiten in $U$ erfüllen die CAT($0$)-Vergleichseigenschaft:\\
-      Für alle $d \in \Bild(\sigma_{ac})$ mit Vergleichspunkt $\overline{d}$ in $\Delta \overline{abc}$ gilt
-      \[ d(b, d) \leq d_{\E^2}(\overline{b}, \overline{d}). \]
-      und analog für $d' \in \sigma_{ab}$, $d'' \in \sigma_{bc}$.
-    \end{itemize}
-  \end{definition}
-
-  \begin{definition}<2->
-    Der Längenraum $X$ heißt \emph{CAT($0$)-Raum}, falls $X$ eine Überdeckung mit offenen CAT($0$)-Gebieten besitzt.\\
-    Man sagt auch, der Raum habe \emph{Alexandrov-Krümmung $\leq 0$}.
-  \end{definition}
-\end{frame}
-
+\iffalse
 \begin{frame}
   \begin{prop}[BBI, 9.1.17]
     Sei $(X, d)$ ein Längenraum, $U \subseteq X$ ein CAT($0$)-Gebiet. Dann gilt:
@@ -156,7 +136,7 @@
 
   \begin{satz}[Cartan-Hadamard]
     \begin{enumerate}
-      \item Für alle Paare $p, q$ von Punkte in einem Hadamard-Raum gibt es genau eine verbindende Geodäte $\sigma_{pq}$.
+      \item Für alle Paare $p, q$ von Punkten in einem Hadamard-Raum gibt es genau eine verbindende Geodäte $\sigma_{pq}$.
       \item All diese Geodäten sind kürzeste Wege.
     \end{enumerate}
   \end{satz}
@@ -171,11 +151,12 @@
     eine linear parametrisierte Geodäte.
   \end{lem}
 \end{frame}
+\fi
 
 \begin{frame}
   % BH = Martin Bridson, André Haefliger
   \begin{lem}[BH, II.4.3]
-    Sei $(X, d)$ ein vollständiger CAT($0$)-Raum und $c : \I \to X$ eine Geodäte von $x \coloneqq c(0)$ nach $y \coloneqq c(1)$. Sei $\epsilon > 0$ so klein, dass $\overline{B_{2 \epsilon}(c(t))}$ für alle $t \in \I$ eine CAT($0$)-Umgebung ist. Dann gilt:
+    Sei $(X, d)$ ein vollständiger CAT($0$)-Raum und $c : \I \to X$ eine Geodäte von $x \coloneqq c(0)$ nach $y \coloneqq c(1)$. Sei $\epsilon > 0$ so klein, dass $\overline{B_{2 \epsilon}(c(t))}$ für alle $t \in \I$ ein CAT($0$)-Gebiet ist. Dann gilt:
     \begin{enumerate}
       \item Seien $\alpha, \beta : \I \to X$ linear parametrisierte Geodäten mit
       \[
@@ -185,14 +166,14 @@
         \quad \text{$\forall t \in \I$}.
       \]
       Dann ist die Abstandsfunktion $\delta(t) \coloneqq d(\alpha(t), \beta(t))$ konvex.
-      \item \uncover<3->{Für alle $\overline{x} \in B_\epsilon(x)$ und $\overline{y} \in B_\epsilon(y)$ gibt es genau eine Geodäte $\overline{c} : \I \to X$ von $\overline{x}$ nach $\overline{y}$, sodass
+      \item \uncover{Für alle $\overline{x} \in B_\epsilon(x)$ und $\overline{y} \in B_\epsilon(y)$ gibt es genau eine Geodäte $\overline{c} : \I \to X$ von $\overline{x}$ nach $\overline{y}$, sodass
       \[ t \mapsto d(c(t), \overline{c}(t)) \]
       konvex ist.}
-      \item \uncover<4->{Außerdem gilt: $L(\overline{c}) \leq d(x, \overline{x}) + L(c) + d(\overline{y}, y)$}
+      \item \uncover<2->{Außerdem gilt: $L(\overline{c}) \leq d(x, \overline{x}) + L(c) + d(\overline{y}, y)$}
     \end{enumerate}
   \end{lem}
 
-  \begin{bem}<2->
+  \begin{bem}
     Solch ein $\epsilon > 0$ existiert aufgrund der Kompaktheit von $c(\I)$.
   \end{bem}
 \end{frame}
@@ -227,9 +208,9 @@
     Sei $X$ ein vollständiger CAT($0$)-Raum und $p \in X$. Dann gilt:
     \begin{enumerate}
       \item $\tilde{X}_p$ ist zusammenziehbar.
-      \item $\exp_p : \tilde{X}_p \to X$ ist eine lokale Isometrie, d.\,h. für alle $\tilde{x} \in \tilde{X}_p$ existiert ein $r > 0$, sodass $\exp_p(B_r(\tilde{x})) \subseteq B_r(\exp_p(\tilde{x}))$ und
+      \item Für alle $\tilde{x} \in \tilde{X}_p$ existiert ein $r > 0$, sodass $\exp_p(B_r(\tilde{x})) = B_r(\exp_p(\tilde{x}))$ und
       \[ \exp_p|_{B_r(\tilde{x})} : B_r(\tilde{x}) \to B_r(\exp_p(\tilde{x})) \]
-      eine Isometrie ist.
+      eine Isometrie ist. Insbesondere ist $\exp_p : \tilde{X}_p \to X$ ist eine lokale Isometrie.
     \end{enumerate}
   \end{lem}
 
@@ -240,15 +221,22 @@
 
 \begin{frame}
   \begin{definition}
-    
-  % TODO: Surjektivität fordern oder folgern?
-    Eine \emph{Überlagerung} eines topologischen Raumes $X$ ist ein Tupel $(\tilde{X}, \pi)$ bestehend aus einem topolischen Raum $\tilde{X}$ und einer surjektiven Überlagerungsabbildung $\pi : \tilde{X} \to X$, für die gilt:
+    Seien $X$, $Y$ topologische Räume und $p : X \to Y$ stetig. Eine Teilmenge $U \subset Y$ wird von $p$ \emph{gleichmäßig überlagert}, falls es einen diskreten topologischen Raum $D$ und einen Homöomorphismus $\phi : p^{-1}(U) \to U \times D$ gibt, sodass kommutiert:
+    \begin{center}
+      \begin{tikzpicture}
+        \matrix (mat) [matrix of nodes, column sep=0.8cm, row sep=0.95cm, ampersand replacement=\&]{
+          \node (PM) {$p^{-1}(U)$}; \& \&
+          \node (UD) {$U \times D$}; \\
+          \& \node (U) {$U$}; \\
+        };
+        \draw[->] (PM) to node [above] {$\phi$} (UD);
+        \draw[->] (PM) to node [below] {$\approx$} (UD);
+        \draw[->] (UD) to node [above] {$\pi$} (U);
+        \draw[->] (PM) to node [left] {$p$} (U);
+      \end{tikzpicture}
+    \end{center}
 
-    Für alle $x \in X$ gibt es eine Umgebung $U_x \subseteq X$, sodass
-    \[ \pi^{-1}(U_x) = \bigcup_{i \in I} V_i \]
-    für disjunkte offene Mengen $(V_i)_{i \in I}$, für die jeweils gilt:
-    \[ \pi|_{V_i} : V_i \to U \]
-    ist ein Homöomorphismus.
+    Die Abbildung $p$ ist eine \emph{Überlagerung}, falls jeder Punkt in $y$ eine gleichmäßig überlagerte Umgebung besitzt.
   \end{definition}
 
   \begin{bsp}<2->
@@ -259,28 +247,28 @@
 % Standardbeispiel: Überlagerung $\R \to S^1$ texen? (tikZ?)
 
 \begin{frame}
-  Überlagerungsabbildungen $\pi : \tilde{X} \to X$ besitzen folgende Hochhebungseigenschaften:
+  Überlagerungsabbildungen $p : \tilde{X} \to X$ besitzen folgende wichtige Hochhebungseigenschaften:
 
   % Faserschreibweise verwenden?
   \begin{lem}[Hochheben von Wegen]
-    Sei $\gamma : \I \to X$ ein stetiger Weg und $z \in \tilde{X}$ mit $\pi(z) = \gamma(0)$.
-    % (kurz: $z \in p^{-1}(\gamma(0))$).
+    Sei $\gamma : \I \to X$ ein stetiger Weg und $\tilde{x}_0 \in \tilde{X}$ mit $p(\tilde{x}_0) = \gamma(0)$.
+    % (kurz: $\tilde{x}_0 \in p^{-1}(\gamma(0))$).
     Dann gibt es genau einen Weg $\tilde{\gamma} : \I \to \tilde{X}$ mit
     \[
-      \tilde{\gamma}(0) = z
+      \tilde{\gamma}(0) = \tilde{x}_0
       \quad \text{und} \quad
       p \circ \tilde{\gamma} = \gamma.
     \]
   \end{lem}
 
   \begin{lem}<2->[Hochheben von Weghomotopien]
-    Seien $\gamma_1, \gamma_2 : \I \to X$ zwei stetige Wege mit $p := \gamma_1(0) = \gamma_2(0)$ und $\gamma_1(1) = \gamma_2(1)$ zusammen mit einer Homotopie $H : \I \times \I \to X$ zwischen $\gamma_1$ und $\gamma_2$ relativ der Endpunkte. Sei $z \in \tilde{X}$ mit $\pi(z) = p$ und $\tilde{\gamma_1}, \tilde{\gamma_2} : \I \to \tilde{X}$ die Hochhebungen von $\gamma_1$ bzw. $\gamma_2$ wie in obigem Lemma. Dann gibt es genau eine Homotopie
+    Seien $\gamma_1, \gamma_2 : \I \to X$ zwei stetige Wege mit $x_0 := \gamma_1(0) = \gamma_2(0)$ und $\gamma_1(1) = \gamma_2(1)$ zusammen mit einer Homotopie $H : \I \times \I \to X$ zwischen $\gamma_1$ und $\gamma_2$ relativ der Endpunkte. Sei $\tilde{x}_0 \in \tilde{X}$ mit $p(\tilde{x}_0) = x_0$ und $\tilde{\gamma_1}, \tilde{\gamma_2} : \I \to \tilde{X}$ die Hochhebungen von $\gamma_1$ bzw. $\gamma_2$ wie in obigem Lemma. Dann gibt es genau eine Homotopie
     \[ \tilde{H} : \I \times \I \to \tilde{X} \]
     von $\tilde{\gamma_1}$ und $\tilde{\gamma_2}$ relativ der Endpunkte.
   \end{lem}
 \end{frame}
 
-% Auslassen?
+\iffalse
 \begin{frame}
   \begin{definition}
     Ein \emph{lokaler Homöomorphismus} ist eine stetige Abbildung $f : Y \to Z$ zwischen topologischen Räumen, für die gilt:
@@ -297,15 +285,16 @@
     \end{itemize}
   \end{bem}
 \end{frame}
+\fi
 
 \begin{frame}
   \begin{lem}[BH, I.3.28.]
-    Sei $X$ ein zusammenhängender metrischer Raum, $\tilde{X}$ ein vollständiger metrischer Raum und $\pi : \tilde{X} \to X$ ein lokaler Homöomorphismus. Angenommen,
+    Sei $X$ ein wegzusammenhängender metrischer Raum, $\tilde{X}$ ein vollständiger metrischer Raum und $p : \tilde{X} \to X$ ein lokaler Homöomorphismus. Angenommen,
     \begin{itemize}
-      \item $L(\tilde{\alpha}) \leq L(\pi \circ \tilde{\alpha})$ für alle Wege $\alpha : \I \to \tilde{X}$
-      \item für alle $x \in X$ gibt es ein $r > 0$, sodass jedes $y \in B_r(x)$ mit $x$ durch eine eindeuitge linear parametrisierte Geodäte $\gamma_y : \I \to B_r(x)$ verbunden ist und $\gamma_y$ stetig von $y$ abhängt.
+      \item $L(\tilde{\alpha}) \leq L(p \circ \tilde{\alpha})$ für alle Wege $\alpha : \I \to \tilde{X}$
+      \item für alle $x \in X$ gibt es ein $r > 0$, sodass jedes $y \in B_r(x)$ mit $x$ durch eine eindeutige linear parametrisierte Geodäte $\gamma_y : \I \to B_r(x)$ verbunden ist und $\gamma_y$ stetig von $y$ abhängt.
     \end{itemize}
-    Dann ist $\pi$ eine Überlagerung.
+    Dann ist $p$ eine Überlagerung.
   \end{lem}
 
   \begin{folg}
@@ -315,19 +304,23 @@
 
 \begin{frame}
   \begin{definition}
-    Ein vollständiger, einfach zusammenhängender Längenraum mit Alexandrov-Krümmung $\leq 0$ (kurz: ein CAT($0$)-Raum) heißt \emph{Hadamard-Raum}.
+    Ein vollständiger, einfach zusammenhängender Längenraum mit Alexandrov-Krümmung $\leq 0$ heißt \emph{Hadamard-Raum}.
   \end{definition}
 
-  \begin{satz}[Cartan-Hadamard]
+  \begin{lem}
+    Sei $p : \tilde{X} \to X$ eine Überlagerungsabbildung, $\tilde{X} \not= \emptyset$, $X$ einfach zusammenhängend und $\tilde{X}$ wegzusammenhängend. Dann ist $p$ ein Homöomorphismus.
+  \end{lem}
+
+  \begin{folg}
+    $exp_p : \tilde{X}_p \to X$ ist ein Homöomorphismus, wenn $X$ ein Hadamard-Raum ist.
+  \end{folg}
+
+  \begin{satz}[Cartan-Hadamard]<2->
     \begin{enumerate}
       \item Für alle Paare $p, q$ von Punkte in einem Hadamard-Raum gibt es genau eine verbindende Geodäte $\sigma_{pq}$.
       \item All diese Geodäten sind kürzeste Wege.
     \end{enumerate}
   \end{satz}
-
-  \begin{lem}
-    Sei $\pi : \tilde{X} \to X$ eine Überlagerungsabbildung, $\tilde{X} \not= \emptyset$, $X$ einfach zusammenhängend und $\tilde{X}$ wegzusammenhängend. Dann ist $\pi$ ein Homöomorphismus.
-  \end{lem}
 \end{frame}
 
 % Induzierte Längenstrukturen. Notwendig?
