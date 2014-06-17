@@ -1,0 +1,352 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\usetheme{Frankfurt}
+\useoutertheme[subsection=false]{miniframes}
+\usepackage{color,graphicx,overpic,tikz}
+\usetikzlibrary{matrix,shapes,arrows,positioning}
+\definecolor{DarkBlue}{rgb}{0.098,0.098,0.349} % RGB(25, 25, 89)
+\setbeamercolor{section in head/foot}{fg=white, bg=DarkBlue}
+\definecolor{LighterBlue}{rgb}{0.15,0.2,0.8}
+\setbeamercolor{frametitle}{bg=LighterBlue, fg=white}
+\setbeamercolor{title}{fg=white, bg=LighterBlue}
+\setbeamercolor{structure}{fg=LighterBlue, bg=white}
+\setbeamercovered{transparent}
+\setbeamertemplate{headline}{}
+
+\definecolor{LightBlue}{rgb}{0.5,0.65,1}
+
+\newcommand{\E}{\mathbb{E}} % Euklidischer Raum
+\newcommand{\R}{\mathbb{R}} % Reelle Zahlen
+\newcommand{\N}{\mathbb{N}} % Natürliche Zahlen
+\newcommand{\I}{\left[0,1\right]} % Kompaktes Einheitsintervall
+\newcommand{\HH}{\mathbb{H}} % Hyperbolischer Raum
+\newcommand{\Bild}{\mathrm{Bild}} % Bild
+\newcommand{\fa}[1]{\forall \, {#1} \,:\,} % Schöner Allquantor
+\newcommand{\ex}[1]{\exists \, {#1} \,:\,} % Schöner Existenzquantor
+\newcommand{\dist}{\mathsf{dist}} % Distanz
+
+% Färbe \emph{} dunkelgrün
+\definecolor{Emph}{rgb}{0.05,0.5,0.2}
+\renewcommand{\emph}[1]{\textcolor{Emph}{#1}}
+
+% Platzhalter
+\newcommand{\blank}{\text{--}}
+
+% Absolutwert, Norm
+% siehe http://tex.stackexchange.com/questions/43008/absolute-value-symbols
+\usepackage{mathtools}
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+
+\theoremstyle{definition}
+
+\newtheorem*{bspe}{Beispiele}
+\newtheorem*{bsp}{Beispiel}
+\newtheorem*{satz}{Satz}
+\newtheorem*{lem}{Lemma}
+\newtheorem*{bem}{Bemerkung}
+\newtheorem*{kor}{Korollar}
+\newtheorem*{prop}{Proposition}
+\newtheorem*{folg}{Folgerung}
+\newtheorem*{bew}{Beweis}
+
+% copied from http://tex.stackexchange.com/questions/11954/automatically-scale-big-and-small-graphics-for-beamer-presentations
+\newcommand{\framedgraphic}[1] {
+  \begin{frame}
+    \begin{center}
+      \vspace{-10pt}
+      \includegraphics[width=\textwidth,height=0.85\textheight,keepaspectratio]{#1}
+    \end{center}
+  \end{frame}
+}
+
+\title{Alexandrov-Krümmung, Hadamard-Räume und der Satz von Cartan-Hadamard}
+\author{Tim Baumann}
+\institute{Seminar Metrische Geometrie}
+\date{17. Juni 2014}
+
+\begin{document}
+
+\setlength{\abovedisplayskip}{2pt}
+\setlength{\belowdisplayskip}{2pt}
+\setlength{\abovedisplayshortskip}{2pt}
+\setlength{\belowdisplayshortskip}{2pt}
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+\iffalse
+\begin{frame}
+  \begin{prop}[BBI, 9.1.17]
+    Sei $(X, d)$ ein Längenraum, $U \subseteq X$ ein CAT($0$)-Gebiet. Dann gilt:
+    \begin{enumerate}
+      \item Seien $\sigma_{ab}$ und $\sigma_{bc}$ zwei kürzeste Wege in $U$, die in $b$ enden bzw. starten. Falls $\measuredangle abc = \pi$, dann ist auch $\sigma_{ab} * \sigma_{bc}$ ein kürzester Weg.
+      \item Jede Geodäte in $U$ ist ein kürzester Weg.
+    \end{enumerate}
+  \end{prop}
+\end{frame}
+
+\begin{frame}
+  \begin{definition}
+    Sei $(X, d)$ ein Längenraum. Eine Geodäte $\gamma : \left[a, b\right] \to X$ heißt \emph{linear parametrisiert}, wenn für alle $a \leq s < t \leq b$ gilt:
+    \[ \frac{L(\gamma|_{\left[s,t\right]})}{L(\gamma)} = \frac{t-s}{b-a} \]
+  \end{definition}
+
+  \begin{lem}<2->[BBI, 9.2.3]
+    Sei $(X, d)$ ein Längenraum, $U \subseteq X$ ein CAT($0$)-Gebiet und $\alpha, \beta : I \to U$ zwei durch dasselbe Intervall $I$ und linear parametrisierte Geodäten in $U$. Dann ist die Distanzfunktion
+    \[ \delta : I \to \R_{\geq 0}, \quad t \mapsto d(\alpha(t), \beta(t)) \]
+    konvex.
+  \end{lem}
+
+  \begin{kor}<3->[Eindeutigkeit]
+    Sei oben $I = \left[t_1, t_2\right]$ und $\alpha(t_1) = \beta(t_1)$, $\alpha(t_2) = \beta(t_2)$. Dann gilt $\alpha \equiv \beta$ auf ganz $I$.
+  \end{kor}
+\end{frame}
+
+\begin{frame}
+  \begin{definition}
+    Sei $X$ ein topologischer Raum, $\gamma_1, \gamma_2 : \left[ 0, 1 \right] \to X$ stetige Wege mit $p = \gamma_1(0) = \gamma_2(0)$ und $q = \gamma_1(1) = \gamma_2(1)$. Eine \emph{Homotopie} der Wege $\gamma_1$ und $\gamma_2$ \emph{relativ der Endpunkte} ist eine stetige Abbildung
+    \[ H : \I \times \I \to X \]
+    mit
+    \begin{itemize}
+      \item $H(\blank, 0) = \gamma_1$,
+      \item $H(\blank, 1) = \gamma_2$,
+      \item $H(0, t) = p$ für alle $t \in \I$,
+      \item $H(1, t) = q$ für alle $t \in \I$.
+    \end{itemize}
+  \end{definition}
+
+  \begin{definition}<2->
+    Ein topologischer Raum $X$ heißt \emph{einfach zusammenhängend}, falls
+    \begin{itemize}
+      \item er wegzusammenhängend ist und
+      \item jeder geschlossene Weg $\gamma : \I \to X$ (d.\,h. $\gamma(0) = \gamma(1)$) homotop relativ der Endpunkte zum konstanten Weg $t \mapsto \gamma(0)$ ist.
+    \end{itemize}
+  \end{definition}
+\end{frame}
+
+\begin{frame}
+  \begin{definition}
+    Ein vollständiger, einfach zusammenhängender Längenraum mit Alexandrov-Krümmung $\leq 0$ heißt \emph{Hadamard-Raum}.
+  \end{definition}
+
+  \begin{satz}[Cartan-Hadamard]
+    \begin{enumerate}
+      \item Für alle Paare $p, q$ von Punkten in einem Hadamard-Raum gibt es genau eine verbindende Geodäte $\sigma_{pq}$.
+      \item All diese Geodäten sind kürzeste Wege.
+    \end{enumerate}
+  \end{satz}
+\end{frame}
+
+\begin{frame}
+  \begin{lem}[Konvergenz von linear param. Geodäten]
+    Sei $X$ ein vollständiger CAT($0$)-Raum und $(\gamma_n : \I \to X)_{n \in \N}$ eine Cauchy-Folge bestehend linear parametrisierten Geodäten bzgl. der Maximumsmetrik
+    \[ d(\alpha, \beta) \coloneqq \max_{t \in \I} d(\alpha(t), \beta(t)). \]
+    Dann ist die Grenzfunktion
+    \[ \gamma : \I \to X, \quad t \mapsto \lim_{n \to \infty} \gamma_n(t) \]
+    eine linear parametrisierte Geodäte.
+  \end{lem}
+\end{frame}
+\fi
+
+\begin{frame}
+  % BH = Martin Bridson, André Haefliger
+  \begin{lem}[BH, II.4.3]
+    Sei $(X, d)$ ein vollständiger CAT($0$)-Raum und $c : \I \to X$ eine Geodäte von $x \coloneqq c(0)$ nach $y \coloneqq c(1)$. Sei $\epsilon > 0$ so klein, dass $\overline{B_{2 \epsilon}(c(t))}$ für alle $t \in \I$ ein CAT($0$)-Gebiet ist. Dann gilt:
+    \begin{enumerate}
+      \item Seien $\alpha, \beta : \I \to X$ linear parametrisierte Geodäten mit
+      \[
+        d(\alpha(t), c(t)) < \epsilon
+        \quad \text{und} \quad
+        d(\beta(t), c(t)) < \epsilon
+        \quad \text{$\forall t \in \I$}.
+      \]
+      Dann ist die Abstandsfunktion $\delta(t) \coloneqq d(\alpha(t), \beta(t))$ konvex.
+      \item \uncover{Für alle $\overline{x} \in B_\epsilon(x)$ und $\overline{y} \in B_\epsilon(y)$ gibt es genau eine Geodäte $\overline{c} : \I \to X$ von $\overline{x}$ nach $\overline{y}$, sodass
+      \[ t \mapsto d(c(t), \overline{c}(t)) \]
+      konvex ist.}
+      \item \uncover<2->{Außerdem gilt: $L(\overline{c}) \leq d(x, \overline{x}) + L(c) + d(\overline{y}, y)$}
+    \end{enumerate}
+  \end{lem}
+
+  \begin{bem}
+    Solch ein $\epsilon > 0$ existiert aufgrund der Kompaktheit von $c(\I)$.
+  \end{bem}
+\end{frame}
+
+
+\begin{frame}
+  \begin{definition}
+    Sei $X$ ein metrischer Raum und $p \in X$. Dann wird
+    \begin{align*}
+      \tilde{X}_p \coloneqq \{ &\text{Geodäten } \gamma : \I \to X \text{ mit } \gamma(0) = p\\
+      &\text{und $\gamma$ linear parametrisiert} \}
+    \end{align*}
+    \emph{Raum der Geodäten mit Startpunkt $p$} genannt. Mit der Metrik
+    \[ d(\alpha, \beta) \coloneqq \max_{t \in \I} \abs{\alpha(t) - \beta(t)} \]
+    wird $(\tilde{X}_p, d)$ zu einem metrischen Raum.\\
+    Der Punkt $\tilde{p} \in \tilde{X}_p$ sei die konstante Geodäte $t \mapsto p$.
+  \end{definition}
+
+  \begin{definition}<2->
+    Die \emph{Exponentialabbildung} ist die Abbildung
+    \[ \exp_p : \tilde{X}_p \to X, \quad \gamma \mapsto \gamma(1), \]
+    welche jede Geodäte auf ihren Endpunkt abbildet.
+  \end{definition}
+\end{frame}
+
+\begin{frame}
+  \begin{lem}<1->[BH, II.4.6]
+    Sei $X$ ein vollständiger CAT($0$)-Raum und $p \in X$. Dann ist auch $\tilde{X}_p$ vollständig.
+  \end{lem}
+
+  \begin{lem}<2->[BH, II.4.5]
+    Sei $X$ ein vollständiger CAT($0$)-Raum und $p \in X$. Dann gilt:
+    \begin{enumerate}
+      \item $\tilde{X}_p$ ist zusammenziehbar.
+      \item Für alle $\tilde{x} \in \tilde{X}_p$ existiert ein $r > 0$, sodass $\exp_p(B_r(\tilde{x})) = B_r(\exp_p(\tilde{x}))$ und
+      \[ \exp_p|_{B_r(\tilde{x})} : B_r(\tilde{x}) \to B_r(\exp_p(\tilde{x})) \]
+      eine Isometrie ist. Insbesondere ist $\exp_p : \tilde{X}_p \to X$ ist eine lokale Isometrie.
+    \end{enumerate}
+  \end{lem}
+
+  \begin{kor}<3->
+    $\tilde{X}_p$ ist einfach zusammenhängend.
+  \end{kor}
+\end{frame}
+
+\begin{frame}
+  \begin{definition}
+    Seien $X$, $Y$ topologische Räume und $p : X \to Y$ stetig. Eine Teilmenge $U \subset Y$ wird von $p$ \emph{gleichmäßig überlagert}, falls es einen diskreten topologischen Raum $D$ und einen Homöomorphismus $\phi : p^{-1}(U) \to U \times D$ gibt, sodass kommutiert:
+    \begin{center}
+      \begin{tikzpicture}
+        \matrix (mat) [matrix of nodes, column sep=0.8cm, row sep=0.95cm, ampersand replacement=\&]{
+          \node (PM) {$p^{-1}(U)$}; \& \&
+          \node (UD) {$U \times D$}; \\
+          \& \node (U) {$U$}; \\
+        };
+        \draw[->] (PM) to node [above] {$\phi$} (UD);
+        \draw[->] (PM) to node [below] {$\approx$} (UD);
+        \draw[->] (UD) to node [above] {$\pi$} (U);
+        \draw[->] (PM) to node [left] {$p$} (U);
+      \end{tikzpicture}
+    \end{center}
+
+    Die Abbildung $p$ ist eine \emph{Überlagerung}, falls jeder Punkt in $y$ eine gleichmäßig überlagerte Umgebung besitzt.
+  \end{definition}
+
+  \begin{bsp}<2->
+    Jeder Homöomorphismus ist auch eine Überlagerung.
+  \end{bsp}
+\end{frame}
+
+% Standardbeispiel: Überlagerung $\R \to S^1$ texen? (tikZ?)
+
+\begin{frame}
+  Überlagerungsabbildungen $p : \tilde{X} \to X$ besitzen folgende wichtige Hochhebungseigenschaften:
+
+  % Faserschreibweise verwenden?
+  \begin{lem}[Hochheben von Wegen]
+    Sei $\gamma : \I \to X$ ein stetiger Weg und $\tilde{x}_0 \in \tilde{X}$ mit $p(\tilde{x}_0) = \gamma(0)$.
+    % (kurz: $\tilde{x}_0 \in p^{-1}(\gamma(0))$).
+    Dann gibt es genau einen Weg $\tilde{\gamma} : \I \to \tilde{X}$ mit
+    \[
+      \tilde{\gamma}(0) = \tilde{x}_0
+      \quad \text{und} \quad
+      p \circ \tilde{\gamma} = \gamma.
+    \]
+  \end{lem}
+
+  \begin{lem}<2->[Hochheben von Weghomotopien]
+    Seien $\gamma_1, \gamma_2 : \I \to X$ zwei stetige Wege mit $x_0 := \gamma_1(0) = \gamma_2(0)$ und $\gamma_1(1) = \gamma_2(1)$ zusammen mit einer Homotopie $H : \I \times \I \to X$ zwischen $\gamma_1$ und $\gamma_2$ relativ der Endpunkte. Sei $\tilde{x}_0 \in \tilde{X}$ mit $p(\tilde{x}_0) = x_0$ und $\tilde{\gamma_1}, \tilde{\gamma_2} : \I \to \tilde{X}$ die Hochhebungen von $\gamma_1$ bzw. $\gamma_2$ wie in obigem Lemma. Dann gibt es genau eine Homotopie
+    \[ \tilde{H} : \I \times \I \to \tilde{X} \]
+    von $\tilde{\gamma_1}$ und $\tilde{\gamma_2}$ relativ der Endpunkte.
+  \end{lem}
+\end{frame}
+
+\iffalse
+\begin{frame}
+  \begin{definition}
+    Ein \emph{lokaler Homöomorphismus} ist eine stetige Abbildung $f : Y \to Z$ zwischen topologischen Räumen, für die gilt:
+
+    Für alle $y \in Y$ eine Umgebung $U_y \subseteq Y$ von $y$ existiert, sodass $f(U_y)$ offen und
+    \[ f|_{U_y} : U_y \to f(U_y) \]
+    ein Homöomorphismus ist.
+  \end{definition}
+
+  \begin{bem}<2->
+    \begin{itemize}
+      \item Jeder lokale Isomorphismus ist ein lokaler Homöomorphismus.
+      \item Jede Überlagerungsabbildung $p : \tilde{X} \to X$ ist ein lokaler Homöomorphismus, aber nicht jeder lokale Homöomorphismus ist eine Überlagerungsabbildung.
+    \end{itemize}
+  \end{bem}
+\end{frame}
+\fi
+
+\begin{frame}
+  \begin{lem}[BH, I.3.28.]
+    Sei $X$ ein wegzusammenhängender metrischer Raum, $\tilde{X}$ ein vollständiger metrischer Raum und $p : \tilde{X} \to X$ ein lokaler Homöomorphismus. Angenommen,
+    \begin{itemize}
+      \item $L(\tilde{\alpha}) \leq L(p \circ \tilde{\alpha})$ für alle Wege $\alpha : \I \to \tilde{X}$
+      \item für alle $x \in X$ gibt es ein $r > 0$, sodass jedes $y \in B_r(x)$ mit $x$ durch eine eindeutige linear parametrisierte Geodäte $\gamma_y : \I \to B_r(x)$ verbunden ist und $\gamma_y$ stetig von $y$ abhängt.
+    \end{itemize}
+    Dann ist $p$ eine Überlagerung.
+  \end{lem}
+
+  \begin{folg}
+    Sei $X$ ein Hadamard-Raum (vollständig, einfach zshgd, CAT($0$)) und $p \in X$. Dann ist $\exp_p : \tilde{X}_p \to X$ eine Überlagerung.
+  \end{folg}
+\end{frame}
+
+\begin{frame}
+  \begin{definition}
+    Ein vollständiger, einfach zusammenhängender Längenraum mit Alexandrov-Krümmung $\leq 0$ heißt \emph{Hadamard-Raum}.
+  \end{definition}
+
+  \begin{lem}
+    Sei $p : \tilde{X} \to X$ eine Überlagerungsabbildung, $\tilde{X} \not= \emptyset$, $X$ einfach zusammenhängend und $\tilde{X}$ wegzusammenhängend. Dann ist $p$ ein Homöomorphismus.
+  \end{lem}
+
+  \begin{folg}
+    $exp_p : \tilde{X}_p \to X$ ist ein Homöomorphismus, wenn $X$ ein Hadamard-Raum ist.
+  \end{folg}
+
+  \begin{satz}[Cartan-Hadamard]<2->
+    \begin{enumerate}
+      \item Für alle Paare $p, q$ von Punkte in einem Hadamard-Raum gibt es genau eine verbindende Geodäte $\sigma_{pq}$.
+      \item All diese Geodäten sind kürzeste Wege.
+    \end{enumerate}
+  \end{satz}
+\end{frame}
+
+% Induzierte Längenstrukturen. Notwendig?
+% Lemma BH, II.4.7.
+% Hilfslemma (1.108 bzw. BH, I.3.28)
+% Letztendliche Formulierung des Satzes von Cartan-Hadamard?
+% Eindeutigkeit von Geodäten
+% "Alexandrov's patchwork": CAT(0)-Vergleichseigenschaft auch im Großen.
+% Dazu: Alexandrovs Lemma, "Verklebelemma"
+
+\framedgraphic{bilder/Picture15.jpg}
+
+\begin{frame}
+  \begin{satz}
+    Sei $X$ ein Hadamard-Raum. Dann gilt für alle $x, y, z \in X$ mit verbindenden Kürzesten $\sigma_{xy}, \sigma_{yz}, \sigma_{xz}$: Die Winkelsumme des Dreiecks $\Delta (x, y, z)$ ist $\leq \pi$.
+  \end{satz}
+
+  \begin{bem}
+    Dies ist äquivalent dazu, dass das Dreieck die Vergleichseigenschaft erfüllt. Somit sind in Hadamard-Räumen Dreiecke beliebiger Größe "`dünn"'.
+  \end{bem}
+
+  \begin{bew}
+    "`Alexandrovs Flickwerk"'
+  \end{bew}
+\end{frame}
+
+\framedgraphic{bilder/cat.jpg}
+
+\end{document}
