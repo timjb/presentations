@@ -6,12 +6,68 @@
   <doc-data|<doc-title|Von-Neumann-Dimension>|<doc-author|<author-data|<author-name|Tim
   Baumann>>>>
 
+  Wir wollen einen Dimensionsbegriff für Hilbert-<math|\<cal-N\><around*|(|G|)>>-Moduln
+  definieren. Bei endlich-dimensionalen Vektorräumen gilt: Die Dimension
+  eines Vektorraums <math|V> ist die Spur der Identitätsabbildung auf
+  <math|V>. Diese Gleichheit wollen wir als Definition der Dimension von
+  Hilbert-<math|\<cal-N\><around*|(|G|)>>-Moduln verwenden. Dazu müssen wir
+  definieren, was die Spur eines Morphismus zwischen
+  Hilbert-<math|\<cal-N\><around*|(|G|)>>-Moduln ist.
+
+  <with|color|dark magenta|TODO: Normierungs-Eigenschaft>
+
+  Erinnerung: Die Spur von <math|f\<in\>\<cal-N\><around*|(|G|)>> ist
+  definiert als <math|tr<rsub|\<cal-N\><around*|(|G|)>><around*|(|f|)>\<assign\><around*|\<langle\>|f<around*|(|e|)>,e|\<rangle\>>>.
+  Wir benötigen ein paar Lemmata zur Spur:
+
+  <\definition*>
+    Die <strong|Konjugationsabbildung> auf <math|l<rsup|2><around*|(|G|)>>
+    ist definiert durch
+
+    <\equation*>
+      <wide|<space|0.8em>|\<bar\>> : l<rsup|2><around*|(|G|)>\<rightarrow\>l<rsup|2><around*|(|G|)>,<space|1em><big|sum><rsub|g\<in\>G>\<lambda\><rsub|g>\<cdot\>g<rsub|>\<mapsto\><big|sum><rsub|g\<in\>G>\<lambda\><rsub|g>\<cdot\>g<rsup|-1>.
+    </equation*>
+  </definition*>
+
+  <\lemma*>
+    Für <math|b\<in\>H>, <math|f\<in\>\<cal-N\><around*|(|G|)>> gilt
+    <math|f<rsup|\<ast\>><around*|(|e|)>=<overline|f<around*|(|e|)>>>.
+  </lemma*>
+
+  <\proof>
+    Für ein beliebiges <math|g\<in\>G>, gilt
+
+    <\eqnarray*>
+      <tformat|<cwith|2|2|2|2|cell-halign|l>|<cwith|1|1|2|2|cell-halign|l>|<cwith|3|3|2|2|cell-halign|l>|<table|<row|<cell|<around*|\<langle\>|f<rsup|\<ast\>><around*|(|e|)>,g|\<rangle\>>>|<cell|=
+      <around*|\<langle\>|e,f<around*|(|g|)>|\<rangle\>>>|<cell|=
+      <around*|\<langle\>|e,g.f<around*|(|e|)>|\<rangle\>>>>|<row|<cell|>|<cell|=
+      <around*|\<langle\>|g<rsup|-1>,f<around*|(|e|)>|\<rangle\>>>|<cell|=
+      <around*|\<langle\>|<overline|g>,f<around*|(|e|)>|\<rangle\>>>>|<row|<cell|>|<cell|=
+      <around*|\<langle\>|g,<overline|f<around*|(|e|)>>|\<rangle\>>>|<cell|=
+      <around*|\<langle\>|<overline|f<around*|(|e|)>>,g|\<rangle\>>.>>>>
+    </eqnarray*>
+  </proof>
+
+  Wir wollen zunächst diese Definition verallgemeinern auf Morphismen
+  zwischen Hilbert-<math|\<cal-N\><around*|(|G|)>>-Moduln. Das wird uns
+  gelingen für folgende Klasse von Morphismen:
+
   <\definition*>
     Sei <math|H> ein Hilbertraum. Ein Operator
     <math|f\<in\>\<cal-B\><around*|(|H|)>> heiÿt <strong|positiv>, falls
     <math|<around*|\<langle\>|f<around*|(|v|)>,v|\<rangle\>>\<in\>\<bbb-R\><rsub|\<geqslant\>0>>
     für alle <math|v\<in\>H>.
   </definition*>
+
+  <\lemma*>
+    Es gilt: <math|f> ist positiv \ \ <math|\<Longleftrightarrow\>>
+    \ \ <math|\<exists\> g\<in\>\<cal-B\><around*|(|H|)> : f =
+    g<rsup|<math-up|*>>g>
+  </lemma*>
+
+  <\corollary*>
+    Positive Operatoren sind selbstadjungiert.
+  </corollary*>
 
   <\theorem*>
     Für alle positiven <math|f\<in\>\<cal-B\><around*|(|H|)>> gibt es genau
@@ -22,17 +78,8 @@
 
   <strong|Beweis>: siehe [R], Thm 12.32
 
-  <\corollary*>
-    Es gilt: <math|f> ist positiv <math|\<Leftrightarrow\>> <math|\<exists\>
-    g\<in\>\<cal-B\><around*|(|H|)>: f = g<rsup|<math-up|*>>g>
-  </corollary*>
-
-  <\remark*>
-    Insbesondere sind positive Operatoren selbstadjungiert.
-  </remark*>
-
   <\notation*>
-    <math|f<rsub|1>\<leqslant\>f<rsub|2><space|1em>:\<Leftrightarrow\><space|1em><around*|(|f<rsub|2>-f<rsub|1>|)>>
+    <math|f<rsub|1>\<leqslant\>f<rsub|2><space|1em>:\<Longleftrightarrow\><space|1em><around*|(|f<rsub|2>-f<rsub|1>|)>>
     ist positiv
   </notation*>
 
@@ -85,16 +132,12 @@
       <big|sum><rsub|i\<in\>I><around*|\<langle\>|<overline|f><around*|(|b<rsub|i>\<otimes\>e|)>,b<rsub|i>\<otimes\>e|\<rangle\>><space|1em>\<in\>
       <around*|[|0,\<infty\>|]>.
     </equation*>
+
+    <\eqnarray*>
+      <tformat|<cwith|2|2|2|2|cell-halign|r>|<table|<row|<cell|tr<rsub|\<cal-N\><around*|(|G|)>><around*|(|f|)>>|<cell|\<assign\>>|<cell|<big|sum><rsub|i\<in\>I><around*|\<langle\>|<overline|f><around*|(|b<rsub|i>\<otimes\>e|)>,b<rsub|i>\<otimes\>e|\<rangle\>><space|1em>\<in\>
+      <around*|[|0,\<infty\>|]>.>>|<row|<cell|>|<cell|=>|<cell|<big|sum><rsub|i\<in\>I>tr<rsub|\<cal-N\><around*|(|G|)>><around*|(|l<rsup|2><around*|(|G|)>\<cong\><around*|{|b<rsub|i>|}>\<otimes\>l<rsup|2><around*|(|G|)>\<hookrightarrow\>H\<otimes\>l<rsup|2><around*|(|G|)><long-arrow|\<rubber-rightarrow\>|<overline|f>>H\<otimes\>l<rsup|2><around*|(|G|)><long-arrow|\<rubber-rightarrow\>|pr><around*|{|b<rsub|i>|}>\<otimes\>l<rsup|2><around*|(|G|)>\<cong\>l<rsup|2><around*|(|G|)>|)>>>>>
+    </eqnarray*>
   </definition*>
-
-  <\lemma*>
-    Die Definition der Von-Neumann-Spur ist unabhängig von den Wahlen.
-  </lemma*>
-
-  <\proof>
-    <with|color|dark magenta|TODO: Zeige Unabhängigkeit von allen möglichen
-    Wahlen>
-  </proof>
 
   <\remark*>
     Wenn <math|I> nicht abzählbar ist, dann wird die Summation folgendermaÿen
@@ -119,7 +162,7 @@
   <\lemma*>
     Angenommen, <math|H> ist ein Hilbertraum mit unitärer <math|G>-Wirkung,
     <math|f \<in\> \<cal-B\><around*|(|H|)>> ein positiver, G-äquivarianter
-    Operator. Dannist die eindeutige positive Wurzel
+    Operator. Dann ist die eindeutige positive Wurzel
     <math|f<rsup|<frac*|1|2>> \<in\> \<cal-B\><around*|(|H|)>> von <math|f>
     (d.h. <math|f = f<rsup|<frac*|1|2>> \<circ\> f<rsup|<frac*|1|2>>>)
     ebenfalls G-äquivariant.
@@ -149,6 +192,62 @@
   </proof>
 
   <\lemma*>
+    Die Definition der Von-Neumann-Spur ist unabhängig von der Wahl der
+    Basis.
+  </lemma*>
+
+  <\proof>
+    Sei <math|<around*|(|c<rsub|j>|)><rsub|j\<in\>J>> eine weitere Basis von
+    <math|H>. Dann ist
+
+    <\eqnarray*>
+      <tformat|<cwith|1|1|2|2|cell-halign|l>|<cwith|3|3|2|2|cell-halign|l>|<cwith|4|4|2|2|cell-halign|l>|<cwith|5|5|2|2|cell-halign|l>|<cwith|6|6|2|2|cell-halign|l>|<cwith|2|2|2|2|cell-halign|l>|<table|<row|<cell|<big|sum><rsub|i\<in\>I><around*|\<langle\>|<overline|f><around*|(|b<rsub|i>\<otimes\>e|)>,b<rsub|i>\<otimes\>e|\<rangle\>>>|<cell|=
+      <big|sum><rsub|i\<in\>I><around*|\<\|\|\>|<overline|f>
+      <rsup|<frac*|1|2>><around*|(|b<rsub|i>\<otimes\>e|)>|\<\|\|\>><rsup|2>>|<cell|>>|<row|<cell|>|<cell|=
+      <big|sum><rsub|i\<in\>I><big|sum><rsub|j\<in\>J><big|sum><rsub|g\<in\>G><around*|\||<around*|\<langle\>|<overline|f>
+      <rsup|<frac*|1|2>><around*|(|b<rsub|i>\<otimes\>e|)>,c<rsub|j>\<otimes\>g|\<rangle\>>|\|><rsup|2>>|<cell|>>|<row|<cell|>|<cell|=
+      <big|sum><rsub|i\<in\>I><big|sum><rsub|j\<in\>J><big|sum><rsub|g\<in\>G><around*|\||<around*|\<langle\>|b<rsub|i>\<otimes\>e,<overline|f>
+      <rsup|<frac*|1|2>><around*|(|c<rsub|j>\<otimes\>g|)>|\<rangle\>>|\|><rsup|2>>|<cell|>>|<row|<cell|>|<cell|=
+      <big|sum><rsub|j\<in\>J><big|sum><rsub|i\<in\>I><big|sum><rsub|g\<in\>G><around*|\||<around*|\<langle\>|b<rsub|i>\<otimes\>g<rsup|-1>,<overline|f>
+      <rsup|<frac*|1|2>><around*|(|c<rsub|j>\<otimes\>e|)>|\<rangle\>>|\|><rsup|2>>|<cell|>>|<row|<cell|>|<cell|=
+      <big|sum><rsub|j\<in\>J><around*|\<\|\|\>|<overline|f>
+      <rsup|<frac*|1|2>><around*|(|c<rsub|j>\<otimes\>e|)>|\<\|\|\>><rsup|2>>|<cell|>>|<row|<cell|>|<cell|=
+      <big|sum><rsub|j\<in\>J><around*|\<langle\>|<overline|f><around*|(|c<rsub|j>\<otimes\>e|)>,c<rsub|j>\<otimes\>e|\<rangle\>>>|<cell|>>>>
+    </eqnarray*>
+
+    Hierbei haben wir verwendet: Die Parseval-Identität, die Tatsache, dass
+    <math|G> isometrisch wirkt und die <math|G>-Äquivarianz von
+    <math|<overline|f> <rsup|<frac*|1|2>>> (siehe vorheriges Lemma).
+  </proof>
+
+  \;
+
+  <\lemma*>
+    Die Definition der Von-Neumann-Spur ist unabhängig von der Wahl der
+    isometrischen, <math|G>-äquivarianten Einbettung
+    <math|V\<hookrightarrow\>H\<otimes\>l<rsup|2><around*|(|G|)>>.
+  </lemma*>
+
+  <\proof>
+    Seien <math|H<rsub|1>>, <math|H<rsub|2>> zwei Hilberträume und
+    <math|i<rsub|1/2> : V\<hookrightarrow\>H<rsub|1/2>\<otimes\>l<rsup|2><around*|(|G|)>>
+    zwei <math|G>-äquivariante isometrische Einbettungen. Betrachte die
+    beiden Einbettungen
+
+    <\equation*>
+      <wide|i|~><rsub|1/2> := <around*|(|V<long-arrow|\<rubber-rightarrow\>|i<rsub|1/2>>H<rsub|1/2>\<otimes\>l<rsup|2><around*|(|G|)>\<hookrightarrow\><around*|(|H<rsub|1>\<oplus\>H<rsub|2>|)>\<otimes\>l<rsup|2><around*|(|G|)>|)>.
+    </equation*>
+
+    Man sieht leicht: Die Einbettungen <math|i<rsub|1>> und
+    <math|<wide|i|~><rsub|1>> liefern in der Definition der Von-Neumann-Spur
+    dasselbe Ergebnis. Gleiches gilt für <math|i<rsub|2>> und
+    <math|<wide|i|~><rsub|2>>. Wir dürfen somit ohne Einschränkung annehmen,
+    dass <math|H<rsub|1>=H<rsub|2>=: H>.
+
+    <with|color|dark magenta|TODO: Zeige Unabhängigkeit von Einbettung>
+  </proof>
+
+  <\lemma*>
     Sei <math|f\<in\>\<cal-B\><around*|(|V|)>> positiv, <math|u :
     W\<rightarrow\> V> unitär. Dann gilt <math|tr<rsub|\<cal-N\><around*|(|G|)>><around*|(|f|)>=tr<rsub|\<cal-N\><around*|(|G|)>><around*|(|u<rsup|-1>
     f u|)>>.
@@ -160,7 +259,22 @@
     H\<otimes\>l<rsup|2><around*|(|G|)>>.
   </proof>
 
-  \;
+  <\definition*>
+    Eine beschränkte, lineare Abbildung <math|u : V\<rightarrow\>W> zwischen
+    Hilberträumen heiÿt <strong|partielle Isometrie>, wenn
+    <math|u\|<rsub|ker<around*|(|u|)><rsup|\<perp\>>>> eine Isometrie (d.h.
+    skalarprodukterhaltend) ist.
+  </definition*>
+
+  <\theorem*>
+    <dueto|Polarzerlegung>Für alle beschränkten, linearen Abb. <math|f : V
+    \<rightarrow\> W> zwischen Hilberträumen gibt es eine partielle Isometrie
+    <math|u : V \<rightarrow\> W>, sodass <math|f=u <around*|\||f|\|>> mit
+    <math|<around*|\||f|\|>\<assign\><around*|(|f<rsup|\<ast\>>
+    f|)><rsup|<frac*|1|2>>>.
+  </theorem*>
+
+  <strong|Beweis>: siehe <with|color|dark magenta|TODO>
 
   <\lemma*>
     Jede kurze exakte Sequenz <math|0 \<rightarrow\> U
@@ -307,15 +421,42 @@
     </equation*>
   </proof>
 
-  <with|color|dark magenta|TODO: Lemma zur Existenz der Polarzerlegung>
+  <\remark*>
+    Sei <math|H\<less\>G> eine Untergruppe mit endlichem Index
+    <math|<around*|[|G :H|]>>. Dann kann man jedes
+    Hilbert-<math|\<cal-N\><around*|(|G|)>>-Modul auch als
+    Hilbert-<math|\<cal-N\><around*|(|H|)>>-Modul auffassen (durch
+    Einschränkung der Gruppenwirkung). Wähle Repräsentanten
+    <math|x<rsub|1>,\<ldots\>,x<rsub|k>\<in\>G> der <math|H>-Orbits von
+    <math|G>, <math|k=<around*|[|G :H|]>>. Sei \ <math|i :
+    V\<hookrightarrow\>H\<otimes\>l<rsup|2><around*|(|G|)>> eine
+    isometrische, <math|G>-äquivariante Einbettung. Man erhält eine
+    isometrische <math|H>-äquivariante Einbettung durch Nachschalten
+    folgender Abbildung:
 
-  8) Sei <math|H\<less\>G> eine Untergruppe mit endlichem Index
+    <\eqnarray*>
+      <tformat|<table|<row|<cell|H\<otimes\>l<rsup|2><around*|(|G|)>>|<cell|\<rightarrow\>>|<cell|<around*|(|<big|oplus><rsub|g
+      H\<in\>G/H>H|)>\<otimes\>l<rsup|2><around*|(|H|)>\<cong\><big|oplus><rsub|i=1,\<ldots\>,k><around*|(|H\<otimes\>l<rsup|2><around*|(|H|)>\<nocomma\>\<nocomma\>|)>>>|<row|<cell|h\<otimes\>g>|<cell|\<mapsto\>>|<cell|<around*|(|0,\<ldots\>,h\<otimes\>
+      x<rsub|j><rsup|-1>g,\<ldots\>,0|)><space|1em><math-up|für
+      <math|g\<in\>x<rsub|j>H>>.>>>>
+    </eqnarray*>
+  </remark*>
+
+  <strong|8)> Sei <math|H\<less\>G> eine Untergruppe mit endlichem Index
   <math|<around*|[|G :H|]>>. Sei <math|f : V \<rightarrow\> V> ein positiver
   Endomorphismus eines Hilbert-<math|\<cal-N\><around*|(|G|)>>-Moduls
-  <math|V>. <with|color|dark magenta|TODO: Fertig verstehen>
+  <math|V>. Dann gilt <math|dim<rsub|\<cal-N\><around*|(|H|)>><around*|(|f|)>=<around*|[|g
+  :H|]>\<cdot\>dim<rsub|\<cal-N\><around*|(|G|)>><around*|(|f|)>>.
 
   <\proof>
-    <with|color|dark magenta|TODO>
+    Sei <math|<around*|(|b<rsub|i>|)><rsub|i\<in\>I>> eine Basis von
+    <math|H>. Dann ist <math|<around*|(|0,\<ldots\>,b<rsub|i>,\<ldots\>,0|)><rsub|i\<in\>I,j=1,\<ldots\>,k>>
+    eine Hilbertbasis von <math|<big|oplus><rsub|g H\<in\>G/H>H> (dabei steht
+    das <math|b<rsub|i>> an der <math|j>-ten Stelle) und es gilt
+
+    <\eqnarray*>
+      <tformat|<table|<row|<cell|tr<rsub|\<cal-N\><around*|(|H|)>><around*|(|f|)>>|<cell|=>|<cell|<big|sum><rsub|j=1,\<ldots\>,k><big|sum><rsub|i\<in\>I><around*|\<langle\>|<overline|f<rsub|H>><around*|(|<around*|(|0,\<ldots\>,b<rsub|i>,\<ldots\>,0|)>\<otimes\>e|)>,<around*|(|0,\<ldots\>,b<rsub|i>,\<ldots\>,0|)>\<otimes\>e|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<big|sum><rsub|j=1,\<ldots\>,k><big|sum><rsub|i\<in\>I><around*|\<langle\>|<overline|f<rsub|G>><around*|(|b<rsub|i>\<otimes\>x<rsub|j>|)>\<nocomma\>,b<rsub|i>\<otimes\>x<rsub|j>|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|<big|sum><rsub|j=1,\<ldots\>,k><big|sum><rsub|i\<in\>I><around*|\<langle\>|<overline|f<rsub|G>><around*|(|b<rsub|i>\<otimes\>e|)>\<nocomma\>,b<rsub|i>\<otimes\>e|\<rangle\>>>>|<row|<cell|>|<cell|=>|<cell|k\<cdot\>tr<rsub|\<cal-N\><around*|(|G|)>><around*|(|f|)>.>>>>
+    </eqnarray*>
   </proof>
 
   <\definition*>
@@ -427,11 +568,12 @@
 
   <strong|6)> Sei <math|H\<less\>G> eine Untergruppe mit endlichem Index
   <math|<around*|[|G :H|]>> und <math|V> ein
-  Hilbert-<math|\<cal-N\><around*|(|G|)>>-Modul. <with|color|dark
-  magenta|TODO: Rest verstehen>
+  Hilbert-<math|\<cal-N\><around*|(|G|)>>-Modul. Dann ist
+  <math|dim<rsub|\<cal-N\><around*|(|H|)>><around*|(|V|)>=<around*|[|G
+  :H|]>\<cdot\>dim<rsub|\<cal-N\><around*|(|G|)>><around*|(|V|)>>.
 
   <\proof>
-    <with|color|dark magenta|TODO>
+    Folgt aus Satz 1.9, 8)
   </proof>
 
   <\remark*>
@@ -507,6 +649,8 @@
     aber ist gleich <math|k+1> im Bereich <math|<around*|{|e<rsup|2i\<pi\>x>
     \| x\<in\><around*|[|0,2<rsup|-<around*|(|k+1|)>>|]>|}>>. Widerspruch.
   </example*>
+
+  \;
 
   <strong|[L]><space|1em>W. Lück, <em|L<rsup|2>-invariants: Theory and
   applications to geometry and K-theory>, Ergebnisse der Mathematik und ihrer
