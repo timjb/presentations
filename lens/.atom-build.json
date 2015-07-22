@@ -1,0 +1,9 @@
+{
+  "cmd": "sh",
+  "name": "lens-presentation",
+  "args": [ "build.sh" ],
+  "sh": false,
+  "env": {
+    "PATH": "/usr/texbin:/usr/local/bin:/usr/bin:/bin"
+  }
+}
