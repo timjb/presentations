@@ -33,6 +33,9 @@
 \institute[CCA]{Curry Club Augsburg}
 \date{13. August 2015}
 
+\newcommand{\kreuz}{$\,^\dag$} % Dagger, alter!
+\newcommand{\kkreuz}{$\,^\ddag$} % DDagger, alter!
+
 \begin{document}
 
 \begin{frame}
@@ -48,15 +51,189 @@
 
 \begin{frame}[fragile]
   \frametitle{Was sind Lenses?}
-  %\lstinputlisting[language=Haskell]{records.hs}
+  Eine Lens beschreibt eine (feste) Position in einer Datenstruktur, an der ein Wert eines bestimmten Typs gespeichert ist.
+  Mit einer Lens ist es möglich, diesen Wert auszulesen und zu überschreiben.
+  \begin{columns}[t]
+    \column{.45\textwidth}
+    \begin{visibleenv}<2->
+\begin{minted}[fontsize=\small]{haskell}
+data Address = Address
+  { _streetLine :: String
+  , _townLine :: String
+  }
+
+data Person = Person
+  { _firstName :: String
+  , _lastName :: String
+  , _address :: Address
+  }
+\end{minted}
+    \end{visibleenv}
+    \column{.5\textwidth}
+    \begin{visibleenv}<3->
+\begin{minted}[fontsize=\small, escapeinside=||]{haskell}
+data Lens|\kreuz| s a = Lens|\kreuz|
+  { getter :: s -> a
+  , setter :: a -> s -> s
+  }
+\end{minted}
+    \end{visibleenv}
+    \begin{onlyenv}<4>
+\begin{minted}[fontsize=\small, escapeinside=||]{haskell}
+address :: Lens|\kreuz| Person Address
+address = Lens|\kreuz|
+  { getter = _address
+  , setter = \a p ->
+      p { _address = a }
+  }
+\end{minted}
+    \end{onlyenv}
+    \begin{onlyenv}<5->
+      Lens-Gesetze:
+      \begin{enumerate}
+        \small
+        \item \mintinline{haskell}{a = getter l (setter l a s)}
+        \item \mintinline{haskell}{  setter l a . setter l b} \\
+        \mintinline{haskell}{= setter l a}
+      \end{enumerate}
+    \end{onlyenv}
+  \end{columns}
+\begin{onlyenv}<4>
+\begin{minted}[fontsize=\small, escapeinside=||]{haskell}
+ firstName,  lastName :: Lens|\kreuz| Person String
+ streetLine, townLine :: Lens|\kreuz| Address String
+\end{minted}
+\end{onlyenv}
+\begin{onlyenv}<5->
+\begin{minted}[fontsize=\small, escapeinside=||]{haskell}
+ streetLine, townLine :: Lens|\kreuz| Address String
+ firstName,  lastName :: Lens|\kreuz| Person String
+ address              :: Lens|\kreuz| Person Address
+\end{minted}
+\end{onlyenv}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Komponieren von Lenses}
+\begin{minted}[escapeinside=||]{haskell}
+compose :: Lens|\kreuz| s a -> Lens|\kreuz| a b -> Lens|\kreuz| s b
+\end{minted}
+  \vspace{-12pt}
+  \begin{visibleenv}<2->
+\begin{minted}[escapeinside=||]{haskell}
+compose l m = Lens|\kreuz|
+  { getter = getter m . getter l
+  , setter = \b s -> setter l (setter m b (getter l s)) s
+  }
+\end{minted}
+  \end{visibleenv}
+\begin{minted}[escapeinside=||]{haskell}
+personTownLine :: Lens|\kreuz| Person String
+personTownLine = compose address townLine
+\end{minted}
+
+\vspace{1em}
+
+  \begin{visibleenv}<3->
+    Folgende Hilfsfunktion ist oft nützlich:
+\begin{minted}[escapeinside=||]{haskell}
+modify :: Lens|\kreuz| s a -> (a -> a) -> s -> s
+modify l f s = setter l (f (getter l s)) s
+\end{minted}
+    Zum Beispiel, um die Stadt in der Adresse in Versalien zu schreiben:
+\begin{minted}[escapeinside=||]{haskell}
+person' = modify personTownLine (map toUpper) person
+\end{minted}
+  \end{visibleenv}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Alles wunderbar? Leider nein}
+
+  \textbf{Problem Nr. 1}: Bei der Auswertung
+\begin{minted}[fontsize=\small, escapeinside=||]{haskell}
+  modify (compose l m) f s
+= setter (compose l m) (f (getter (compose l m) s)) s
+= setter l (setter m (f (getter m (getter l s))) (getter l s)) s
+\end{minted}
+  wird \mintinline{haskell}{getter l s} zweimal berechnet.
+  Besser wäre
+\begin{minted}[fontsize=\small, escapeinside=||]{haskell}
+  modify (compose l m) f s
+= let a = getter l s in setter l (setter m (f (getter m a)) a) s
+\end{minted}
+
+  \begin{visibleenv}<2->
+    \begin{columns}[t]
+      \column{.43\textwidth}
+
+      \textbf{Problem Nr. 2}: In \mintinline{haskell}{modify} wird die Datenstruktur zweimal durchlaufen: Einmal, um den gesuchten Wert zu extrahieren, dann nochmal, um den neuen Wert abzulegen. \\
+      Das kann kostspielig sein, z.\,B. bei der Lens rechts.
+      \column{.5\textwidth}
+\begin{minted}[fontsize=\footnotesize, escapeinside=??]{haskell}
+data NonEmpty a =
+  Cons a (NonEmpty a) | Last a
+last :: Lens?\kreuz? (NonEmpty a) a
+last = Lens?\kreuz? getter setter
+ where
+  getter (Cons _ xs) = getter xs
+  getter (Last x) = x
+  setter a (Cons _ xs) = setter a xs
+  setter a (Last _) = Last a
+\end{minted}
+    \end{columns}
+  \end{visibleenv}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Alles wunderbar? Leider nein}
+  \textbf{Idee}: Erweitere die Definition einer Lens um die \mintinline{haskell}{modify}-Funktion. \\
+  \begin{visibleenv}<2->
+    Wir verallgemeinern auch gleich \mintinline{haskell}{modify} auf effektvolle Updatefunktionen, d.\,h. solche, die beispielsweise \mintinline{haskell}{IO} verwenden:
+  \end{visibleenv}
+  \begin{onlyenv}<1>
+\begin{minted}[escapeinside=||]{haskell}
+data Lens|\kkreuz| s a = Lens|\kkreuz|
+  { getter  :: s -> a
+  , setter  :: a -> s -> s
+  , modify  ::              (a ->   a) -> s ->   s
+  }
+\end{minted}
+  \end{onlyenv}
+  \begin{onlyenv}<2-3>
+\begin{minted}[escapeinside=||]{haskell}
+data Lens|\kkreuz| s a = Lens|\kkreuz|
+  { getter  :: s -> a
+  , setter  :: a -> s -> s
+  , modifyF :: Functor f => (a -> f a) -> s -> f s
+  }
+\end{minted}
+  \end{onlyenv}
+  \begin{onlyenv}<4->
+\begin{minted}[escapeinside=||]{haskell}
+data Lens|\kkreuz| s a = Lens|\kkreuz|
+  { {-getter  :: s -> a
+  , setter  :: a -> s -> s
+  ,-} modifyF :: Functor f => (a -> f a) -> s -> f s
+  }
+\end{minted}
+  \end{onlyenv}
+
+  \vspace{2em}
+
+  \begin{onlyenv}<3->
+    \Large Bahnbrechende Einsicht von Twaan van Laarhoven: \\
+
+    \colorbox{yellow}{
+      \huge \mintinline{haskell}{modifyF} umfasst \mintinline{haskell}{getter} und \mintinline{haskell}{setter}!
+    }
+  \end{onlyenv}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{API}
 \begin{minted}{haskell}
-data Person = Person { firstName :: String
-                     , lastName :: String
-                     }
-data Book = Book { id :: Integer
-                 , title :: String
-                 , author :: Person
-                 }
+(.^) :: s -> Lens s a -> a
 \end{minted}
 \end{frame}
 
@@ -67,22 +244,6 @@ data Book = Book { id :: Integer
     \includegraphics[width=0.9\linewidth]{ccc-picking-lens-library.png}
     \caption{Picking a Lens Library (Cartesian Closed Comic)}
   \end{figure}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Multiple Columns}
-  \begin{columns}[c] % The "c" option specifies centered vertical alignment while the "t" option is used for top vertical alignment
-    \column{.45\textwidth} % Left column and width
-    \textbf{Heading}
-    \begin{enumerate}
-      \item Statement
-      \item Explanation
-      \item Example
-    \end{enumerate}
-
-    \column{.5\textwidth} % Right column and width
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer lectus nisl, ultricies in feugiat rutrum, porttitor sit amet augue. Aliquam ut tortor mauris. Sed volutpat ante purus, quis accumsan dolor.
-  \end{columns}
 \end{frame}
 
 \end{document}
