@@ -35,6 +35,7 @@
 
 \newcommand{\kreuz}{$\,^\dag$} % Dagger, alter!
 \newcommand{\kkreuz}{$\,^\ddag$} % DDagger, alter!
+\newcommand{\hask}[1]{\mintinline{haskell}{#1}} % Inline-Haskell-Code
 
 \begin{document}
 
@@ -49,7 +50,7 @@
 \end{frame}
 \fi
 
-\begin{frame}[fragile]
+\begin{frame}[t,fragile]
   \frametitle{Was sind Lenses?}
   Eine Lens beschreibt eine (feste) Position in einer Datenstruktur, an der ein Wert eines bestimmten Typs gespeichert ist.
   Mit einer Lens ist es möglich, diesen Wert auszulesen und zu überschreiben.
@@ -69,6 +70,7 @@ data Person = Person
   }
 \end{minted}
     \end{visibleenv}
+    \vspace{1em}
     \column{.5\textwidth}
     \begin{visibleenv}<3->
 \begin{minted}[fontsize=\small, escapeinside=||]{haskell}
@@ -92,16 +94,17 @@ address = Lens|\kreuz|
       Lens-Gesetze:
       \begin{enumerate}
         \small
-        \item \mintinline{haskell}{a = getter l (setter l a s)}
-        \item \mintinline{haskell}{  setter l a . setter l b} \\
-        \mintinline{haskell}{= setter l a}
+        \item \hask{a = getter l (setter l a s)}
+        \item \hask{  setter l a . setter l b} \\
+        \hask{= setter l a}
+        \item \hask{s = setter l (getter l s) s}
       \end{enumerate}
     \end{onlyenv}
   \end{columns}
 \begin{onlyenv}<4>
 \begin{minted}[fontsize=\small, escapeinside=||]{haskell}
- firstName,  lastName :: Lens|\kreuz| Person String
  streetLine, townLine :: Lens|\kreuz| Address String
+ firstName,  lastName :: Lens|\kreuz| Person String
 \end{minted}
 \end{onlyenv}
 \begin{onlyenv}<5->
@@ -156,7 +159,7 @@ person' = modify personTownLine (map toUpper) person
 = setter (compose l m) (f (getter (compose l m) s)) s
 = setter l (setter m (f (getter m (getter l s))) (getter l s)) s
 \end{minted}
-  wird \mintinline{haskell}{getter l s} zweimal berechnet.
+  wird \hask{getter l s} zweimal berechnet.
   Besser wäre
 \begin{minted}[fontsize=\small, escapeinside=||]{haskell}
   modify (compose l m) f s
@@ -167,7 +170,7 @@ person' = modify personTownLine (map toUpper) person
     \begin{columns}[t]
       \column{.43\textwidth}
 
-      \textbf{Problem Nr. 2}: In \mintinline{haskell}{modify} wird die Datenstruktur zweimal durchlaufen: Einmal, um den gesuchten Wert zu extrahieren, dann nochmal, um den neuen Wert abzulegen. \\
+      \textbf{Problem Nr. 2}: In \hask{modify} wird die Datenstruktur zweimal durchlaufen: Einmal, um den gesuchten Wert zu extrahieren, dann nochmal, um den neuen Wert abzulegen. \\
       Das kann kostspielig sein, z.\,B. bei der Lens rechts.
       \column{.5\textwidth}
 \begin{minted}[fontsize=\footnotesize, escapeinside=??]{haskell}
@@ -187,9 +190,9 @@ last = Lens?\kreuz? getter setter
 
 \begin{frame}[fragile]
   \frametitle{Alles wunderbar? Leider nein}
-  \textbf{Idee}: Erweitere die Definition einer Lens um die \mintinline{haskell}{modify}-Funktion. \\
+  \textbf{Idee}: Erweitere die Definition einer Lens um die \hask{modify}-Funktion. \\
   \begin{visibleenv}<2->
-    Wir verallgemeinern auch gleich \mintinline{haskell}{modify} auf effektvolle Updatefunktionen, d.\,h. solche, die beispielsweise \mintinline{haskell}{IO} verwenden:
+    Wir verallgemeinern auch gleich \hask{modify} auf effektvolle Updatefunktionen, d.\,h. solche, die beispielsweise \hask{IO} verwenden:
   \end{visibleenv}
   \begin{onlyenv}<1>
 \begin{minted}[escapeinside=||]{haskell}
@@ -225,9 +228,125 @@ data Lens|\kkreuz| s a = Lens|\kkreuz|
     \Large Bahnbrechende Einsicht von Twaan van Laarhoven: \\
 
     \colorbox{yellow}{
-      \huge \mintinline{haskell}{modifyF} umfasst \mintinline{haskell}{getter} und \mintinline{haskell}{setter}!
+      \huge \hask{modifyF} umfasst \hask{getter} und \hask{setter}!
     }
   \end{onlyenv}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{
+    \colorbox{yellow}{
+      \hask{modifyF} umfasst
+      \visible<2->{{\small 1.}} \hask{getter} und
+      \visible<3->{{\small 2.}} \hask{setter}
+    }
+  }
+
+\begin{minted}{haskell}
+type Lens' s a = Functor f => (a -> f a) -> s -> f s
+\end{minted}
+
+  \begin{enumerate}
+    \item
+    \begin{visibleenv}<2->
+\begin{minted}{haskell}
+(.^) :: s -> Lens' s a -> a
+\end{minted}
+    \end{visibleenv}
+    \vspace{-0.8em}
+    \begin{visibleenv}<7->
+\begin{minted}{haskell}
+s .^ l = getConst (l Const s)
+\end{minted}
+    \end{visibleenv}
+
+    \begin{visibleenv}<6->
+\begin{minted}{haskell}
+newtype Const a b = Const { getConst :: a }
+instance Functor (Const a) where
+  fmap _ (Const b) = Const b
+\end{minted}
+    \end{visibleenv}
+    \vspace{1em}
+
+    \item
+    \begin{visibleenv}<3->
+\begin{minted}{haskell}
+(.~) :: Lens' s a -> a -> s -> s
+\end{minted}
+    \end{visibleenv}
+    \vspace{-0.8em}
+    \begin{visibleenv}<5->
+\begin{minted}{haskell}
+(.~) l a s = getId (l (\_ -> Id s) s)
+\end{minted}
+    \end{visibleenv}
+
+    \begin{visibleenv}<4->
+\begin{minted}{haskell}
+newtype Id a = Id { getId :: a }
+instance Functor Id where
+  fmap f (Id a) = Id (f a)
+\end{minted}
+    \end{visibleenv}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Komponieren von \hask{Lens'}es}
+  \begin{onlyenv}<1>
+    \begin{tabular}{r l}
+      Gegeben: & \mintinline{haskell}{ l  :: Lens' s a} \\
+      und & \mintinline{haskell}{ m  :: Lens' a b} \\[0.4em]
+      Gesucht: & \mintinline{haskell}{ ?  :: Lens' s b}
+    \end{tabular}
+  \end{onlyenv}
+  \begin{onlyenv}<2>
+    \begin{tabular}{r l}
+      Gegeben: & \mintinline{haskell}{ l  :: Functor f => (a -> f a) ->  s -> f s} \\
+      und & \mintinline{haskell}{ m  :: Functor f => (b -> f b) ->  a -> f a} \\[0.4em]
+      Gesucht: & \mintinline{haskell}{ ?  :: Functor f => (b -> f b) ->  s -> f s}
+    \end{tabular}
+  \end{onlyenv}
+  \begin{onlyenv}<3>
+    \begin{tabular}{r l}
+      Gegeben: & \mintinline{haskell}{ l  :: Functor f => (a -> f a) -> (s -> f s)} \\
+      und & \mintinline{haskell}{ m  :: Functor f => (b -> f b) -> (a -> f a)} \\[0.4em]
+      Gesucht: & \mintinline{haskell}{ ?  :: Functor f => (b -> f b) -> (s -> f s)}
+    \end{tabular}
+  \end{onlyenv}
+  \begin{onlyenv}<4->
+    \begin{tabular}{r l}
+      Gegeben: & \mintinline{haskell}{ l  :: Functor f => (a -> f a) -> (s -> f s)} \\
+      und & \mintinline{haskell}{ m  :: Functor f => (b -> f b) -> (a -> f a)} \\[0.4em]
+      Gesucht: & \mintinline{haskell}{l.m :: Functor f => (b -> f b) -> (s -> f s)}
+    \end{tabular}
+  \end{onlyenv}
+
+  \begin{visibleenv}<5->
+    \vspace{1em}
+    Dabei ist \hask{.} die stinknormale Funktionsverkettung aus der \hask{Prelude}!
+    \vspace{1em}
+  \end{visibleenv}
+
+  \begin{visibleenv}<6->
+    Im Beispiel vom Anfang:
+\begin{minted}{haskell}
+address :: Lens' Person Address
+address f (Person first last addr) =
+  fmap (Person first last) (f addr)
+\end{minted}
+  \end{visibleenv}
+  \begin{visibleenv}<7->
+\begin{minted}{haskell}
+streetLine, townLine :: Lens' Address String
+firstName,  lastName :: Lens' Person String
+\end{minted}
+  \end{visibleenv}
+  \begin{visibleenv}<8->
+    Dann haben wir \enspace
+    \hask{address.townLine :: Lens' Person String}
+  \end{visibleenv}
 \end{frame}
 
 \begin{frame}[fragile]
