@@ -7,6 +7,8 @@
 \usepackage[ngerman]{babel}
 \usepackage[outputdir=output]{minted} % Syntax-Highlighted Code; requires pygments to be installed
 
+\usepackage{tikz}
+
 \usetheme{Boadilla}
 \usecolortheme{seagull}
 
@@ -349,6 +351,86 @@ firstName,  lastName :: Lens' Person String
   \end{visibleenv}
 \end{frame}
 
+\begin{frame}[t,fragile]
+  \frametitle{Weitere optische Gerätschaften}
+  \begin{center}
+    \begin{tikzpicture}[
+        overlay,
+        myrect/.style={
+          rectangle,
+          draw,
+          rounded corners,
+          inner sep=4pt
+        }
+      ]
+      \begin{scope}[shift={(1,0)}]
+        \node<7->[myrect] (setter) at (-4,0.5) {Setter};
+        \node<6->[myrect] (fold) at (-4,-0.5) {Fold};
+        \node<2->[myrect] (traversal) at (-2,0.5) {Traversal};
+        \node<5->[myrect] (getter) at (-2,-0.5) {Getter};
+        \node<3->[myrect] (prism) at (0,0.5) {Prism};
+        \node[myrect] (lens) at (0,-0.5) {Lens};
+        \node<4->[myrect] (iso) at (1.5,0) {Iso};
+        \draw<7->[->] (setter) -- (traversal);
+        \draw<6->[->] (fold) -- (traversal);
+        \draw<6->[->] (fold) -- (getter);
+        \draw<2->[->] (traversal) -- (lens);
+        \draw<3->[->] (traversal) -- (prism);
+        \draw<5->[->] (getter) -- (lens);
+        \draw<4->[->] (prism) -- (iso);
+        \draw<4->[->] (lens) -- (iso);
+      \end{scope}
+    \end{tikzpicture}
+  \end{center}
+
+  \vspace{2em}
+
+  %{\setlength\tabcolsep{0.2em}
+  %\footnotesize
+
+  {
+  \setbeamercolor{alerted text}{fg=blue}
+  \setbeamerfont{alerted text}{series=\mdseries}
+
+  \begin{onlyenv}<1-7>
+    \begin{tabular}{r l}
+      \visible<7->{\alert<7>{Setter}} &
+      \visible<7->{???} \\
+
+      \visible<6->{\alert<6>{Fold}} &
+      \visible<6->{Funktion \hask{s -> [a]}} \\
+
+      \visible<5->{\alert<5>{Getter}} &
+      \visible<5->{Funktion \hask{s -> a}} \\
+
+      \visible<2->{\alert<2>{Traversal}} &
+      \visible<2->{ein \hask{s} besteht aus \hask{a}'s und anderen Daten} \\
+
+      \alert<1>{Lens} &
+      ein \hask{s} besteht aus einem \hask{a} und anderen Daten \\
+
+      \visible<3->{\alert<3>{Prism}} &
+      \visible<3->{ein \hask{s} ist ein \hask{a} oder etwas anderes} \\
+
+      \visible<4->{\alert<4>{Iso}} &
+      \visible<4->{ein \hask{s} ist dasselbe wie ein \hask{a}}
+    \end{tabular}
+  \end{onlyenv}}
+
+  \begin{onlyenv}<8->
+    \vspace{-0.7em}
+\begin{minted}[fontsize=\footnotesize,baselinestretch=1.2]{haskell}
+   Setter' s a =                                (a -> Id a) -> s -> Id s
+     Fold  s a = (Contrav't f, Applicative f) => (a -> f a) -> s -> f s
+   Getter  s a =     (Contrav't f, Functor f) => (a -> f a) -> s -> f s
+Traversal' s a =               Applicative f  => (a -> f a) -> s -> f s
+     Lens' s a =                   Functor f  => (a -> f a) -> s -> f s
+    Prism' s a =    (Choice p, Applicative f) =>  p a (f a) -> p s (f s)
+      Iso' s a =    (Profunctor p, Functor f) =>  p a (f a) -> p s (f s)
+\end{minted}
+  \end{onlyenv}
+\end{frame}
+
 \begin{frame}[fragile]
   \frametitle{API}
 \begin{minted}{haskell}
@@ -364,5 +446,9 @@ firstName,  lastName :: Lens' Person String
     \caption{Picking a Lens Library (Cartesian Closed Comic)}
   \end{figure}
 \end{frame}
+
+% TODO:
+% * Traversals erklären
+% * Rubiks-Cube-Beispiel
 
 \end{document}
