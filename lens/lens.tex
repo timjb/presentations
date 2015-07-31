@@ -5,7 +5,10 @@
 \usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
+
 \usepackage[outputdir=output]{minted} % Syntax-Highlighted Code; requires pygments to be installed
+\newminted{haskell}{}
+\newmintinline{haskell}{}
 
 \usepackage{tikz}
 
@@ -37,7 +40,6 @@
 
 \newcommand{\kreuz}{$\,^\dag$} % Dagger, alter!
 \newcommand{\kkreuz}{$\,^\ddag$} % DDagger, alter!
-\newcommand{\hask}[1]{\mintinline{haskell}{#1}} % Inline-Haskell-Code
 
 \begin{document}
 
@@ -59,7 +61,7 @@
   \begin{columns}[t]
     \column{.45\textwidth}
     \begin{visibleenv}<2->
-\begin{minted}[fontsize=\small]{haskell}
+\begin{haskellcode*}{fontsize=\small}
 data Address = Address
   { _streetLine :: String
   , _townLine :: String
@@ -70,85 +72,85 @@ data Person = Person
   , _lastName :: String
   , _address :: Address
   }
-\end{minted}
+\end{haskellcode*}
     \end{visibleenv}
     \vspace{1em}
     \column{.5\textwidth}
     \begin{visibleenv}<3->
-\begin{minted}[fontsize=\small, escapeinside=||]{haskell}
+\begin{haskellcode*}{fontsize=\small, escapeinside=||}
 data Lens|\kreuz| s a = Lens|\kreuz|
   { getter :: s -> a
   , setter :: a -> s -> s
   }
-\end{minted}
+\end{haskellcode*}
     \end{visibleenv}
     \begin{onlyenv}<4>
-\begin{minted}[fontsize=\small, escapeinside=||]{haskell}
+\begin{haskellcode*}{fontsize=\small, escapeinside=||}
 address :: Lens|\kreuz| Person Address
 address = Lens|\kreuz|
   { getter = _address
   , setter = \a p ->
       p { _address = a }
   }
-\end{minted}
+\end{haskellcode*}
     \end{onlyenv}
     \begin{onlyenv}<5->
       Lens-Gesetze:
       \begin{enumerate}
         \small
-        \item \hask{a = getter l (setter l a s)}
-        \item \hask{  setter l a . setter l b} \\
-        \hask{= setter l a}
-        \item \hask{s = setter l (getter l s) s}
+        \item \haskellinline{a = getter l (setter l a s)}
+        \item \haskellinline{  setter l a . setter l b} \\
+        \haskellinline{= setter l a}
+        \item \haskellinline{s = setter l (getter l s) s}
       \end{enumerate}
     \end{onlyenv}
   \end{columns}
 \begin{onlyenv}<4>
-\begin{minted}[fontsize=\small, escapeinside=||]{haskell}
+\begin{haskellcode*}{fontsize=\small, escapeinside=||}
  streetLine, townLine :: Lens|\kreuz| Address String
  firstName,  lastName :: Lens|\kreuz| Person String
-\end{minted}
+\end{haskellcode*}
 \end{onlyenv}
 \begin{onlyenv}<5->
-\begin{minted}[fontsize=\small, escapeinside=||]{haskell}
+\begin{haskellcode*}{fontsize=\small, escapeinside=||}
  streetLine, townLine :: Lens|\kreuz| Address String
  firstName,  lastName :: Lens|\kreuz| Person String
  address              :: Lens|\kreuz| Person Address
-\end{minted}
+\end{haskellcode*}
 \end{onlyenv}
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Komponieren von Lenses}
-\begin{minted}[escapeinside=||]{haskell}
+\begin{haskellcode*}{escapeinside=||}
 compose :: Lens|\kreuz| s a -> Lens|\kreuz| a b -> Lens|\kreuz| s b
-\end{minted}
+\end{haskellcode*}
   \vspace{-12pt}
   \begin{visibleenv}<2->
-\begin{minted}[escapeinside=||]{haskell}
+\begin{haskellcode*}{escapeinside=||}
 compose l m = Lens|\kreuz|
   { getter = getter m . getter l
   , setter = \b s -> setter l (setter m b (getter l s)) s
   }
-\end{minted}
+\end{haskellcode*}
   \end{visibleenv}
-\begin{minted}[escapeinside=||]{haskell}
+\begin{haskellcode*}{escapeinside=||}
 personTownLine :: Lens|\kreuz| Person String
 personTownLine = compose address townLine
-\end{minted}
+\end{haskellcode*}
 
 \vspace{1em}
 
   \begin{visibleenv}<3->
     Folgende Hilfsfunktion ist oft nützlich:
-\begin{minted}[escapeinside=||]{haskell}
+\begin{haskellcode*}{escapeinside=||}
 modify :: Lens|\kreuz| s a -> (a -> a) -> s -> s
 modify l f s = setter l (f (getter l s)) s
-\end{minted}
+\end{haskellcode*}
     Zum Beispiel, um die Stadt in der Adresse in Versalien zu schreiben:
-\begin{minted}[escapeinside=||]{haskell}
+\begin{haskellcode*}{escapeinside=||}
 person' = modify personTownLine (map toUpper) person
-\end{minted}
+\end{haskellcode*}
   \end{visibleenv}
 \end{frame}
 
@@ -156,26 +158,26 @@ person' = modify personTownLine (map toUpper) person
   \frametitle{Alles wunderbar? Leider nein}
 
   \textbf{Problem Nr. 1}: Bei der Auswertung
-\begin{minted}[fontsize=\small, escapeinside=||]{haskell}
+\begin{haskellcode*}{fontsize=\small, escapeinside=||}
   modify (compose l m) f s
 = setter (compose l m) (f (getter (compose l m) s)) s
 = setter l (setter m (f (getter m (getter l s))) (getter l s)) s
-\end{minted}
-  wird \hask{getter l s} zweimal berechnet.
+\end{haskellcode*}
+  wird \haskellinline{getter l s} zweimal berechnet.
   Besser wäre
-\begin{minted}[fontsize=\small, escapeinside=||]{haskell}
+\begin{haskellcode*}{fontsize=\small, escapeinside=||}
   modify (compose l m) f s
 = let a = getter l s in setter l (setter m (f (getter m a)) a) s
-\end{minted}
+\end{haskellcode*}
 
   \begin{visibleenv}<2->
     \begin{columns}[t]
       \column{.43\textwidth}
 
-      \textbf{Problem Nr. 2}: In \hask{modify} wird die Datenstruktur zweimal durchlaufen: Einmal, um den gesuchten Wert zu extrahieren, dann nochmal, um den neuen Wert abzulegen. \\
+      \textbf{Problem Nr. 2}: In \haskellinline{modify} wird die Datenstruktur zweimal durchlaufen: Einmal, um den gesuchten Wert zu extrahieren, dann nochmal, um den neuen Wert abzulegen. \\
       Das kann kostspielig sein, z.\,B. bei der Lens rechts.
       \column{.5\textwidth}
-\begin{minted}[fontsize=\footnotesize, escapeinside=??]{haskell}
+\begin{haskellcode*}{fontsize=\footnotesize, escapeinside=??}
 data NonEmpty a =
   Cons a (NonEmpty a) | Last a
 last :: Lens?\kreuz? (NonEmpty a) a
@@ -185,43 +187,43 @@ last = Lens?\kreuz? getter setter
   getter (Last x) = x
   setter a (Cons _ xs) = setter a xs
   setter a (Last _) = Last a
-\end{minted}
+\end{haskellcode*}
     \end{columns}
   \end{visibleenv}
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[fragile,t]
   \frametitle{Alles wunderbar? Leider nein}
-  \textbf{Idee}: Erweitere die Definition einer Lens um die \hask{modify}-Funktion. \\
+  \textbf{Idee}: Erweitere die Definition einer Lens um die \haskellinline{modify}-Funktion. \\
   \begin{visibleenv}<2->
-    Wir verallgemeinern auch gleich \hask{modify} auf effektvolle Updatefunktionen, d.\,h. solche, die beispielsweise \hask{IO} verwenden:
+    Wir verallgemeinern auch gleich \haskellinline{modify} auf effektvolle Updatefunktionen, d.\,h. solche, die beispielsweise \haskellinline{IO} verwenden:
   \end{visibleenv}
   \begin{onlyenv}<1>
-\begin{minted}[escapeinside=||]{haskell}
+\begin{haskellcode*}{escapeinside=||}
 data Lens|\kkreuz| s a = Lens|\kkreuz|
   { getter  :: s -> a
   , setter  :: a -> s -> s
   , modify  ::              (a ->   a) -> s ->   s
   }
-\end{minted}
+\end{haskellcode*}
   \end{onlyenv}
   \begin{onlyenv}<2-3>
-\begin{minted}[escapeinside=||]{haskell}
+\begin{haskellcode*}{escapeinside=||}
 data Lens|\kkreuz| s a = Lens|\kkreuz|
   { getter  :: s -> a
   , setter  :: a -> s -> s
   , modifyF :: Functor f => (a -> f a) -> s -> f s
   }
-\end{minted}
+\end{haskellcode*}
   \end{onlyenv}
   \begin{onlyenv}<4->
-\begin{minted}[escapeinside=||]{haskell}
+\begin{haskellcode*}{escapeinside=||}
 data Lens|\kkreuz| s a = Lens|\kkreuz|
   { {-getter  :: s -> a
   , setter  :: a -> s -> s
   ,-} modifyF :: Functor f => (a -> f a) -> s -> f s
   }
-\end{minted}
+\end{haskellcode*}
   \end{onlyenv}
 
   \vspace{2em}
@@ -230,7 +232,7 @@ data Lens|\kkreuz| s a = Lens|\kkreuz|
     \Large Bahnbrechende Einsicht von Twaan van Laarhoven: \\
 
     \colorbox{yellow}{
-      \huge \hask{modifyF} umfasst \hask{getter} und \hask{setter}!
+      \huge \haskellinline{modifyF} umfasst \haskellinline{getter} und \haskellinline{setter}!
     }
   \end{onlyenv}
 \end{frame}
@@ -238,64 +240,64 @@ data Lens|\kkreuz| s a = Lens|\kkreuz|
 \begin{frame}[fragile]
   \frametitle{
     \colorbox{yellow}{
-      \hask{modifyF} umfasst
-      \visible<2->{{\small 1.}} \hask{getter} und
-      \visible<3->{{\small 2.}} \hask{setter}
+      \haskellinline{modifyF} umfasst
+      \visible<2->{{\small 1.}} \haskellinline{getter} und
+      \visible<3->{{\small 2.}} \haskellinline{setter}
     }
   }
 
-\begin{minted}{haskell}
+\begin{haskellcode}
 type Lens' s a = Functor f => (a -> f a) -> s -> f s
-\end{minted}
+\end{haskellcode}
 
   \begin{enumerate}
     \item
     \begin{visibleenv}<2->
-\begin{minted}{haskell}
+\begin{haskellcode}
 (.^) :: s -> Lens' s a -> a
-\end{minted}
+\end{haskellcode}
     \end{visibleenv}
     \vspace{-0.8em}
     \begin{visibleenv}<7->
-\begin{minted}{haskell}
+\begin{haskellcode}
 s .^ l = getConst (l Const s)
-\end{minted}
+\end{haskellcode}
     \end{visibleenv}
 
     \begin{visibleenv}<6->
-\begin{minted}{haskell}
+\begin{haskellcode}
 newtype Const a b = Const { getConst :: a }
 instance Functor (Const a) where
   fmap _ (Const b) = Const b
-\end{minted}
+\end{haskellcode}
     \end{visibleenv}
     \vspace{1em}
 
     \item
     \begin{visibleenv}<3->
-\begin{minted}{haskell}
+\begin{haskellcode}
 (.~) :: Lens' s a -> a -> s -> s
-\end{minted}
+\end{haskellcode}
     \end{visibleenv}
     \vspace{-0.8em}
     \begin{visibleenv}<5->
-\begin{minted}{haskell}
+\begin{haskellcode}
 (.~) l a s = getId (l (\_ -> Id s) s)
-\end{minted}
+\end{haskellcode}
     \end{visibleenv}
 
     \begin{visibleenv}<4->
-\begin{minted}{haskell}
+\begin{haskellcode}
 newtype Id a = Id { getId :: a }
 instance Functor Id where
   fmap f (Id a) = Id (f a)
-\end{minted}
+\end{haskellcode}
     \end{visibleenv}
   \end{enumerate}
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Komponieren von \hask{Lens'}es}
+  \frametitle{Komponieren von \haskellinline{Lens'}es}
   \begin{onlyenv}<1>
     \begin{tabular}{r l}
       Gegeben: & \mintinline{haskell}{ l  :: Lens' s a} \\
@@ -327,27 +329,27 @@ instance Functor Id where
 
   \begin{visibleenv}<5->
     \vspace{1em}
-    Dabei ist \hask{.} die stinknormale Funktionsverkettung aus der \hask{Prelude}!
+    Dabei ist \haskellinline{.} die stinknormale Funktionsverkettung aus der \haskellinline{Prelude}!
     \vspace{1em}
   \end{visibleenv}
 
   \begin{visibleenv}<6->
     Im Beispiel vom Anfang:
-\begin{minted}{haskell}
+\begin{haskellcode}
 address :: Lens' Person Address
 address f (Person first last addr) =
   fmap (Person first last) (f addr)
-\end{minted}
+\end{haskellcode}
   \end{visibleenv}
   \begin{visibleenv}<7->
-\begin{minted}{haskell}
+\begin{haskellcode}
 streetLine, townLine :: Lens' Address String
 firstName,  lastName :: Lens' Person String
-\end{minted}
+\end{haskellcode}
   \end{visibleenv}
   \begin{visibleenv}<8->
     Dann haben wir \enspace
-    \hask{address.townLine :: Lens' Person String}
+    \haskellinline{address.townLine :: Lens' Person String}
   \end{visibleenv}
 \end{frame}
 
@@ -398,28 +400,28 @@ firstName,  lastName :: Lens' Person String
       \visible<7->{???} \\
 
       \visible<6->{\alert<6>{Fold}} &
-      \visible<6->{Funktion \hask{s -> [a]}} \\
+      \visible<6->{Funktion \haskellinline{s -> [a]}} \\
 
       \visible<5->{\alert<5>{Getter}} &
-      \visible<5->{Funktion \hask{s -> a}} \\
+      \visible<5->{Funktion \haskellinline{s -> a}} \\
 
       \visible<2->{\alert<2>{Traversal}} &
-      \visible<2->{ein \hask{s} besteht aus \hask{a}'s und anderen Daten} \\
+      \visible<2->{ein \haskellinline{s} besteht aus \haskellinline{a}'s und anderen Daten} \\
 
       \alert<1>{Lens} &
-      ein \hask{s} besteht aus einem \hask{a} und anderen Daten \\
+      ein \haskellinline{s} besteht aus einem \haskellinline{a} und anderen Daten \\
 
       \visible<3->{\alert<3>{Prism}} &
-      \visible<3->{ein \hask{s} ist ein \hask{a} oder etwas anderes} \\
+      \visible<3->{ein \haskellinline{s} ist ein \haskellinline{a} oder etwas anderes} \\
 
       \visible<4->{\alert<4>{Iso}} &
-      \visible<4->{ein \hask{s} ist dasselbe wie ein \hask{a}}
+      \visible<4->{ein \haskellinline{s} ist dasselbe wie ein \haskellinline{a}}
     \end{tabular}
   \end{onlyenv}}
 
   \begin{onlyenv}<8->
     \vspace{-0.7em}
-\begin{minted}[fontsize=\footnotesize,baselinestretch=1.2]{haskell}
+\begin{haskellcode*}{fontsize=\footnotesize,baselinestretch=1.2}
    Setter' s a =                                (a -> Id a) -> s -> Id s
      Fold  s a = (Contrav't f, Applicative f) => (a -> f a) -> s -> f s
    Getter  s a =     (Contrav't f, Functor f) => (a -> f a) -> s -> f s
@@ -427,15 +429,15 @@ Traversal' s a =               Applicative f  => (a -> f a) -> s -> f s
      Lens' s a =                   Functor f  => (a -> f a) -> s -> f s
     Prism' s a =    (Choice p, Applicative f) =>  p a (f a) -> p s (f s)
       Iso' s a =    (Profunctor p, Functor f) =>  p a (f a) -> p s (f s)
-\end{minted}
+\end{haskellcode*}
   \end{onlyenv}
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{API}
-\begin{minted}{haskell}
+\begin{haskellcode}
 (.^) :: s -> Lens s a -> a
-\end{minted}
+\end{haskellcode}
 \end{frame}
 
 \begin{frame}
