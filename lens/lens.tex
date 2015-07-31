@@ -54,6 +54,28 @@
 \end{frame}
 \fi
 
+\begin{frame}[fragile,t]
+  \frametitle{Welche Bibliothek?}
+  % Bildquelle: https://ro-che.info/ccc/23
+  \begin{figure}
+    \includegraphics[width=0.9\linewidth]{ccc-picking-lens-library.png}
+    \caption{Picking a Lens Library (Cartesian Closed Comic)}
+  \end{figure}
+  \begin{visibleenv}<2->
+    \begin{center}
+      \begin{minipage}{0.65\textwidth}
+        Die von Edward Kmett natürlich! %Und nun alle:
+
+        \visible<3->{\mintinline{bash}{$ cabal update}} \\
+        \visible<4->{\mintinline{bash}{$ cabal install lens}} \\
+        \visible<5->{\mintinline{bash}{Building profunctors...}} \\
+        \visible<6->{\mintinline{bash}{Configuring semigroupoids...}} \\
+        \visible<7->{\mintinline{bash}{Downloading kan-extensions...}}
+      \end{minipage}
+    \end{center}
+  \end{visibleenv}
+\end{frame}
+
 \begin{frame}[t,fragile]
   \frametitle{Was sind Lenses?}
   Eine Lens beschreibt eine (feste) Position in einer Datenstruktur, an der ein Wert eines bestimmten Typs gespeichert ist.
@@ -354,7 +376,7 @@ firstName,  lastName :: Lens' Person String
 \end{frame}
 
 \begin{frame}[t,fragile]
-  \frametitle{Weitere optische Gerätschaften}
+  \frametitle{Weitere optische Gerätschaften aus \haskellinline{lens}}
   \begin{center}
     \begin{tikzpicture}[
         overlay,
@@ -366,6 +388,7 @@ firstName,  lastName :: Lens' Person String
         }
       ]
       \begin{scope}[shift={(1,0)}]
+        %\draw[use as bounding box] (-5,-1) rectangle (2.5,1.5);
         \node<7->[myrect] (setter) at (-4,0.5) {Setter};
         \node<6->[myrect] (fold) at (-4,-0.5) {Fold};
         \node<2->[myrect] (traversal) at (-2,0.5) {Traversal};
@@ -391,7 +414,7 @@ firstName,  lastName :: Lens' Person String
   %\footnotesize
 
   {
-  \setbeamercolor{alerted text}{fg=blue}
+  \setbeamercolor{alerted text}{fg=orange}
   \setbeamerfont{alerted text}{series=\mdseries}
 
   \begin{onlyenv}<1-7>
@@ -431,6 +454,74 @@ Traversal' s a =               Applicative f  => (a -> f a) -> s -> f s
       Iso' s a =    (Profunctor p, Functor f) =>  p a (f a) -> p s (f s)
 \end{haskellcode*}
   \end{onlyenv}
+
+  % Lens-Beispiele
+  \begin{onlyenv}<1>
+\begin{haskellcode*}{fontsize=\small}
+_1 :: Lens' (x,y) x,    _1 :: Lens' (x,y,z) x
+_2 :: Lens' (x,y) y,    _2 :: Lens' (x,y,z) y
+lens :: (s -> a) -> (s -> a -> s) -> Lens' s a
+choosing :: Lens' s a -> Lens' s' a -> Lens' (Either s s') a
+inside :: Lens' s a -> Lens' (e -> s) (e -> a)
+devoid :: Lens' Void a
+united :: Lens' a ()
+\end{haskellcode*}
+  % -- Void = (a, Void)
+  % -- a    = (a, ())
+  \end{onlyenv}
+
+  % Traversal-Beispiele
+  \begin{onlyenv}<2>
+\begin{haskellcode}
+-- TODO
+\end{haskellcode}
+  \end{onlyenv}
+
+  % Prism-Beispiele
+  \begin{onlyenv}<3>
+\begin{haskellcode*}{fontsize=\small}
+_Left :: Prism' (Either a c) a,    _Right :: Prism' (Either a c) c
+_Just :: Prism' (Maybe a) a
+_Void :: Prism' s Void
+prism :: (a -> s) -> (s -> Either s a) -> Prism' s a
+outside :: Prism' s a -> Lens' (s -> r) (a -> r)
+\end{haskellcode*}
+  \end{onlyenv}
+
+  % Iso-Beispiele
+  \begin{onlyenv}<4>
+\begin{haskellcode}
+curried :: Iso' ((a, b) -> c) (a -> b -> c)
+iso :: (s -> a) -> (a -> s) -> Iso' s a
+from :: Iso' s a -> Iso' a s
+mapping :: Functor f => Iso' s a -> Iso' (f s) (f a)
+\end{haskellcode}
+  \end{onlyenv}
+
+  % Getter-Beispiele
+  \begin{onlyenv}<5>
+\begin{haskellcode}
+to :: (s -> a) -> Getter s a
+\end{haskellcode}
+  \end{onlyenv}
+
+  % Fold-Beispiele
+  \begin{onlyenv}<6>
+\begin{haskellcode}
+folding :: Foldable f => (s -> f a) -> Fold s a
+folded  :: Foldable f => Fold (f a) a
+replicated :: Int -> Fold a a
+unfolded :: (b -> Maybe (a, b)) -> Fold b a
+\end{haskellcode}
+  \end{onlyenv}
+
+  % Setter-Beispiele
+  \begin{onlyenv}<7>
+\begin{haskellcode}
+sets :: ((a -> a) -> s -> s) -> Setter' s a
+mapped :: Functor f => Setter' (f a) a
+\end{haskellcode}
+  \end{onlyenv}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -438,15 +529,6 @@ Traversal' s a =               Applicative f  => (a -> f a) -> s -> f s
 \begin{haskellcode}
 (.^) :: s -> Lens s a -> a
 \end{haskellcode}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Welche Bibliothek?}
-  % Bildquelle: https://ro-che.info/ccc/23
-  \begin{figure}
-    \includegraphics[width=0.9\linewidth]{ccc-picking-lens-library.png}
-    \caption{Picking a Lens Library (Cartesian Closed Comic)}
-  \end{figure}
 \end{frame}
 
 % TODO:
