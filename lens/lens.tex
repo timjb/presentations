@@ -13,6 +13,7 @@
 \newminted{haskell}{}
 \newmintinline{haskell}{}
 
+\usepackage{hyperref}
 \usepackage{tikz}
 
 \usetheme{Boadilla}
@@ -552,9 +553,26 @@ mapped :: Setter' (x -> a) a
 \end{frame}
 
 \begin{frame}
-  \frametitle{Wo kann ich mehr über Lens erfahren?}
-  TODO
+  \frametitle{Wo kann ich mehr über \haskellinline{lens} erfahren?}
+  \begin{itemize}
+    \item Das Lens-Wiki: \url{https://github.com/ekmett/lens/wiki}
+    \item Blogserie ``Lens over Tea'' \url{http://artyom.me/lens-over-tea-1}
+    \item \href{https://skillsmatter.com/skillscasts/4251-lenses-compositional-data-access-and-manipulation}{Vortrag von Simon Peyton Jones bei Skills Matter}
+    \item \href{http://www.haskellforall.com/2013/05/program-imperatively-using-haskell.html}{Blogpost: Program imperatively using Haskell lenses}
+    \item \href{https://www.fpcomplete.com/school/to-infinity-and-beyond/pick-of-the-week/a-little-lens-starter-tutorial}{School of Haskell: A Little Lens Starter Tutorial}
+  \end{itemize}
 \end{frame}
+
+{\setbeamertemplate{background}{}
+\begin{frame}[b]
+  \begin{center}
+    \includegraphics[width=5cm,keepaspectratio]{donald-detective.jpg} \\
+  \end{center}
+
+  \centering \small
+  \url{http://timbaumann.info/presentations/lens/lens.pdf} \\
+  \url{https://github.com/timjb/presentations/tree/gh-pages/lens}
+\end{frame}}
 
 % TODO:
 % Type-changing lenses
