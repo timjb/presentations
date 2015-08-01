@@ -420,7 +420,7 @@ firstName,  lastName :: Lens' Person String
   \begin{onlyenv}<1-7>
     \begin{tabular}{r l}
       \visible<7->{\alert<7>{Setter}} &
-      \visible<7->{???} \\
+      \visible<7->{in \haskellinline{s} gibt es veränderbare \haskellinline{a}'s} \\
 
       \visible<6->{\alert<6>{Fold}} &
       \visible<6->{Funktion \haskellinline{s -> [a]}} \\
@@ -458,13 +458,12 @@ Traversal' s a =               Applicative f  => (a -> f a) -> s -> f s
   % Lens-Beispiele
   \begin{onlyenv}<1>
 \begin{haskellcode*}{fontsize=\small}
-_1 :: Lens' (x,y) x,    _1 :: Lens' (x,y,z) x
-_2 :: Lens' (x,y) y,    _2 :: Lens' (x,y,z) y
 lens :: (s -> a) -> (s -> a -> s) -> Lens' s a
+_1 :: Lens' (x,y) x     _1 :: Lens' (x,y,z) x
+_2 :: Lens' (x,y) y     _2 :: Lens' (x,y,z) y
 choosing :: Lens' s a -> Lens' s' a -> Lens' (Either s s') a
 inside :: Lens' s a -> Lens' (e -> s) (e -> a)
-devoid :: Lens' Void a
-united :: Lens' a ()
+devoid :: Lens' Void a    united :: Lens' a ()
 \end{haskellcode*}
   % -- Void = (a, Void)
   % -- a    = (a, ())
@@ -472,18 +471,21 @@ united :: Lens' a ()
 
   % Traversal-Beispiele
   \begin{onlyenv}<2>
-\begin{haskellcode}
--- TODO
-\end{haskellcode}
+\begin{haskellcode*}{fontsize=\small}
+traverse :: Traversable t => Traversal' (t a) a
+beside :: Traversal' s a -> Traversal s' a b
+       -> Traversal' (s,s') a
+taking :: Int -> Traversal' s a -> Traversal' s a
+\end{haskellcode*}
   \end{onlyenv}
 
   % Prism-Beispiele
   \begin{onlyenv}<3>
 \begin{haskellcode*}{fontsize=\small}
-_Left :: Prism' (Either a c) a,    _Right :: Prism' (Either a c) c
+prism :: (a -> s) -> (s -> Either s a) -> Prism' s a
+_Left :: Prism' (Either a c) a    _Right :: Prism' (Either a c) c
 _Just :: Prism' (Maybe a) a
 _Void :: Prism' s Void
-prism :: (a -> s) -> (s -> Either s a) -> Prism' s a
 outside :: Prism' s a -> Lens' (s -> r) (a -> r)
 \end{haskellcode*}
   \end{onlyenv}
@@ -491,8 +493,8 @@ outside :: Prism' s a -> Lens' (s -> r) (a -> r)
   % Iso-Beispiele
   \begin{onlyenv}<4>
 \begin{haskellcode}
-curried :: Iso' ((a, b) -> c) (a -> b -> c)
 iso :: (s -> a) -> (a -> s) -> Iso' s a
+curried :: Iso' ((a, b) -> c) (a -> b -> c)
 from :: Iso' s a -> Iso' a s
 mapping :: Functor f => Iso' s a -> Iso' (f s) (f a)
 \end{haskellcode}
@@ -502,16 +504,17 @@ mapping :: Functor f => Iso' s a -> Iso' (f s) (f a)
   \begin{onlyenv}<5>
 \begin{haskellcode}
 to :: (s -> a) -> Getter s a
+to length :: Getter [a] Int
 \end{haskellcode}
   \end{onlyenv}
 
   % Fold-Beispiele
   \begin{onlyenv}<6>
 \begin{haskellcode}
+unfolded :: (b -> Maybe (a, b)) -> Fold b a
 folding :: Foldable f => (s -> f a) -> Fold s a
 folded  :: Foldable f => Fold (f a) a
 replicated :: Int -> Fold a a
-unfolded :: (b -> Maybe (a, b)) -> Fold b a
 \end{haskellcode}
   \end{onlyenv}
 
@@ -520,8 +523,18 @@ unfolded :: (b -> Maybe (a, b)) -> Fold b a
 \begin{haskellcode}
 sets :: ((a -> a) -> s -> s) -> Setter' s a
 mapped :: Functor f => Setter' (f a) a
+mapped :: Setter' (x -> a) a
 \end{haskellcode}
   \end{onlyenv}
+
+  {\small
+  \begin{onlyenv}<9->
+    \begin{itemize}
+      \item<9-> Durch Subtyping ist jeder Iso eine Lens, jedes Prism ein Traversal \ldots
+      \item<10-> Man kann z.\,B. eine Lens mit einem Traversal verknüpfen (mit \haskellinline{.}) und man bekommt ein Traversal.
+      \item<11-> Viele Beispielfunktionen haben einen allgemeineren Typ als angegeben.
+    \end{itemize}
+  \end{onlyenv}}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -534,5 +547,6 @@ mapped :: Functor f => Setter' (f a) a
 % TODO:
 % * Traversals erklären
 % * Rubiks-Cube-Beispiel
+% * "jQuery für Haskell"
 
 \end{document}
