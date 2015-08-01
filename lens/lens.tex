@@ -6,6 +6,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
 
+
+%\setbeameroption{show notes} % Kommentare im fertigen PDF
+
 \usepackage[outputdir=output]{minted} % Syntax-Highlighted Code; requires pygments to be installed
 \newminted{haskell}{}
 \newmintinline{haskell}{}
@@ -18,6 +21,9 @@
 \setbeamertemplate{footline}[page number] % Einfacher Folienzähler als Fußzeile
 \setbeamertemplate{navigation symbols}{} % Keine Navigationslinks
 }
+
+% Bildquelle: http://www.dibujosdisneyparacolorear.com/imagenes-donald-detective-jpg
+\setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{donald-detective-bg.jpg}}
 
 \defbeamertemplate*{title page}{customized}[1][]
 {
@@ -125,6 +131,7 @@ address = Lens|\kreuz|
         \haskellinline{= setter l a}
         \item \haskellinline{s = setter l (getter l s) s}
       \end{enumerate}
+      \note{Das sind die ``costate comonad coalgebra'' Gesetze}
     \end{onlyenv}
   \end{columns}
 \begin{onlyenv}<4>
@@ -544,9 +551,20 @@ mapped :: Setter' (x -> a) a
 \end{haskellcode}
 \end{frame}
 
+\begin{frame}
+  \frametitle{Wo kann ich mehr über Lens erfahren?}
+  TODO
+\end{frame}
+
 % TODO:
+% Type-changing lenses
 % * Traversals erklären
 % * Rubiks-Cube-Beispiel
 % * "jQuery für Haskell"
+% Funktionen: over, both
+% Man muss nicht auf "lens" dependen, um eine Lens zu schreiben!
+% at :: Lens (Map a) (Maybe a)
+% Was ist die Konvention mit "Of" am Ende des Namens einer Funktion?
+% Die beste imperative Programmiersprache ist ... Haskell (+=, *=, ...)
 
 \end{document}
