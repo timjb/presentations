@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Curry Club Augsburg</title>
+  <link href="http://curry-club-augsburg.de/atom.xml" rel="self" />
+  <link href="http://curry-club-augsburg.de" />
+  <id>http://curry-club-augsburg.de/atom.xml</id>
+  <author>
+    <name>Curry Club Augsburg</name>
+    <email>post@curry-club-augsburg.de</email>
+  </author>
+  <updated>2015-07-25T00:00:00Z</updated>
+  <entry>
+    <title>Programm für das sechste Treffen am 10. September 2015</title>
+    <link href="http://curry-club-augsburg.de/posts/2015-07-25-ankuendigung-sechstes-treffen.html" />
+    <id>http://curry-club-augsburg.de/posts/2015-07-25-ankuendigung-sechstes-treffen.html</id>
+    <published>2015-07-25T00:00:00Z</published>
+    <updated>2015-07-25T00:00:00Z</updated>
+    <summary type="html"><![CDATA[This is the post description]]></summary>
+  </entry>
+  <!-- weitere <entry>'s -->
+</feed>

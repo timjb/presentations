@@ -6,7 +6,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
 
-
 %\setbeameroption{show notes} % Kommentare im fertigen PDF
 
 \usepackage[outputdir=output]{minted} % Syntax-Highlighted Code; requires pygments to be installed
@@ -551,6 +550,28 @@ mapped :: Setter' (x -> a) a
 (.^) :: s -> Lens s a -> a
 \end{haskellcode}
 \end{frame}
+
+\begin{frame}
+  \frametitle{Beispiel: Curry-Feed parsen}
+  \begin{center}
+    \includegraphics[width=10cm]{curry-termine-screenshot.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Beispiel: Curry-Feed parsen}
+  \inputminted[fontsize=\footnotesize]{xml}{curry-feed.xml}
+\end{frame}
+
+{\setbeamertemplate{background}{}
+\begin{frame}[b]
+  \frametitle{Beispiel: Curry-Feed parsen}
+  \begin{visibleenv}<2->
+    \hfill \includegraphics[height=2cm]{lens-jquery.png}
+  \end{visibleenv}
+  \vspace{-2cm}
+  \inputminted[fontsize=\small]{haskell}{curry-termine/Main.hs}
+\end{frame}}
 
 \begin{frame}
   \frametitle{Wo kann ich mehr über \haskellinline{lens} erfahren?}
