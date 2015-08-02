@@ -547,6 +547,14 @@ mapped :: Setter' (x -> a) a
   \end{onlyenv}}
 \end{frame}
 
+{\setbeamertemplate{background}{}
+\begin{frame}
+  % Quelle: https://ro-che.info/ccc/29
+  \begin{center}
+    \includegraphics[width=0.9\linewidth]{ccc-does-diagram-commute.jpg}
+  \end{center}
+\end{frame}}
+
 \begin{frame}[fragile]
   \frametitle{API}
 \begin{haskellcode}
@@ -614,7 +622,7 @@ data Person = Person
 \end{haskellcode*}
     \begin{onlyenv}<2>
 \begin{haskellcode*}{fontsize=\small}
-address :: Functor f
+address :: forall f. Functor f
         => (Address -> f Address)
         -> Person -> f Person
 address f (Person first last addr) =
@@ -685,5 +693,7 @@ makeLenses'' Person
 % at :: Lens (Map a) (Maybe a)
 % Was ist die Konvention mit "Of" am Ende des Namens einer Funktion?
 % Die beste imperative Programmiersprache ist ... Haskell (+=, *=, ...)
+% Indexed Traversals?
+% Prisms are dual to Lenses
 
 \end{document}
