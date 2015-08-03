@@ -16,6 +16,7 @@ build-type:          Simple
 cabal-version:       >=1.10
 data-files:          socke-klein.bmp
                      socke-background.bmp
+                     was-ficht-dich-an.bmp
 
 executable flappy-cat
   main-is:             Main.hs

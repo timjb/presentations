@@ -16,7 +16,8 @@ main :: IO ()
 main = do
   socke      <- loadBMP =<< getDataFileName "socke-klein.bmp"
   background <- loadBMP =<< getDataFileName "socke-background.bmp"
-  let renderHandler    = return . render socke background
+  wfda       <- loadBMP =<< getDataFileName "was-ficht-dich-an.bmp"
+  let renderHandler    = return . render socke background wfda
       inputHandler evt = return . execState (handleInput evt)
       stepHandler dt   = return . execState (step dt)
   playIO displayMode white fps initialFlappyCat
@@ -30,11 +31,15 @@ main = do
 render
   :: Picture -- ^ Socke
   -> Picture -- ^ Background
+  -> Picture -- ^ Schnurrli, was ficht dich an?
   -> FlappyCat
   -> Picture
-render socke background fc
+render socke background wfda fc
   | fc ^. gameOver =
-      Translate (-170) (-20) $ Scale 0.5 0.5 $ Text "Game Over"
+      Pictures
+      [ Translate (-110) (-150) $ Scale 0.3 0.3 $ Text "Game Over"
+      , Translate 0 20 $ wfda
+      ]
   | otherwise =
       let deg = atan (fc ^. velY / velX) * (-180/pi) in
       Pictures
