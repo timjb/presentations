@@ -1,28 +1,38 @@
 \documentclass{beamer}
 
-\mode<presentation> {
-
-\usepackage{graphicx}
 \usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
 
-%\setbeameroption{show notes} % Kommentare im fertigen PDF
+\mode<presentation> {
+  %\setbeameroption{show notes} % Kommentare im fertigen PDF
 
+  \usetheme{Boadilla}
+  \usecolortheme{seagull}
+
+  \setbeamertemplate{footline}[page number] % Einfacher Folienzähler als Fußzeile
+  \setbeamertemplate{navigation symbols}{} % Keine Navigationslinks
+}
+
+\usepackage{graphicx}
+
+% Damit die Tilde ~ im Code nicht hochgestellt dargestellt wird, muss man einen anderen Font verwenden, z.B.
+%\usepackage[T1]{fontenc}
+%\usepackage{beramono}
+% Dieser Font ist aber zu breit.
+% siehe https://github.com/gpoore/minted/issues/2#issuecomment-18451836
 \usepackage[outputdir=output]{minted} % Syntax-Highlighted Code; requires pygments to be installed
 \newminted{haskell}{}
 \newmintinline{haskell}{}
 
 \usepackage{hyperref}
+\usepackage{url}
+% URLs mit LaTeX-Sonderzeichen (Prozent-Zeichen etc.)
+\urldef{\lenswithoutdep}\url{https://github.com/ekmett/lens/wiki/How-can-I-write-lenses-without-depending-on-lens%3F}
+
 \usepackage{tikz}
 
 \definecolor{dimgray}{rgb}{0.41, 0.41, 0.41}
-
-\usetheme{Boadilla}
-\usecolortheme{seagull}
-
-\setbeamertemplate{footline}[page number] % Einfacher Folienzähler als Fußzeile
-\setbeamertemplate{navigation symbols}{} % Keine Navigationslinks
-}
+\definecolor{greenncs}{rgb}{0.0, 0.62, 0.42}
 
 % Bildquelle: http://www.dibujosdisneyparacolorear.com/imagenes-donald-detective-jpg
 \setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{donald-detective-bg.jpg}}
@@ -49,6 +59,7 @@
 \newcommand{\kreuz}{$\,^\dag$} % Dagger, alter!
 \newcommand{\kkreuz}{$\,^\ddag$} % DDagger, alter!
 \newcommand{\fa}{$\forall$}
+\newcommand{\ev}{$\rightsquigarrow$} % evaluates to
 
 \begin{document}
 
@@ -187,7 +198,9 @@ person' = modify personTownLine (map toUpper) person
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Alles wunderbar? Leider nein}
+  \frametitle{
+    Alles wunderbar? Leider nein
+  }
 
   \textbf{Problem Nr. 1}: Bei der Auswertung
 \begin{haskellcode*}{fontsize=\small, escapeinside=||}
@@ -222,10 +235,29 @@ last = Lens?\kreuz? getter setter
 \end{haskellcode*}
     \end{columns}
   \end{visibleenv}
+  \note{
+    Man kann diese Probleme auch anders lösen: Nämlich, indem man Lenses über die Store-Komonade definiert:
+
+\begin{haskellcode*}{}
+newtype Lens a b = Lens (a -> Store b a)
+data Store b a = Store (b -> a) b
+\end{haskellcode*}
+
+    Das ermöglicht, die Datenstruktur nur einmal zu durchlaufen.
+
+    Dies macht das Paket \verb|data-lens| von Edward Kmett. (Das ist der Vorgänger seiner \verb|lens|-Library.)
+  }
 \end{frame}
 
 \begin{frame}[fragile,t]
-  \frametitle{Alles wunderbar? Leider nein}
+  \frametitle{
+    Alles wunderbar? Leider nein
+    \hfill
+    {
+      \small \color{greenncs}
+      \visible<2->{\texttt{\{-\# LANGUAGE Rank2Types \#-\}}}
+    }
+  }
   \textbf{Idee}: Erweitere die Definition einer Lens um die \haskellinline{modify}-Funktion. \\
   \begin{visibleenv}<2->
     Wir verallgemeinern auch gleich \haskellinline{modify} auf effektvolle Updatefunktionen, d.\,h. solche, die beispielsweise \haskellinline{IO} verwenden:
@@ -261,12 +293,13 @@ data Lens|\kkreuz| s a = Lens|\kkreuz|
   \vspace{2em}
 
   \begin{onlyenv}<3->
-    \Large Bahnbrechende Einsicht von Twaan van Laarhoven: \\
+    \Large Bahnbrechende Einsicht von Twan van Laarhoven: \\
 
     \colorbox{yellow}{
       \huge \haskellinline{modifyF} umfasst \haskellinline{getter} und \haskellinline{setter}!
     }
   \end{onlyenv}
+  \note<3->{Diese Einsicht hat Twan van Laarhoven 2009 im Blogartikel \href{http://twanvl.nl/blog/haskell/cps-functional-references}{``CPS based functional references''} veröffentlicht.}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -385,6 +418,41 @@ firstName,  lastName :: Lens' Person String
   \end{visibleenv}
 \end{frame}
 
+\begin{frame}[fragile,t]
+  \frametitle{Was ist ein Traversal?}
+\begin{haskellcode}
+class (Functor t, Foldable t) => Traversable t where
+  traverse :: Applicative f => (a -> f b) -> t a -> f (t b)
+\end{haskellcode}
+  \begin{onlyenv}<2->
+\begin{haskellcode}
+type Traversal' s a = forall f.
+  Applicative f => (a -> f a) -> s -> f s
+\end{haskellcode}
+  \end{onlyenv}
+  {\normalsize Ein \haskellinline{Traversal' s a} ermöglicht das Durchlaufen und Abändern von mehreren Werten vom Typ \verb|a| in einem vom Typ \verb|s| mit applik. Effekten.}
+  \begin{onlyenv}<2->
+\begin{haskellcode}
+traverse :: Traversable t => Traversal' (t a) a
+\end{haskellcode}
+  \end{onlyenv}
+  \begin{onlyenv}<3->
+\begin{haskellcode}
+evenIxs :: Traversal' [a] a
+evenIxs f [] = pure []
+evenIxs f [x] = (:[]) <$> f x
+evenIxs f (x:y:xs) = (\x' xs' -> x':y:xs')
+                     <$> f x <*> evenIxs f xs
+\end{haskellcode}
+  \end{onlyenv}
+  \begin{onlyenv}<4->
+    Traversals lassen sich wie Lenses verknüpfen:
+\begin{haskellcode}
+(.) :: Traversal' s a -> Traversal' a b -> Traversal' s b
+\end{haskellcode}
+  \end{onlyenv}
+\end{frame}
+
 \begin{frame}[t,fragile]
   \frametitle{Weitere optische Gerätschaften aus \haskellinline{lens}}
   \begin{center}
@@ -419,9 +487,6 @@ firstName,  lastName :: Lens' Person String
   \end{center}
 
   \vspace{2em}
-
-  %{\setlength\tabcolsep{0.2em}
-  %\footnotesize
 
   {
   \setbeamercolor{alerted text}{fg=orange}
@@ -505,6 +570,7 @@ outside :: Prism' s a -> Lens' (s -> r) (a -> r)
 \begin{haskellcode}
 iso :: (s -> a) -> (a -> s) -> Iso' s a
 curried :: Iso' ((a, b) -> c) (a -> b -> c)
+packed :: Iso' String Text
 from :: Iso' s a -> Iso' a s
 mapping :: Functor f => Iso' s a -> Iso' (f s) (f a)
 \end{haskellcode}
@@ -545,6 +611,10 @@ mapped :: Setter' (x -> a) a
       \item<11-> Viele Beispielfunktionen haben einen allgemeineren Typ als angegeben.
     \end{itemize}
   \end{onlyenv}}
+
+  \note{Es gibt außerdem noch den Typ \haskellinline{Review t b}. Er entspricht einer Funktion \haskellinline{b -> t}. Unter der Dualität von \haskellinline{Lens'} und \haskellinline{Prism'} entspricht ein \haskellinline{Getter} einem \haskellinline{Review}. Insbesondere ist jedes \haskellinline{Prism' b t} ein \haskellinline{Review t b}.}
+
+  \note{\url{https://github.com/ekmett/lens/wiki/Derivation}{Das Lens-Wiki beschreibt} die Herleitung dieser Typen.}
 \end{frame}
 
 {\setbeamertemplate{background}{}
@@ -555,11 +625,62 @@ mapped :: Setter' (x -> a) a
   \end{center}
 \end{frame}}
 
-\begin{frame}[fragile]
-  \frametitle{API}
-\begin{haskellcode}
-(.^) :: s -> Lens s a -> a
-\end{haskellcode}
+\begin{frame}[fragile,t]
+  \frametitle{Polymorphe Updates}
+  \begin{onlyenv}<1-6>
+\begin{haskellcode*}{escapeinside=||}
+type Lens s t a b = forall f.
+  Functor f => (a -> f b) -> s -> f t
+\end{haskellcode*}
+  \end{onlyenv}
+  \begin{onlyenv}<2-6>
+\begin{haskellcode*}{escapeinside=||}
+type Lens' s a = Lens s s a a
+\end{haskellcode*}
+  \end{onlyenv}
+  \begin{onlyenv}<3-6>
+\begin{haskellcode*}{escapeinside=||}
+_1 :: Lens (x,y) (x',y) x x'
+\end{haskellcode*}
+  \end{onlyenv}
+  \begin{onlyenv}<4-6>
+\begin{haskellcode*}{escapeinside=||}
+  set (_2._1) 42 ("hello",("world","!!!"))
+|\ev| ("hello",(42,"!!!"))
+\end{haskellcode*}
+  \end{onlyenv}
+  \begin{onlyenv}<7->
+\begin{haskellcode*}{escapeinside=||}
+type Prism s t a b = forall p f.
+  (Choice p, Applicative f) => p a (f b) -> p s (f t)
+\end{haskellcode*}
+\begin{haskellcode*}{escapeinside=||}
+type Prism' s a = Prism s s a a
+\end{haskellcode*}
+\begin{haskellcode*}{escapeinside=||}
+_Right :: Prism (Either x y) (Either x y') y y'
+\end{haskellcode*}
+\begin{haskellcode*}{escapeinside=||}
+  set (_Right._2) "world" (Right ("hello",42))
+|\ev| Right ("hello","world")
+\end{haskellcode*}
+  \end{onlyenv}
+  \begin{onlyenv}<5->
+\begin{haskellcode*}{escapeinside=||}
+type Setter s t a b = (a -> Id b) -> (s -> Id t)
+type Setter' s a = Setter s s a a
+mapped :: Functor f => Setter (f x) (f y) x y
+\end{haskellcode*}
+  \end{onlyenv}
+  \begin{onlyenv}<6->
+\begin{haskellcode*}{escapeinside=||}
+type Traversal s t a b = forall f.
+  Applicative f => (a -> f b) -> (s -> f t)
+type Traversal' s a = Traversal s s a a
+traverse :: Traversable t => Traversal (t x) (t y) x y
+\end{haskellcode*}
+  \end{onlyenv}
+  \note{Polymorphe Updates wurden zum ersten Mal 2012 in \href{http://r6.ca/blog/20120623T104901Z.html}{einem Blogartikel} von Russell O'Connor beschrieben.}
 \end{frame}
 
 \begin{frame}
@@ -582,16 +703,18 @@ mapped :: Setter' (x -> a) a
   \end{visibleenv}
   \vspace{-2cm}
   \inputminted[fontsize=\small]{haskell}{curry-termine/Main.hs}
+  \note{Verwendete Packages: \verb|lens|, \verb|text|, \verb|xml-conduit|, \verb|wreq|, \verb|xml-lens|}
+  \note{Es gibt auch Lenses für JSON-Daten. Diese waren früher in \verb|lens| enthalten, jetzt sind sie Teil des Pakets \verb|lens-aeson|.}
 \end{frame}}
 
 \begin{frame}[fragile,t]
   \frametitle{Wie bekomme ich Lenses für meine Datentypen?}
-  \begin{columns}[t]
+  \begin{columns}
     \column{0.48\textwidth}
     \begin{onlyenv}<1-2>
       \begin{visibleenv}<2>
 \begin{haskellcode*}{stripnl=false,fontsize=\small}
-
+{-# LANGUAGE Rank2Types #-}
 -- keine Imports nötig
 
 \end{haskellcode*}
@@ -611,6 +734,14 @@ import Lens.Micro.TH
 -- aus 'microlens-th' (Beispiel)
 \end{haskellcode*}
     \end{onlyenv}
+    \begin{onlyenv}<5>
+\begin{haskellcode*}{stripnl=false,fontsize=\small}
+{-# LANGUAGE DeriveDataTypeable #-}
+import Data.Data
+
+\end{haskellcode*}
+    \end{onlyenv}
+    \begin{onlyenv}<1-4>
 \begin{haskellcode*}{fontsize=\small}
 data Address = Address {...}
 
@@ -620,6 +751,18 @@ data Person = Person
   , _address :: Address
   }
 \end{haskellcode*}
+    \end{onlyenv}
+    \begin{onlyenv}<5>
+\begin{haskellcode*}{fontsize=\small}
+data Address = Address {...}
+  deriving (Typeable, Data)
+data Person = Person
+  { _firstName :: String
+  , _lastName :: String
+  , _address :: Address
+  } deriving (Typeable, Data)
+\end{haskellcode*}
+    \end{onlyenv}
     \begin{onlyenv}<2>
 \begin{haskellcode*}{fontsize=\small}
 address :: forall f. Functor f
@@ -627,7 +770,7 @@ address :: forall f. Functor f
         -> Person -> f Person
 address f (Person first last addr) =
   fmap (Person first last) (f addr)
-
+{-# INLINE address #-} -- empfohlen
 -- und so weiter ...
 \end{haskellcode*}
     \end{onlyenv}
@@ -635,6 +778,16 @@ address f (Person first last addr) =
 \begin{haskellcode*}{fontsize=\small}
 makeLenses'' Address
 makeLenses'' Person
+\end{haskellcode*}
+    \end{onlyenv}
+    \begin{onlyenv}<5>
+\begin{haskellcode*}{fontsize=\footnotesize, escapeinside=||}
+-- Im Client-Code: Importiere Lens
+import Data.Data.Lens
+-- und benutze dann die Funktion:
+biplate :: (Data s, Typeable a)
+        => Traversal' s a
+biplate :: Traversal' Person Address
 \end{haskellcode*}
     \end{onlyenv}
 
@@ -645,6 +798,7 @@ makeLenses'' Person
       {\small \color{dimgray}
       Vorteil: Keine Library benötigt! \\
       Nachteil: Boilerplate-Code}
+      \note{Im Lens-Wiki auf \lenswithoutdep wird erklärt, wie man Lenses, Traversals, Folds etc. schreiben kann, ohne auf Lens zu dependen.}
       \item<3-> Lenses generieren mit Template Haskell-Funktionen aus \haskellinline{lens} \\[0.2em]
       {\small \color{dimgray}
       Vorteil: Komfortabel \\
@@ -653,8 +807,14 @@ makeLenses'' Person
       {\small \color{dimgray}
       Vorteil: Komfortabel, keine Dependency auf \verb|lens| \\
       Nachteil: Template Haskell}
+      \item<5-> Derive \verb|Data| und \verb|Typeable| und benutze \verb|Data.Data.Lens| \\[0.2em]
+      {\small \color{dimgray}
+      Nachteil: nur typgesteuerte Traversals möglich}
     \end{enumerate}
   \end{columns}
+  \note{Lenses bieten die Möglichkeit, die konkrete Implementierung eines Datentyps nach außen hin zu verstecken, aber dennoch Zugriff auf Felder zu gewähren. Dadurch gewinnt man die Freiheit, die Implementierung des Datentyps zu verbessern, ohne das Interface nach außen zu verändern.}
+  \note{\verb|Data.Data.Lens| und \verb|Control.Lens.Plated| basieren auf der \verb|uniplate|-Library für generisches Programmieren von Neil Mitchell.}
+  \note{Die Plated-Funktionalität von Lens kann besonders hilfreich für Compiler-Programmierer sein: Damit kann man nämlich z.B. mit wenig Code auf einem AST Transformationen durchführen.}
 \end{frame}
 
 \begin{frame}
@@ -664,7 +824,7 @@ makeLenses'' Person
 \begin{frame}[fragile,t]
   \frametitle{Wo kann ich mehr über \haskellinline{lens} erfahren?}
   \begin{itemize}
-    \item Das Lens-Wiki: \url{https://github.com/ekmett/lens/wiki}
+    \item \textbf{Das Lens-Wiki:} \url{https://github.com/ekmett/lens/wiki}
     \item Blogserie ``Lens over Tea'' \url{http://artyom.me/lens-over-tea-1}
     \item \href{https://skillsmatter.com/skillscasts/4251-lenses-compositional-data-access-and-manipulation}{Vortrag von Simon Peyton Jones bei Skills Matter}
     \item \href{http://www.haskellforall.com/2013/05/program-imperatively-using-haskell.html}{Blogpost: ``Program imperatively using Haskell lenses''}
@@ -672,6 +832,7 @@ makeLenses'' Person
     \item Cheat Sheet für \verb|Control.Lens|: \\
     \url{https://github.com/anchor/haskell-cheat-sheets}
   \end{itemize}
+  \note{Auch ziemlich cool: \href{http://www.haskellforall.com/2015/01/total-100-exhaustive-pattern-matching.html}{total-1.0.0: Exhaustive pattern matching using traversals, prisms, and lenses}}
 \end{frame}
 
 {\setbeamertemplate{background}{}
@@ -689,8 +850,11 @@ makeLenses'' Person
 % Type-changing lenses
 % * Traversals erklären
 % * Rubiks-Cube-Beispiel
-% Funktionen: over, both
+% Überblick über Operatoren:
+%    https://github.com/ekmett/lens/wiki/Operators
+% Funktionen: over, both, set, view, (&)
 % at :: Lens (Map a) (Maybe a)
+% Kombinatoren für 'Maybe-Lenses', z.B. (?~)
 % Was ist die Konvention mit "Of" am Ende des Namens einer Funktion?
 % Die beste imperative Programmiersprache ist ... Haskell (+=, *=, ...)
 % Indexed Traversals?
