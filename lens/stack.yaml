@@ -1,5 +1,8 @@
 flags: {}
 packages:
 - curry-termine/
-extra-deps: []
+- flappy-cat/
+extra-deps:
+- gloss-1.9.4.1
+- gloss-rendering-1.9.3.1
 resolver: nightly-2015-07-30
