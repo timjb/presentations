@@ -4,6 +4,7 @@ module FlappyCat where
 
 import Control.Lens
 import System.Random
+import Graphics.Gloss.Interface.Pure.Game (KeyState (..), SpecialKey (..))
 import Control.Monad.State.Lazy (MonadState (..))
 
 -- Constants
@@ -15,46 +16,42 @@ width, height :: Int
 width  = 600
 height = 400
 
-sockeExtremePoints :: [(Float, Float)]
-sockeExtremePoints =
-  map (\(x,y) -> (x - 37, 32 - y)) $
-  [ (67,7)
-  , (71,26)
-  , (64,60)
-  , (51,63)
-  , (16,60)
-  , (1,1)
-  ]
+jumpKeys :: [SpecialKey]
+jumpKeys = [KeySpace, KeyEnter, KeyUp]
 
-data Hurdle =
-  Hurdle
-  { _hurdlePosX :: Float
-  , _hurdleHeight :: Float
-  }
+data Pos =
+  Pos
+  { _x :: Float
+  , _y :: Float
+  } deriving (Show, Eq)
+
+makeLenses ''Pos
+
+newtype Hurdle = Hurdle { _hurdlePos :: Pos } deriving (Show, Eq)
 
 makeLenses ''Hurdle
 
 randomHurdle :: (RandomGen g, MonadState g m) => Float -> m Hurdle
 randomHurdle posX = state $ \g ->
-  let (dist, g')     = randomR (200, 600) g
-      (hHeight, g'') = randomR (-140, 140) g'
-  in (Hurdle (posX + dist) hHeight, g'')
+  let (d, g')  = randomR (200, 600)  g
+      (y, g'') = randomR (-130, 130) g'
+  in (Hurdle (Pos (posX + d) y), g'')
 
-passes :: (Float, Float) -> Hurdle -> Bool
-passes (x, y) hurdle =
-  abs (x - hurdle ^. hurdlePosX) > 25 ||
-  abs (y - hurdle ^. hurdleHeight) < 70
+passes :: Pos -> Hurdle -> Bool
+passes pos hurdle =
+  abs (pos^.x - hurdle^.hurdlePos.x) > 25 ||
+  abs (pos^.y - hurdle^.hurdlePos.y) < 70
+
+data GameState = Running | Paused | GameOver deriving (Eq, Show, Read)
 
 data FlappyCat =
   FlappyCat
   { _gen :: StdGen
-  , _pressed :: Bool
-  , _gameOver :: Bool
-  , _dist :: Float
+  , _gameState :: GameState
+  , _catPos :: Pos
   , _velY :: Float
-  , _posY :: Float
   , _hurdles :: [Hurdle]
-  }
+  } deriving (Show)
 
 makeLenses ''FlappyCat
 
@@ -62,10 +59,22 @@ initialFlappyCat :: FlappyCat
 initialFlappyCat =
   FlappyCat
   { _gen = mkStdGen 42
-  , _pressed = False
-  , _gameOver = False
-  , _dist = 0
+  , _gameState = Running
+  , _catPos = Pos 0 0
   , _velY = jumpVel
-  , _posY = 0
   , _hurdles = []
   }
+
+catSlope :: FlappyCat -> Float
+catSlope fc = - atan (fc^.velY / velX)
+
+catExtremePoints :: FlappyCat -> [Pos]
+catExtremePoints fc =
+  map (translate . rotate . center . uncurry Pos)
+    [(67,7), (71,26), (64,60), (51,63), (16,60), (1,1)]
+  where
+    center p = Pos (p^.x - 37) (32 - p^.y)
+    rad = catSlope fc
+    rotate p = Pos (  cos rad * p^.x + sin rad * p^.y)
+                   (- sin rad * p^.x + cos rad * p^.y)
+    translate p = Pos (p^.x + fc^.catPos.x) (p^.y + fc^.catPos.y)

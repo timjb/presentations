@@ -60,6 +60,7 @@
 \newcommand{\kkreuz}{$\,^\ddag$} % DDagger, alter!
 \newcommand{\fa}{$\forall$}
 \newcommand{\ev}{$\rightsquigarrow$} % evaluates to
+\newcommand{\hl}[1]{\colorbox{yellow}{#1}} % highlight code
 
 \begin{document}
 
@@ -612,6 +613,7 @@ mapped :: Setter' (x -> a) a
     \end{itemize}
   \end{onlyenv}}
 
+  \note{Prismen sind dual zu Lenses: Während eine \haskellinline{Lens' s a} den Typ \verb|s| als Produkt von \verb|a| und einem zweiten Typ darstellt, gibt ein \haskellinline{Prism' s a} eine Darsellung von \verb|s| als Summe von \verb|a| und einem zweiten Typ an.}
   \note{Es gibt außerdem noch den Typ \haskellinline{Review t b}. Er entspricht einer Funktion \haskellinline{b -> t}. Unter der Dualität von \haskellinline{Lens'} und \haskellinline{Prism'} entspricht ein \haskellinline{Getter} einem \haskellinline{Review}. Insbesondere ist jedes \haskellinline{Prism' b t} ein \haskellinline{Review t b}.}
 
   \note{\url{https://github.com/ekmett/lens/wiki/Derivation}{Das Lens-Wiki beschreibt} die Herleitung dieser Typen.}
@@ -709,7 +711,8 @@ traverse :: Traversable t => Traversal (t x) (t y) x y
 
 \begin{frame}[fragile,t]
   \frametitle{Wie bekomme ich Lenses für meine Datentypen?}
-  \begin{columns}
+  \vspace{-1.2em}
+  \begin{columns}[t]
     \column{0.48\textwidth}
     \begin{onlyenv}<1-2>
       \begin{visibleenv}<2>
@@ -776,11 +779,12 @@ address f (Person first last addr) =
     \end{onlyenv}
     \begin{onlyenv}<3-4>
 \begin{haskellcode*}{fontsize=\small}
-makeLenses'' Address
-makeLenses'' Person
+makeLenses ''Address
+makeLenses ''Person
 \end{haskellcode*}
     \end{onlyenv}
     \begin{onlyenv}<5>
+      \vspace{1em}
 \begin{haskellcode*}{fontsize=\footnotesize, escapeinside=||}
 -- Im Client-Code: Importiere Lens
 import Data.Data.Lens
@@ -818,8 +822,104 @@ biplate :: Traversal' Person Address
 \end{frame}
 
 \begin{frame}
-  \frametitle{Beispiel: Imperative Programmierung}
+  \frametitle{Beispiel: Imperative (Spiele-) Programmierung}
+  \begin{center}
+    \includegraphics[width=10cm]{flappy-cat-screenshot.png}
+  \end{center}
 \end{frame}
+
+{\setlength{\fboxsep}{2pt} % kaum Innenabstand in \colorbox'en
+\begin{frame}[fragile]
+  \frametitle{Beispiel: Imperative (Spiele-) Programmierung}
+\begin{haskellcode}
+data Pos = Pos { _x :: Float, _y :: Float }
+makeLenses ''Pos
+
+newtype Hurdle = Hurdle { _hurdlePos :: Pos }
+makeLenses ''Hurdle
+
+data GameState = Running | Paused | GameOver
+
+data FlappyCat =
+  FlappyCat
+  { _gen :: StdGen
+  , _gameState :: GameState
+  , _catPos :: Pos
+  , _velY :: Float
+  , _hurdles :: [Hurdle]
+  }
+makeLenses ''FlappyCat
+\end{haskellcode}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Beispiel: Imperative (Spiele-) Programmierung}
+    Ein paar Hilfsfunktionen:
+\begin{haskellcode}
+randomHurdle :: (RandomGen g, MonadState g m)
+             => Float -> m Hurdle
+passes :: Pos -> Hurdle -> Bool
+catExtremePoints :: FlappyCat -> [Pos]
+\end{haskellcode}
+
+  \begin{visibleenv}<2->
+    Eine Monade:
+\begin{haskellcode}
+type FlappyMonad = ContT () (State FlappyCat)
+
+execFlappyMonad :: FlappyMonad () -> FlappyCat -> FlappyCat
+execFlappyMonad = execState . flip runContT return
+
+abort :: FlappyMonad ()
+abort = ContT $ const $ return ()
+\end{haskellcode}
+  \end{visibleenv}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Beispiel: Imperative (Spiele-) Programmierung}
+\begin{haskellcode*}{escapeinside=||}
+handleInput :: Event -> FlappyMonad ()
+handleInput (EventKey (Char 'p') Down _ _) =
+  gameState |\hl{\%=}| \case
+    Running  -> Paused
+    Paused   -> Running
+    GameOver -> GameOver
+handleInput (EventKey (SpecialKey key) Down _ _)
+  |\textbar| key `elem` jumpKeys = do
+  velY |\hl{.=}| jumpVel
+  oldState <- gameState |\hl{<<.=}| Running
+  when (oldState == GameOver) $ do
+    catPos.y |\hl{.=}| 0
+    catPos.x |\hl{.=}| 0
+    hurdles  |\hl{.=}| []
+handleInput _ = return ()
+\end{haskellcode*}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Beispiel: Imperative (Spiele-) Programmierung}
+\begin{haskellcode*}{escapeinside=||}
+step :: Float -> FlappyMonad ()
+step dt = do
+  state <- |\hl{use}| gameState
+  when (state /= Running) abort
+  vy <- velY |\hl{<+=}| dt*gravity
+  px <- catPos.x |\hl{<+=}| dt*velX
+  py <- catPos.y |\hl{<+=}| dt*vy
+  when (py <= -h/2) $ gameState |\hl{.=}| GameOver
+  hs <- hurdles |\hl{<\%=}| filter ((> (px-w)) . (^.hurdlePos.x))
+  let lastX = fromMaybe (d+w) $
+        |\hl{lastOf}| (traverse.hurdlePos.x) hs
+  when (lastX < px + 2*w) $ do
+    hurdle <- lift $ |\hl{zoom}| gen $ randomHurdle lastX
+    hurdles |\hl{.=}| hs ++ [hurdle]
+  eps <- |\hl{use}| $ to catExtremePoints
+  unless (all id $ passes <$> eps <*> hs) $
+    gameState |\hl{.=}| GameOver
+\end{haskellcode*}
+\end{frame}
+}
 
 \begin{frame}[fragile,t]
   \frametitle{Wo kann ich mehr über \haskellinline{lens} erfahren?}
@@ -847,8 +947,6 @@ biplate :: Traversal' Person Address
 \end{frame}}
 
 % TODO:
-% Type-changing lenses
-% * Traversals erklären
 % * Rubiks-Cube-Beispiel
 % Überblick über Operatoren:
 %    https://github.com/ekmett/lens/wiki/Operators
