@@ -26,6 +26,7 @@ executable flappy-cat
   build-depends:       base >=4.8 && <4.9,
                        gloss,
                        lens,
-                       mtl
+                       mtl,
+                       random
   -- hs-source-dirs:
   default-language:    Haskell2010
