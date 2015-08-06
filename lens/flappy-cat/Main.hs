@@ -28,7 +28,7 @@ main = do
     displayMode = InWindow "Flappy Cat" windowSize windowPos
     windowSize = (width, height)
     windowPos = (10, 10)
-    fps = 30
+    fps = 50
 
 render
   :: Picture -- ^ Socke
@@ -47,13 +47,14 @@ render socke background wfda fc
   | otherwise =
       Pictures
       [ background
-      , Translate (-200) 0 $ Color (dim orange) $
+      , Translate (-200) 0 $ Color darkBrown $
           Pictures $ fc ^.. hurdles.traverse.to renderHurdle
       , Translate (-200) (fc^.catPos.y) $ Rotate (catSlope fc * (180/pi)) socke
       , Color white $ Translate (-290) 170 $ Scale 0.15 0.15 $
           Text $ show $ round $ fc^.catPos.x
       ]
   where
+    darkBrown = dim $ dim $ dim $ dim orange
     renderHurdle hurdle =
       let hx = hurdle^.hurdlePos.x - fc^.catPos.x
           rectPath y1 y2 = [(hx-25,y1), (hx+25,y1), (hx+25,y2), (hx-25,y2)]

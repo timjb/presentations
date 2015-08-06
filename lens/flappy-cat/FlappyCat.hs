@@ -9,9 +9,9 @@ import Control.Monad.State.Lazy (MonadState (..))
 
 -- Constants
 jumpVel, gravity, velX :: Float
-jumpVel = 200
-gravity = -450
-velX = 150
+jumpVel = 250
+gravity = -600
+velX = 250
 width, height :: Int
 width  = 600
 height = 400
@@ -33,7 +33,7 @@ makeLenses ''Hurdle
 
 randomHurdle :: (RandomGen g, MonadState g m) => Float -> m Hurdle
 randomHurdle posX = state $ \g ->
-  let (d, g')  = randomR (200, 600)  g
+  let (d, g')  = randomR (300, 600)  g
       (y, g'') = randomR (-130, 130) g'
   in (Hurdle (Pos (posX + d) y), g'')
 
