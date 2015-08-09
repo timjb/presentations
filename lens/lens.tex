@@ -30,9 +30,19 @@
 \urldef{\lenswithoutdep}\url{https://github.com/ekmett/lens/wiki/How-can-I-write-lenses-without-depending-on-lens%3F}
 
 \usepackage{tikz}
+\newcommand\marktikz[1]{%
+  \tikz[remember picture,overlay] \node[inner xsep=0pt] (#1) {};
+}
+\tikzstyle{typeline}=[yellow, very thick]
+\tikzstyle{typebox}=[black, fill=yellow, align=left]
+\tikzset{onslide/.code args={<#1>#2}{%
+  \only<#1>{\pgfkeysalso{#2}} % \pgfkeysalso doesn't change the path
+}}
 
 \definecolor{dimgray}{rgb}{0.41, 0.41, 0.41}
 \definecolor{greenncs}{rgb}{0.0, 0.62, 0.42}
+
+\usepackage{colortbl} % Farbige Gitter in Tabellen
 
 % Bildquelle: http://www.dibujosdisneyparacolorear.com/imagenes-donald-detective-jpg
 \setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{donald-detective-bg.jpg}}
@@ -61,6 +71,7 @@
 \newcommand{\fa}{$\forall$}
 \newcommand{\ev}{$\rightsquigarrow$} % evaluates to
 \newcommand{\hl}[1]{\colorbox{yellow}{#1}} % highlight code
+\newcommand{\hll}[1]{\colorbox{yellow!50!white}{#1}} % highlight code (weaker)
 
 \begin{document}
 
@@ -862,6 +873,7 @@ passes :: Pos -> Hurdle -> Bool
 catExtremePoints :: FlappyCat -> [Pos]
 \end{haskellcode}
 
+  \vspace{1em}
   \begin{visibleenv}<2->
     Eine Monade:
 \begin{haskellcode}
@@ -876,25 +888,34 @@ abort = ContT $ const $ return ()
   \end{visibleenv}
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[b,fragile]
   \frametitle{Beispiel: Imperative (Spiele-) Programmierung}
 \begin{haskellcode*}{escapeinside=||}
 handleInput :: Event -> FlappyMonad ()
 handleInput (EventKey (Char 'p') Down _ _) =
-  gameState |\hl{\%=}| \case
+  gameState |\hl{\%=}\marktikz{t1}| \case
     Running  -> Paused
     Paused   -> Running
     GameOver -> GameOver
 handleInput (EventKey (SpecialKey key) Down _ _)
   |\textbar| key `elem` jumpKeys = do
-  velY |\hl{.=}| jumpVel
-  oldState <- gameState |\hl{<<.=}| Running
+  velY |\hl{.=}\marktikz{t2}| jumpVel
+  oldState <- gameState |\hl{<<.=}\marktikz{t3}| Running
   when (oldState == GameOver) $ do
-    catPos.y |\hl{.=}| 0
-    catPos.x |\hl{.=}| 0
-    hurdles  |\hl{.=}| []
+    catPos.x |\hll{.=}| 0
+    catPos.y |\hll{.=}| 0
+    hurdles  |\hll{.=}| []
 handleInput _ = return ()
 \end{haskellcode*}
+  % Achtung: Man muss 2x kompilieren, damit die Positionen richtig sind!
+  \begin{visibleenv}<2->
+    {\small
+    \begin{tikzpicture}[remember picture, overlay]
+      \draw[typeline] (t1) |- + (2.5, 0.3) node[typebox, anchor=north west] {\verb|:: MonadState s m|\\\verb|=> Setter' s a -> (a -> a) -> m ()|};
+      \draw[typeline] (t2) |- + (4.75, -0.1) node[typebox, anchor=south west] {\verb|:: MonadState s m|\\\verb|=> Setter' s a -> a -> m ()|};
+      \draw[typeline] (t3) |- + (1.5, -0.1) node[typebox, anchor=north west] {\verb|:: MonadState s m|\\\verb|=> Lens' s a -> a -> m a|};
+    \end{tikzpicture}}
+  \end{visibleenv}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -902,24 +923,109 @@ handleInput _ = return ()
 \begin{haskellcode*}{escapeinside=||}
 step :: Float -> FlappyMonad ()
 step dt = do
-  state <- |\hl{use}| gameState
+  state <- |\hl{use}\marktikz{t4}| gameState
   when (state /= Running) abort
-  vy <- velY |\hl{<+=}| dt*gravity
-  px <- catPos.x |\hl{<+=}| dt*velX
-  py <- catPos.y |\hl{<+=}| dt*vy
-  when (py <= -h/2) $ gameState |\hl{.=}| GameOver
-  hs <- hurdles |\hl{<\%=}| filter ((> (px-w)) . (^.hurdlePos.x))
+  vy <- velY |\hl{<+=}\marktikz{t5}| dt*gravity
+  px <- catPos.x |\hll{<+=}| dt*velX
+  py <- catPos.y |\hll{<+=}| dt*vy
+  when (py <= -h/2) $ gameState |\hll{.=}| GameOver
+  hs <- hurdles |\hl{<\%=}\marktikz{t6}| filter ((> (px-w)) . (^.hurdlePos.x))
   let lastX = fromMaybe (d+w) $
-        |\hl{lastOf}| (traverse.hurdlePos.x) hs
+        |\hll{lastOf}| (traverse.hurdlePos.x) hs
   when (lastX < px + 2*w) $ do
-    hurdle <- lift $ |\hl{zoom}| gen $ randomHurdle lastX
-    hurdles |\hl{.=}| hs ++ [hurdle]
-  eps <- |\hl{use}| $ to catExtremePoints
+    hurdle <- lift $ |\hl{zoom}\marktikz{t7}| gen $ randomHurdle lastX
+    hurdles |\hll{.=}| hs ++ [hurdle]
+  eps <- |\hll{use}| $ to catExtremePoints
   unless (all id $ passes <$> eps <*> hs) $
-    gameState |\hl{.=}| GameOver
+    gameState |\hll{.=}| GameOver
 \end{haskellcode*}
+  \begin{visibleenv}<2->
+    {\small
+    \begin{tikzpicture}[remember picture, overlay]
+      \draw[typeline] (t4) |- + (5, 0.5) node[typebox, anchor=south west] {\verb|:: MonadState s m|\\\verb|=> Getter s a -> m a|};
+      \draw[typeline] (t5) |- + (3.5, 0.25) node[typebox, anchor=south west] {\verb|:: (MonadState s m, Num a)|\\\verb|=> Lens' s a -> a -> m a|};
+      \draw[typeline] (t6) |- + (2, 0.85) node[typebox, anchor=south west] {\verb|:: MonadState s m|\\\verb|=> Lens' s a -> (a -> a) -> m a|};
+      \draw[typeline] (t7) |- + (1, -0.1) node[typebox, anchor=north west] {\verb|:: Monad m => Lens' s t|\\\verb|-> StateT t m a -> StateT s m a|};
+    \end{tikzpicture}}
+  \end{visibleenv}
 \end{frame}
 }
+
+\begin{frame}[fragile]
+  \frametitle{Operatoren in Lens}
+
+  \begin{onlyenv}<1>
+\begin{haskellcode*}{fontsize=\small}
+  (%~) :: Setter s t a b -> (a -> b) -> s ->     t
+ (<%~) :: Lens   s t a b -> (a -> b) -> s -> (b, t)
+(<<%~) :: Lens   s t a b -> (a -> b) -> s -> (a, t)
+  (%=) :: MonadState s m => Setter s s a b -> (a -> b) -> m ()
+ (<%=) :: MonadState s m => Lens   s s a b -> (a -> b) -> m b
+(<<%=) :: MonadState s m => Lens   s s a b -> (a -> b) -> m a
+\end{haskellcode*}
+  \end{onlyenv}
+
+  \begin{onlyenv}<2>
+\begin{haskellcode*}{fontsize=\small}
+  (.~) :: Setter s t a b -> b -> s ->     t
+ (<.~) :: Setter s t a b -> b -> s -> (b, t)
+(<<.~) :: Lens   s t a b -> b -> s -> (a, t)
+  (.=) :: MonadState s m => Setter s s a b -> b -> m ()
+ (<.=) :: MonadState s m => Setter s s a b -> b -> m b
+(<<.=) :: MonadState s m => Lens'  s s a b -> b -> m a
+\end{haskellcode*}
+  \end{onlyenv}
+
+  \begin{onlyenv}<3>
+\begin{haskellcode*}{fontsize=\small}
+  (+~) ::  Num a => Setter s t a a -> a -> s ->     t
+ (<+~) ::  Num a => Lens   s t a a -> a -> s -> (a, t)
+(<<+~) ::  Num a => Lens   s t a a -> a -> s -> (a, t)
+  (+=) :: (Num a, MonadState s m) => Setter' s a -> a -> m ()
+ (<+=) :: (Num a, MonadState s m) => Lens'   s a -> a -> m a
+(<<+=) :: (Num a, MonadState s m) => Lens'   s a -> a -> m a
+\end{haskellcode*}
+  \end{onlyenv}
+
+  \begin{onlyenv}<4>
+\begin{haskellcode*}{fontsize=\small}
+  (<>~) ::  Monoid a => Setter s t a a -> a -> s ->     t
+ (<<>~) ::  Monoid a => Lens   s t a a -> a -> s -> (a, t)
+(<<<>~) ::  Monoid a => Lens   s t a a -> a -> s -> (a, t)
+  (<>=) :: (Monoid a, MonadState s m) => Setter' s a -> a -> m ()
+ (<<>=) :: (Monoid a, MonadState s m) => Lens'   s a -> a -> m a
+(<<<>=) :: (Monoid a, MonadState s m) => Lens'   s a -> a -> m a
+\end{haskellcode*}
+  \end{onlyenv}
+
+  \begin{onlyenv}<5>
+\begin{haskellcode*}{fontsize=\small}
+  (||~) :: Setter s t Bool Bool -> Bool -> s ->        t
+ (<||~) :: Lens   s t Bool Bool -> Bool -> s -> (Bool, t)
+(<<||~) :: Lens   s t Bool Bool -> Bool -> s -> (Bool, t)
+  (||=) :: MonadState s m => Setter' s Bool -> Bool -> m ()
+ (<||=) :: MonadState s m => Lens'   s Bool -> Bool -> m Bool
+(<<||=) :: MonadState s m => Lens'   s Bool -> Bool -> m Bool
+\end{haskellcode*}
+  \end{onlyenv}
+
+  \vspace{0.25em}
+  \small
+  \begin{center}
+    {\setlength\extrarowheight{3pt}
+    \begin{tabular}{r!{\color{gray}\vrule} r r r r r}
+      Funktional & \verb|%~| & \verb|.~| & \verb|+~| & \verb|<>~| & \verb?||~? \\
+      Funktional mit Ergebnis & \verb|<%~| & \verb|<.~| & \verb|<+~| & \verb|<<>~| & \verb?<||~? \\
+      Funktional mit vorh. Wert & \verb|<<%~| & \verb|<<.~| & \verb|<<+~| & \verb|<<<>~| & \verb?<<||~? \\ \arrayrulecolor{gray}\hline
+      Monadisch & \verb|%=| & \verb|.=| & \verb|+=| & \verb|<>=| & \verb?||=? \\
+      Monadisch mit Ergebnis & \verb|<%=| & \verb|<.=| & \verb|<+=| & \verb|<<>=| & \verb?<||=? \\
+      Monadisch mit vorh. Wert & \verb|<<%=| & \verb|<<.=| & \verb|<<+=| & \verb|<<<>=| & \verb?<<||=? \\
+    \end{tabular}}
+  \end{center}
+
+  \vspace{0.75em}
+  {\small (Vollständige Liste auf \url{https://github.com/ekmett/lens/wiki/Operators})}
+\end{frame}
 
 \begin{frame}[fragile,t]
   \frametitle{Wo kann ich mehr über \haskellinline{lens} erfahren?}
