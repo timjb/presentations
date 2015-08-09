@@ -832,6 +832,8 @@ biplate :: Traversal' Person Address
   \note{Die Plated-Funktionalität von Lens kann besonders hilfreich für Compiler-Programmierer sein: Damit kann man nämlich z.B. mit wenig Code auf einem AST Transformationen durchführen.}
 \end{frame}
 
+{\setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{donald-detective-wolle-bg.jpg}}
+\setlength{\fboxsep}{2pt} % kaum Innenabstand in \colorbox'en
 \begin{frame}
   \frametitle{Beispiel: Imperative (Spiele-) Programmierung}
   \begin{center}
@@ -839,7 +841,6 @@ biplate :: Traversal' Person Address
   \end{center}
 \end{frame}
 
-{\setlength{\fboxsep}{2pt} % kaum Innenabstand in \colorbox'en
 \begin{frame}[fragile]
   \frametitle{Beispiel: Imperative (Spiele-) Programmierung}
 \begin{haskellcode}
@@ -949,7 +950,6 @@ step dt = do
     \end{tikzpicture}}
   \end{visibleenv}
 \end{frame}
-}
 
 \begin{frame}[fragile]
   \frametitle{Operatoren in Lens}
@@ -1026,6 +1026,7 @@ step dt = do
   \vspace{0.75em}
   {\small (Vollständige Liste auf \url{https://github.com/ekmett/lens/wiki/Operators})}
 \end{frame}
+}
 
 \begin{frame}[fragile,t]
   \frametitle{Wo kann ich mehr über \haskellinline{lens} erfahren?}
