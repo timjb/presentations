@@ -242,7 +242,8 @@ last = Lens?\kreuz? getter setter
  where
   getter (Cons _ xs) = getter xs
   getter (Last x) = x
-  setter a (Cons _ xs) = setter a xs
+  setter a (Cons x xs) = 
+    Cons x (setter a xs)
   setter a (Last _) = Last a
 \end{haskellcode*}
     \end{columns}
@@ -437,18 +438,18 @@ class (Functor t, Foldable t) => Traversable t where
   traverse :: Applicative f => (a -> f b) -> t a -> f (t b)
 \end{haskellcode}
   \begin{onlyenv}<2->
+    {\normalsize Ein \haskellinline{Traversal' s a} ermöglicht das Durchlaufen und Abändern von mehreren Werten vom Typ \verb|a| in einem vom Typ \verb|s| mit applik. Effekten.}
+  \end{onlyenv}
+  \begin{onlyenv}<3->
 \begin{haskellcode}
 type Traversal' s a = forall f.
   Applicative f => (a -> f a) -> s -> f s
 \end{haskellcode}
-  \end{onlyenv}
-  {\normalsize Ein \haskellinline{Traversal' s a} ermöglicht das Durchlaufen und Abändern von mehreren Werten vom Typ \verb|a| in einem vom Typ \verb|s| mit applik. Effekten.}
-  \begin{onlyenv}<2->
 \begin{haskellcode}
 traverse :: Traversable t => Traversal' (t a) a
 \end{haskellcode}
   \end{onlyenv}
-  \begin{onlyenv}<3->
+  \begin{onlyenv}<4->
 \begin{haskellcode}
 evenIxs :: Traversal' [a] a
 evenIxs f [] = pure []
@@ -956,34 +957,34 @@ step dt = do
 
   \begin{onlyenv}<1>
 \begin{haskellcode*}{fontsize=\small}
-  (%~) :: Setter s t a b -> (a -> b) -> s ->     t
- (<%~) :: Lens   s t a b -> (a -> b) -> s -> (b, t)
-(<<%~) :: Lens   s t a b -> (a -> b) -> s -> (a, t)
-  (%=) :: MonadState s m => Setter s s a b -> (a -> b) -> m ()
- (<%=) :: MonadState s m => Lens   s s a b -> (a -> b) -> m b
-(<<%=) :: MonadState s m => Lens   s s a b -> (a -> b) -> m a
+   (%~) :: Setter s t a b -> (a -> b) -> s ->     t
+  (<%~) :: Lens   s t a b -> (a -> b) -> s -> (b, t)
+ (<<%~) :: Lens   s t a b -> (a -> b) -> s -> (a, t)
+   (%=) :: MonadState s m => Setter s s a b -> (a -> b) -> m ()
+  (<%=) :: MonadState s m => Lens   s s a b -> (a -> b) -> m b
+ (<<%=) :: MonadState s m => Lens   s s a b -> (a -> b) -> m a
 \end{haskellcode*}
   \end{onlyenv}
 
   \begin{onlyenv}<2>
 \begin{haskellcode*}{fontsize=\small}
-  (.~) :: Setter s t a b -> b -> s ->     t
- (<.~) :: Setter s t a b -> b -> s -> (b, t)
-(<<.~) :: Lens   s t a b -> b -> s -> (a, t)
-  (.=) :: MonadState s m => Setter s s a b -> b -> m ()
- (<.=) :: MonadState s m => Setter s s a b -> b -> m b
-(<<.=) :: MonadState s m => Lens'  s s a b -> b -> m a
+   (.~) :: Setter s t a b -> b -> s ->     t
+  (<.~) :: Setter s t a b -> b -> s -> (b, t)
+ (<<.~) :: Lens   s t a b -> b -> s -> (a, t)
+   (.=) :: MonadState s m => Setter s s a b -> b -> m ()
+  (<.=) :: MonadState s m => Setter s s a b -> b -> m b
+ (<<.=) :: MonadState s m => Lens'  s s a b -> b -> m a
 \end{haskellcode*}
   \end{onlyenv}
 
   \begin{onlyenv}<3>
 \begin{haskellcode*}{fontsize=\small}
-  (+~) ::  Num a => Setter s t a a -> a -> s ->     t
- (<+~) ::  Num a => Lens   s t a a -> a -> s -> (a, t)
-(<<+~) ::  Num a => Lens   s t a a -> a -> s -> (a, t)
-  (+=) :: (Num a, MonadState s m) => Setter' s a -> a -> m ()
- (<+=) :: (Num a, MonadState s m) => Lens'   s a -> a -> m a
-(<<+=) :: (Num a, MonadState s m) => Lens'   s a -> a -> m a
+   (+~) ::  Num a => Setter s t a a -> a -> s ->     t
+  (<+~) ::  Num a => Lens   s t a a -> a -> s -> (a, t)
+ (<<+~) ::  Num a => Lens   s t a a -> a -> s -> (a, t)
+   (+=) :: (Num a, MonadState s m) => Setter' s a -> a -> m ()
+  (<+=) :: (Num a, MonadState s m) => Lens'   s a -> a -> m a
+ (<<+=) :: (Num a, MonadState s m) => Lens'   s a -> a -> m a
 \end{haskellcode*}
   \end{onlyenv}
 
