@@ -242,7 +242,7 @@ last = Lens?\kreuz? getter setter
  where
   getter (Cons _ xs) = getter xs
   getter (Last x) = x
-  setter a (Cons x xs) = 
+  setter a (Cons x xs) =
     Cons x (setter a xs)
   setter a (Last _) = Last a
 \end{haskellcode*}
@@ -1029,6 +1029,194 @@ step dt = do
 \end{frame}
 }
 
+\begin{frame}[fragile]
+  \frametitle{Beispiel: \texttt{diagrams-rubiks-cube}}
+  \emph{Ziel:} Zauberwürfel und Lösungsalgorithmen zeichnen. \emph{Beispiel:}\\[1em]
+  \includegraphics[width=0.65\linewidth]{rubiks-sequence.png}\\
+  \begin{haskellcode}
+import Diagrams.RubiksCube
+import Control.Lens
+
+diagram :: RubiksCubeBackend n b => Diagram b
+diagram =
+  let moves    = [B, R, F', R', D', F, F]
+      endPos   = solvedRubiksCube
+      settings = with & showStart .~ True
+  in drawMovesBackward settings endPos moves
+  \end{haskellcode}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Beispiel: \texttt{diagrams-rubiks-cube}}
+
+  \begin{haskellcode}
+data Side a = Side
+  {    _topLeft :: a,    _topCenter :: a,    _topRight :: a
+  , _middleLeft :: a, _middleCenter :: a, _middleRight :: a
+  , _bottomLeft :: a, _bottomCenter :: a, _bottomRight :: a
+  } deriving (Show, Eq, Functor, Foldable, Traversable)
+instance Applicative Side
+makeLenses ''Side
+  \end{haskellcode}
+  \vspace{0.5em}
+  \begin{minipage}{0.22 \linewidth}
+    \includegraphics[width=2.25cm]{side.png}
+  \end{minipage}
+  \begin{minipage}{0.75 \linewidth}
+    \begin{haskellcode}
+rotCW, rotCCW :: Side a -> Side a
+rotCW (Side tl tc tr ml mc mr bl bc br) =
+       Side bl ml tl bc mc tc br mr tr
+
+type Aut a = Iso' a a
+rotateSideCW, rotateSideCCW :: Aut (Side a)
+rotateSideCW  = iso rotCW  rotCCW
+rotateSideCCW = iso rotCCW rotCW
+    \end{haskellcode}
+  \end{minipage}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Beispiel: \texttt{diagrams-rubiks-cube}}
+  \begin{haskellcode*}{fontsize=\small}
+data Cube a = Cube
+  { _frontSide :: a,  _backSide :: a
+  ,  _leftSide :: a, _rightSide :: a
+  ,    _upSide :: a,  _downSide :: a
+  } deriving (Show, Eq, Functor, Foldable, Traversable)
+
+instance Applicative Cube
+makeLenses ''Cube
+
+
+  \end{haskellcode*}
+  %\vspace{0.5em}
+  \begin{minipage}{0.3 \linewidth}
+    \includegraphics[width=3cm]{cube.png}
+  \end{minipage}
+  \begin{minipage}{0.67 \linewidth}
+    \begin{haskellcode*}{fontsize=\small}
+rotRight', rotLeft' :: Cube a -> Cube a
+rotRight' (Cube f b l r u d) =
+           Cube l r b f u d
+
+rotateRight', rotateLeft' :: Aut (Cube a)
+rotateRight' = iso rotRight' rotLeft'
+rotateLeft'  = iso rotLeft'  rotRight'
+    \end{haskellcode*}
+  \end{minipage}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Beispiel: \texttt{diagrams-rubiks-cube}}
+  \begin{minipage}{0.43 \linewidth}
+    \includegraphics[width=4.5cm]{rubikscube.png}
+  \end{minipage}
+  \begin{minipage}[b]{0.55 \linewidth}
+    \begin{haskellcode*}{fontsize=\small}
+newtype RubiksCube a = RubiksCube
+  { _cube :: Cube (Side a) }
+    deriving (Show, Eq, Functor)
+
+instance Applicative RubiksCube
+makeLenses ''RubiksCube
+    \end{haskellcode*}
+  \end{minipage}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Beispiel: \texttt{diagrams-rubiks-cube}}
+  %-- | Rotate the whole Rubik's Cube such that the front
+  %-- side becomes the new right side and the top and
+  %-- bottom sides stay fixed.
+  \begin{haskellcode}
+-- Wende einen Automorphismus auf alle Komponenten an
+cong :: Traversal' s a -> Aut a -> Aut s
+cong t i = withIso i $ \f g -> iso (over t f) (over t g)
+
+rotateRight, rotateLeft :: Aut (RubiksCube a)
+rotateRight =
+  cong cube $ rotateRight'
+            . cong   upSide rotateSideCCW
+            . cong downSide rotateSideCW
+rotateLeft = from rotateRight
+
+rotateUp, rotateDown :: Aut (RubiksCube a)
+
+rotateCW, rotateCCW :: Aut (RubiksCube a)
+rotateCW  = rotateUp . rotateLeft . rotateDown
+rotateCCW = from rotateCW
+  \end{haskellcode}
+  % TODO: Skizze von der Wirkung von rotateRight
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Beispiel: \texttt{diagrams-rubiks-cube}}
+  \begin{haskellcode*}{fontsize=\small}
+data Vec4 a = Vec4 a a a a
+  deriving (Show, Eq, Functor, Foldable, Traversable)
+
+cycRight, cycLeft :: Vec4 a -> Vec4 a
+cycRight (Vec4 a b c d) = Vec4 d a b c
+
+cycleRight, cycleLeft :: Aut (Vec4 a)
+cycleRight = iso cycRight cycLeft
+cycleLeft  = from cycleRight
+
+liftVec4 :: Lens' s a -> Lens' (Vec4 s) (Vec4 a)
+liftVec4 l = lens getter setter
+  where
+    getter = fmap (^. l)
+    setter (Vec4 a b c d) (Vec4 a' b' c' d') =
+      Vec4 (set l a' a) (set l b' b) (set l c' c) (set l d' d)
+  \end{haskellcode*}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Beispiel: \texttt{diagrams-rubiks-cube}}
+  \begin{haskellcode*}{fontsize=\small}
+data Vec3 a = Vec3 a a a
+  deriving (Show, Eq, Functor, Foldable, Traversable)
+
+topRow :: Lens' (Side a) (Vec3 a)
+topRow = lens getter setter
+  where
+    getter (Side tl tc tr _ _ _ _ _ _) = Vec3 tl tc tr
+    setter (Side _ _ _ ml mc mr bl bc br) (Vec3 tl tc tr) =
+      Side tl tc tr ml mc mr bl bc br
+
+horizontalSides :: Lens' (Cube a) (Vec4 a)
+horizontalSides = lens getter setter
+  where
+    getter (Cube f b l r _u _d) = Vec4 f r b l
+    setter (Cube _f _b _l _r u d) (Vec4 f' r' b' l') =
+            Cube f' b' l' r' u d
+  \end{haskellcode*}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Beispiel: \texttt{diagrams-rubiks-cube}}
+  \begin{haskellcode}
+upRows :: RowsLens a
+upRows = horizontalSides . liftVec4 topRow
+
+-- Drehe die oberste Ebene im Uhrzeigersinn
+moveU :: Aut (RubiksCube a)
+moveU =
+  cong cube $ cong upRows cycleLeft
+            . cong upSide rotateSideCW
+  \end{haskellcode}
+
+  Zur Erinnerung:
+  \begin{haskellcode*}{fontsize=\small}
+cong :: Traversal' s a -> Aut a -> Aut s
+topRow :: Lens' (Side a) (Vec3 a)
+horizontalSides :: Lens' (Cube a) (Vec4 a)
+cycleLeft :: Aut (Vec4 a)
+rotateSideCW :: Aut (Side a)
+  \end{haskellcode*}
+\end{frame}
+
 \begin{frame}[fragile,t]
   \frametitle{Wo kann ich mehr über \haskellinline{lens} erfahren?}
   \begin{itemize}
@@ -1056,14 +1244,10 @@ step dt = do
 
 % TODO:
 % * Rubiks-Cube-Beispiel
-% Überblick über Operatoren:
-%    https://github.com/ekmett/lens/wiki/Operators
 % Funktionen: over, both, set, view, (&)
 % at :: Lens (Map a) (Maybe a)
 % Kombinatoren für 'Maybe-Lenses', z.B. (?~)
 % Was ist die Konvention mit "Of" am Ende des Namens einer Funktion?
-% Die beste imperative Programmiersprache ist ... Haskell (+=, *=, ...)
 % Indexed Traversals?
-% Prisms are dual to Lenses
 
 \end{document}
