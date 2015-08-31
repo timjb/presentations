@@ -45,7 +45,7 @@
 \usepackage{colortbl} % Farbige Gitter in Tabellen
 
 % Bildquelle: http://www.dibujosdisneyparacolorear.com/imagenes-donald-detective-jpg
-\setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{donald-detective-bg.jpg}}
+\setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{images/donald-detective-bg.jpg}}
 
 \defbeamertemplate*{title page}{customized}[1][]
 {
@@ -61,7 +61,7 @@
 }
 
 \title[Lens]{Lenses und Zauberwürfel}
-\titlegraphic{\includegraphics[width=0.65\linewidth]{rubiks-sequence.png}}
+\titlegraphic{\includegraphics[width=0.65\linewidth]{images/rubiks-sequence.png}}
 \author{Tim Baumann}
 \institute[CCA]{Curry Club Augsburg}
 \date{13. August 2015}
@@ -90,7 +90,7 @@
   \frametitle{Welche Bibliothek?}
   % Bildquelle: https://ro-che.info/ccc/23
   \begin{figure}
-    \includegraphics[width=0.9\linewidth]{ccc-picking-lens-library.png}
+    \includegraphics[width=0.9\linewidth]{images/ccc-picking-lens-library.png}
     \caption{Picking a Lens Library (Cartesian Closed Comic)}
   \end{figure}
   \begin{visibleenv}<2->
@@ -635,7 +635,7 @@ mapped :: Setter' (x -> a) a
 \begin{frame}
   % Quelle: https://ro-che.info/ccc/29
   \begin{center}
-    \includegraphics[width=0.9\linewidth]{ccc-does-diagram-commute.jpg}
+    \includegraphics[width=0.9\linewidth]{images/ccc-does-diagram-commute.jpg}
   \end{center}
 \end{frame}}
 
@@ -700,7 +700,7 @@ traverse :: Traversable t => Traversal (t x) (t y) x y
 \begin{frame}
   \frametitle{Beispiel: Curry-Feed parsen}
   \begin{center}
-    \includegraphics[width=10cm]{curry-termine-screenshot.png}
+    \includegraphics[width=10cm]{images/curry-termine-screenshot.png}
   \end{center}
 \end{frame}
 
@@ -713,7 +713,7 @@ traverse :: Traversable t => Traversal (t x) (t y) x y
 \begin{frame}[b]
   \frametitle{Beispiel: Curry-Feed parsen}
   \begin{visibleenv}<2->
-    \hfill \includegraphics[height=2cm]{lens-jquery.png}
+    \hfill \includegraphics[height=2cm]{images/lens-jquery.png}
   \end{visibleenv}
   \vspace{-2cm}
   \inputminted[fontsize=\small]{haskell}{curry-termine/Main.hs}
@@ -833,12 +833,12 @@ biplate :: Traversal' Person Address
   \note{Die Plated-Funktionalität von Lens kann besonders hilfreich für Compiler-Programmierer sein: Damit kann man nämlich z.B. mit wenig Code auf einem AST Transformationen durchführen.}
 \end{frame}
 
-{\setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{donald-detective-wolle-bg.jpg}}
+{\setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{images/donald-detective-wolle-bg.jpg}}
 \setlength{\fboxsep}{2pt} % kaum Innenabstand in \colorbox'en
 \begin{frame}
   \frametitle{Beispiel: Imperative (Spiele-) Programmierung}
   \begin{center}
-    \includegraphics[width=10cm]{flappy-cat-screenshot.png}
+    \includegraphics[width=10cm]{images/flappy-cat-screenshot.png}
   \end{center}
 \end{frame}
 
@@ -1032,7 +1032,7 @@ step dt = do
 \begin{frame}[fragile]
   \frametitle{Beispiel: \texttt{diagrams-rubiks-cube}}
   \emph{Ziel:} Zauberwürfel und Lösungsalgorithmen zeichnen. \emph{Beispiel:}\\[1em]
-  \includegraphics[width=0.65\linewidth]{rubiks-sequence.png}\\
+  \includegraphics[width=0.65\linewidth]{images/rubiks-sequence.png}\\
   \begin{haskellcode}
 import Diagrams.RubiksCube
 import Control.Lens
@@ -1060,7 +1060,7 @@ makeLenses ''Side
   \end{haskellcode}
   \vspace{0.5em}
   \begin{minipage}{0.22 \linewidth}
-    \includegraphics[width=2.25cm]{side.png}
+    \includegraphics[width=2.25cm]{images/side.png}
   \end{minipage}
   \begin{minipage}{0.75 \linewidth}
     \begin{haskellcode}
@@ -1092,7 +1092,7 @@ makeLenses ''Cube
   \end{haskellcode*}
   %\vspace{0.5em}
   \begin{minipage}{0.3 \linewidth}
-    \includegraphics[width=3cm]{cube.png}
+    \includegraphics[width=3cm]{images/cube.png}
   \end{minipage}
   \begin{minipage}{0.67 \linewidth}
     \begin{haskellcode*}{fontsize=\small}
@@ -1110,7 +1110,7 @@ rotateLeft'  = iso rotLeft'  rotRight'
 \begin{frame}[fragile]
   \frametitle{Beispiel: \texttt{diagrams-rubiks-cube}}
   \begin{minipage}{0.43 \linewidth}
-    \includegraphics[width=4.5cm]{rubikscube.png}
+    \includegraphics[width=4.5cm]{images/rubikscube.png}
   \end{minipage}
   \begin{minipage}[b]{0.55 \linewidth}
     \begin{haskellcode*}{fontsize=\small}
@@ -1234,7 +1234,7 @@ rotateSideCW :: Aut (Side a)
 {\setbeamertemplate{background}{}
 \begin{frame}[b]
   \begin{center}
-    \includegraphics[width=5cm,keepaspectratio]{donald-detective.jpg} \\
+    \includegraphics[width=5cm,keepaspectratio]{images/donald-detective.jpg} \\
   \end{center}
 
   \centering \small
