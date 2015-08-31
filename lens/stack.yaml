@@ -2,6 +2,7 @@ flags: {}
 packages:
 - curry-termine/
 - flappy-cat/
+- pandoc-filter-example/
 extra-deps:
 - gloss-1.9.4.1
 - gloss-rendering-1.9.3.1

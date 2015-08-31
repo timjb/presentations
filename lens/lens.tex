@@ -1242,12 +1242,44 @@ rotateSideCW :: Aut (Side a)
   \url{https://github.com/timjb/presentations/tree/gh-pages/lens}
 \end{frame}}
 
+\begin{frame}[fragile]
+  \frametitle{Plated}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Plated}
+  \begin{haskellcode*}{fontsize=\small}
+data Inline
+  = Str String
+  | Emph [Inline]
+  | Math MathType String
+  | Link [Inline] Target
+  | Image [Inline] Target
+    ...
+  deriving (..., Typeable, Data, Generic)
+
+data Block
+  = Para [Inline]
+  | BlockQuote [Block]
+  | BulletList [[Block]]
+  | Header Int Attr [Inline]
+    ...
+  deriving (..., Typeable, Data, Generic)
+
+data Pandoc = Pandoc Meta [Block]
+  deriving (..., Typeable, Data, Generic)
+  \end{haskellcode*}
+\end{frame}
+
 % TODO:
-% * Rubiks-Cube-Beispiel
 % Funktionen: over, both, set, view, (&)
 % at :: Lens (Map a) (Maybe a)
 % Kombinatoren für 'Maybe-Lenses', z.B. (?~)
 % Was ist die Konvention mit "Of" am Ende des Namens einer Funktion?
-% Indexed Traversals?
+
+% Bonusfolien:
+% * Zippers
+% * Plated
+% * Indexed Lenses/Traversals
 
 \end{document}
