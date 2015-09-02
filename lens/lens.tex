@@ -712,13 +712,14 @@ traverse :: Traversable t => Traversal (t x) (t y) x y
 {\setbeamertemplate{background}{}
 \begin{frame}[b]
   \frametitle{Beispiel: Curry-Feed parsen}
-  \begin{visibleenv}<2->
-    \hfill \includegraphics[height=2cm]{images/lens-jquery.png}
-  \end{visibleenv}
-  \vspace{-2cm}
   \inputminted[fontsize=\small]{haskell}{curry-termine/Main.hs}
   \note{Verwendete Packages: \verb|lens|, \verb|text|, \verb|xml-conduit|, \verb|wreq|, \verb|xml-lens|}
   \note{Es gibt auch Lenses für JSON-Daten. Diese waren früher in \verb|lens| enthalten, jetzt sind sie Teil des Pakets \verb|lens-aeson|.}
+  \begin{visibleenv}<2->
+    \vspace{-7cm}
+    \hfill \includegraphics[height=3cm]{images/lens-jquery.png}
+    \vspace{4cm}
+  \end{visibleenv}
 \end{frame}}
 
 \begin{frame}[fragile,t]
@@ -999,7 +1000,7 @@ step dt = do
 \end{haskellcode*}
   \end{onlyenv}
 
-  \begin{onlyenv}<5>
+  \begin{onlyenv}<5->
 \begin{haskellcode*}{fontsize=\small}
   (||~) :: Setter s t Bool Bool -> Bool -> s ->        t
  (<||~) :: Lens   s t Bool Bool -> Bool -> s -> (Bool, t)
@@ -1026,6 +1027,14 @@ step dt = do
 
   \vspace{0.75em}
   {\small (Vollständige Liste auf \url{https://github.com/ekmett/lens/wiki/Operators})}
+
+  \begin{visibleenv}<6->
+    \vspace{-6cm}
+    \begin{center}
+      \includegraphics[height=4cm]{images/lens-perl.png}
+    \end{center}
+    \vspace{2cm}
+  \end{visibleenv}
 \end{frame}
 }
 
@@ -1276,10 +1285,17 @@ data Pandoc = Pandoc Meta [Block]
 % at :: Lens (Map a) (Maybe a)
 % Kombinatoren für 'Maybe-Lenses', z.B. (?~)
 % Was ist die Konvention mit "Of" am Ende des Namens einer Funktion?
+% Lenses für Defaultparameters (https://ocharles.org.uk/blog/posts/2015-07-23-another-approach-to-default-variables.html)
 
 % Bonusfolien:
 % * Zippers
 % * Plated
 % * Indexed Lenses/Traversals
+
+% Weitere Ideen aus Lens over Tea
+% * `Const m` ist ein Applicative wenn m ein Monoid ist. Indem man passende Monide wählt bekommt man view, toListOf, preview, has
+% * Typ-Synonyme wie `Getting`, `LensLike`
+% * Performance-Probleme bei naiver Implementierung von toListOf
+% * `each` bei Traversals
 
 \end{document}

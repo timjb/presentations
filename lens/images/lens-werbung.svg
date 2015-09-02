@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 744.09448819 1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="lens-perl.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="62.173062"
+     inkscape:cy="77.507637"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1440"
+     inkscape:window-height="851"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g3343"
+       transform="translate(-2.8571429,-75.142857)">
+      <path
+         transform="matrix(1.8195222,-0.32009242,0.08328998,0.4734507,1855.8583,8.723484)"
+         d="m -534.28571,149.50505 -84.28221,-0.94373 14.25579,83.07319 -79.86552,-26.94218 -12.11297,83.41258 -67.63103,-50.30334 -37.29602,75.58696 -48.77634,-68.74045 -58.82828,60.36237 -25.1471,-80.44878 -74.60201,39.22909 0.9437,-84.28221 -83.0732,14.25579 26.9422,-79.86552 -83.4126,-12.11297 50.3034,-67.631026 -75.587,-37.296019 68.7405,-48.776346 -60.3624,-58.828279 80.4488,-25.14709 -39.2291,-74.60202 84.2822,0.94373 -14.2558,-83.07318 79.86553,26.94217 12.11297,-83.41257 67.63103,50.30333 37.29602,-75.58696 48.77634,68.74045 58.82828,-60.36237 25.14709,80.44878 74.60202,-39.22909 -0.94373,84.28221 83.07319,-14.25578 -26.94218,79.86551 83.41258,12.11297 -50.30334,67.63103 75.58696,37.296019 -68.74045,48.7763462 60.36237,58.8282788 -80.44878,25.147093 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="false"
+         sodipodi:arg2="0.70602165"
+         sodipodi:arg1="0.54894202"
+         sodipodi:r2="275.97574"
+         sodipodi:r1="344.96967"
+         sodipodi:cy="-30.494938"
+         sodipodi:cx="-828.57141"
+         sodipodi:sides="20"
+         id="path4138"
+         style="opacity:1;fill:#ffe680;fill-opacity:1;fill-rule:nonzero;stroke:#db9656;stroke-width:6.95200014;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         sodipodi:type="star" />
+      <text
+         transform="matrix(0.98487603,-0.17326051,0.17326051,0.98487603,0,0)"
+         sodipodi:linespacing="125%"
+         id="text4140"
+         y="295.01447"
+         x="-57.572838"
+         style="font-style:oblique;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:65px;line-height:125%;font-family:'Comic Neue';-inkscape-font-specification:'Comic Neue Bold Oblique';letter-spacing:0px;word-spacing:0px;fill:#800000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="295.01447"
+           x="-57.572838"
+           id="tspan4142"
+           sodipodi:role="line">Lens lässt Haskell-Code</tspan><tspan
+           y="376.26447"
+           x="-57.572838"
+           sodipodi:role="line"
+           id="tspan3337">   aussehen wie Perl!</tspan></text>
+    </g>
+    <g
+       id="g4197"
+       inkscape:export-xdpi="83.106979"
+       inkscape:export-ydpi="83.106979">
+      <path
+         sodipodi:type="star"
+         style="opacity:1;fill:#ffe680;fill-opacity:1;fill-rule:nonzero;stroke:#db9656;stroke-width:6.95200014;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="path3351"
+         sodipodi:sides="20"
+         sodipodi:cx="-828.57141"
+         sodipodi:cy="-30.494938"
+         sodipodi:r1="344.96967"
+         sodipodi:r2="275.97574"
+         sodipodi:arg1="0.54894202"
+         sodipodi:arg2="0.70602165"
+         inkscape:flatsided="false"
+         inkscape:rounded="0"
+         inkscape:randomized="0"
+         d="m -534.28571,149.50505 -84.28221,-0.94373 14.25579,83.07319 -79.86552,-26.94218 -12.11297,83.41258 -67.63103,-50.30334 -37.29602,75.58696 -48.77634,-68.74045 -58.82828,60.36237 -25.1471,-80.44878 -74.60201,39.22909 0.9437,-84.28221 -83.0732,14.25579 26.9422,-79.86552 -83.4126,-12.11297 50.3034,-67.631026 -75.587,-37.296019 68.7405,-48.776346 -60.3624,-58.828279 80.4488,-25.14709 -39.2291,-74.60202 84.2822,0.94373 -14.2558,-83.07318 79.86553,26.94217 12.11297,-83.41257 67.63103,50.30333 37.29602,-75.58696 48.77634,68.74045 58.82828,-60.36237 25.14709,80.44878 74.60202,-39.22909 -0.94373,84.28221 83.07319,-14.25578 -26.94218,79.86551 83.41258,12.11297 -50.30334,67.63103 75.58696,37.296019 -68.74045,48.7763462 60.36237,58.8282788 -80.44878,25.147093 z"
+         transform="matrix(1.8899539,-0.3360611,0.02775521,0.70890287,1945.3796,429.52953)" />
+      <text
+         xml:space="preserve"
+         style="font-style:oblique;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:65px;line-height:125%;font-family:'Comic Neue';-inkscape-font-specification:'Comic Neue Bold Oblique';letter-spacing:0px;word-spacing:0px;fill:#800000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="-168.00468"
+         y="691.88324"
+         id="text3353"
+         sodipodi:linespacing="125%"
+         transform="matrix(0.98487603,-0.17326051,0.17326051,0.98487603,0,0)"><tspan
+           sodipodi:role="line"
+           id="tspan3355"
+           x="-168.00468"
+           y="691.88324">Du willst in Haskell write-only</tspan><tspan
+           sodipodi:role="line"
+           x="-168.00468"
+           y="773.13324"
+           id="tspan3359">Code wie in Perl schreiben? </tspan><tspan
+           id="tspan3357"
+           sodipodi:role="line"
+           x="-168.00468"
+           y="854.38324">   Dann versuche Lens!</tspan></text>
+    </g>
+    <g
+       id="g4144"
+       transform="matrix(0.98487603,-0.17326051,0.17326051,0.98487603,927.29434,1108.1394)"
+       inkscape:export-xdpi="85.732498"
+       inkscape:export-ydpi="85.732498"
+       style="stroke:#db9656;stroke-opacity:1">
+      <path
+         transform="matrix(1.8474632,0,0,0.48072111,993.61231,-0.12109198)"
+         d="m -534.28571,149.50505 -84.28221,-0.94373 14.25579,83.07319 -79.86552,-26.94218 -12.11297,83.41258 -67.63103,-50.30334 -37.29602,75.58696 -48.77634,-68.74045 -58.82828,60.36237 -25.1471,-80.44878 -74.60201,39.22909 0.9437,-84.28221 -83.0732,14.25579 26.9422,-79.86552 -83.4126,-12.11297 50.3034,-67.631026 -75.587,-37.296019 68.7405,-48.776346 -60.3624,-58.828279 80.4488,-25.14709 -39.2291,-74.60202 84.2822,0.94373 -14.2558,-83.07318 79.86553,26.94217 12.11297,-83.41257 67.63103,50.30333 37.29602,-75.58696 48.77634,68.74045 58.82828,-60.36237 25.14709,80.44878 74.60202,-39.22909 -0.94373,84.28221 83.07319,-14.25578 -26.94218,79.86551 83.41258,12.11297 -50.30334,67.63103 75.58696,37.296019 -68.74045,48.7763462 60.36237,58.8282788 -80.44878,25.147093 z"
+         inkscape:randomized="0"
+         inkscape:rounded="0"
+         inkscape:flatsided="false"
+         sodipodi:arg2="0.70602165"
+         sodipodi:arg1="0.54894202"
+         sodipodi:r2="275.97574"
+         sodipodi:r1="344.96967"
+         sodipodi:cy="-30.494938"
+         sodipodi:cx="-828.57141"
+         sodipodi:sides="20"
+         id="path4138-1"
+         style="opacity:1;fill:#ffe680;fill-opacity:1;fill-rule:nonzero;stroke:#db9656;stroke-width:6.95200014;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         sodipodi:type="star" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text4140-7"
+         y="5.5050621"
+         x="-955.42859"
+         style="font-style:oblique;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:65px;line-height:125%;font-family:'Comic Neue';-inkscape-font-specification:'Comic Neue Bold Oblique';letter-spacing:0px;word-spacing:0px;fill:#800000;fill-opacity:1;stroke:#db9656;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="5.5050621"
+           x="-955.42859"
+           id="tspan4142-9"
+           sodipodi:role="line">Lens ist jQuery für Haskell!</tspan></text>
+    </g>
+  </g>
+</svg>
