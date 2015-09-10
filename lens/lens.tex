@@ -85,7 +85,6 @@
   \frametitle{Übersicht}
   \tableofcontents
 \end{frame}
-\fi
 
 \begin{frame}[fragile,t]
   \frametitle{Welche Bibliothek?}
@@ -593,9 +592,9 @@ ignored :: Traversal' s a -- trivial traversal
 \begin{haskellcode*}{fontsize=\small}
 prism :: (a -> s) -> (s -> Either s a) -> Prism' s a
 _Left :: Prism' (Either a c) a    _Right :: Prism' (Either a c) c
-_Just :: Prism' (Maybe a) a
-_Void :: Prism' s Void
+_Just :: Prism' (Maybe a) a       _Void :: Prism' s Void
 outside :: Prism' s a -> Lens' (s -> r) (a -> r)
+_Show :: (Read a, Show a) => Prism' String a
 \end{haskellcode*}
   \end{onlyenv}
 
@@ -1276,6 +1275,7 @@ rotateSideCW :: Aut (Side a)
     \end{mdframed}
   \end{minipage}
 \end{frame}
+\fi
 
 \begin{frame}[fragile,t]
   \frametitle{Wo kann ich mehr über \haskellinline{lens} erfahren?}
@@ -1329,6 +1329,56 @@ data Block
 data Pandoc = Pandoc Meta [Block]
   deriving (..., Typeable, Data, Generic)
   \end{haskellcode*}
+\end{frame}
+
+\begin{frame}[fragile,t]
+  \frametitle{Anwendung: Ausnahmebehandlung}
+  \begin{haskellcode*}{fontsize=\small,escapeinside=||}
+class (Typeable e, Show e) => Exception e where ...
+data SomeException = forall e. Exception e => SomeException e
+handle :: Exception e => (e -> IO a) -> IO a -> IO a
+
+handle (\(exc :: AssertionFailed) -> return "caught")
+       (assert (2+2 == 3) (return "uncaught"))
+|\ev| "caught"
+
+handle (\(exc :: AssertionFailed) -> return "caught")
+       (assert (2+2 == 4) (return "works"))
+|\ev| "works"
+  \end{haskellcode*}
+  Es ist doof, dass man das Argument im Exception-Handler mit einem Typ annotieren muss.
+  Doch zum Glück gibt es \verb|Control.Exception.Lens|!
+\end{frame}
+
+\begin{frame}[fragile,t]
+  \frametitle{Anwendung: Ausnahmebehandlung}
+  \begin{haskellcode*}{fontsize=\small,escapeinside=||}
+import Control.Exception.Lens
+catching :: MonadCatch m => Prism' SomeException a
+         -> m r -> (a -> m r) -> m r
+
+catching _AssertionFailed (assert (2+2 == 3) (return "uncaught"))
+                          (const (return "caught"))
+|\ev| "caught"
+
+catching _AssertionFailed (assert (2+2 == 4) (return "works"))
+                          (const (return "caught"))
+|\ev| "works"
+  \end{haskellcode*}
+
+  In \verb|Control.Exception.Lens| sind ganz viele \verb|Prism|s vordefiniert:
+  \begin{minipage}{0.85 \linewidth}
+    \begin{mdframed}[backgroundcolor=blue!10]
+      \begin{haskellcode*}{fontsize=\footnotesize}
+_IndexOutOfBounds :: Prism' SomeException String
+_StackOverflow    :: Prism' SomeException ()
+_UserInterrupt    :: Prism' SomeException ()
+_DivideByZero     :: Prism' SomeException ArithException
+_AssertionFailed  :: Prism' SomeException String
+-- (usw)
+      \end{haskellcode*}
+    \end{mdframed}
+  \end{minipage}
 \end{frame}
 
 % TODO:
