@@ -85,6 +85,7 @@
   \frametitle{Übersicht}
   \tableofcontents
 \end{frame}
+\fi
 
 \begin{frame}[fragile,t]
   \frametitle{Welche Bibliothek?}
@@ -1275,7 +1276,6 @@ rotateSideCW :: Aut (Side a)
     \end{mdframed}
   \end{minipage}
 \end{frame}
-\fi
 
 \begin{frame}[fragile,t]
   \frametitle{Wo kann ich mehr über \haskellinline{lens} erfahren?}
@@ -1304,11 +1304,31 @@ rotateSideCW :: Aut (Side a)
 \end{frame}}
 
 \begin{frame}[fragile]
-  \frametitle{Plated}
+  \frametitle{Beispiel: Haddock-Links mit Pandoc und Plated}
+  Ziel: Verlinke Haskell-Funktionen in Markdown-Dokumenten
+
+  \begin{mdframed}[backgroundcolor=blue!10]
+    {\scriptsize Markdown:}
+    \begin{minted}{text}
+In this example, the position of parameters in paths are
+declared with `Web.Routing.SafeRouting.var`.
+    \end{minted}
+  \end{mdframed}
+
+  \begin{minted}[escapeinside=||,fontsize=\footnotesize]{text}
+$ pandoc |\hl{--filter hayoo-links}| type-safe_routing.markdown > output.html
+  \end{minted}
+
+  \vspace{12pt}
+
+  {\huge \ev} \enspace \begin{minipage}[t]{0.5 \linewidth}
+    \vspace{-10pt}
+    \includegraphics[width=7.5cm]{images/hayoo-links-screenshot.jpg}
+  \end{minipage}
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Plated}
+  \frametitle{Beispiel: Haddock-Links mit Pandoc und Plated}
   \begin{haskellcode*}{fontsize=\small}
 data Inline
   = Str String
@@ -1330,6 +1350,40 @@ data Block
 data Pandoc = Pandoc Meta [Block]
   deriving (..., Typeable, Data, Generic)
   \end{haskellcode*}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Beispiel: Haddock-Links mit Pandoc und Plated}
+  \begin{haskellcode*}{fontsize=\footnotesize,escapeinside=&&}
+data HsIdentifier = HsModule [String] | HsFunction [String] String
+
+parseHsIdentifier :: String -> Maybe HsIdentifier
+
+-- returns (str', url, title) pair
+getIdentifierInfos :: HsIdentifier
+                   -> IO (Maybe (Maybe String, String, String))
+
+hayooLinkModules :: Inline -> IO Inline
+hayooLinkModules code@(Code attr str) =
+  case parseHsIdentifier str of
+    Nothing -> return code
+    Just identifier ->
+      maybe code (\(str',url,title) -> Link [maybe code (Code attr) str']
+                                            (url, title))
+        <$> getIdentifierInfos identifier
+hayooLinkModules x = return x
+
+main :: IO ()
+main = pipeline $ &\hl{traverseOf}\marktikz{h1}& &\hl{template}\marktikz{h2}& hayooLinkModules
+  where pipeline :: (Pandoc -> IO Pandoc) -> IO ()
+  \end{haskellcode*}
+  \begin{visibleenv}<2->
+    {\scriptsize
+    \begin{tikzpicture}[remember picture, overlay]
+      \draw[typeline] (h1) |- + (0, 2.6) node[typebox, anchor=south west] {\verb|:: Applicative f => Traversal s t a b| \\ \verb|-> (a -> f b) -> s -> f t|};
+      \draw[typeline] (h2) |- + (0, 0.6) node[typebox, anchor=south west] {\verb|:: forall s a. (Data s, Typeable a)| \\ \verb|=> Traversal' s a|};
+    \end{tikzpicture}}
+  \end{visibleenv}
 \end{frame}
 
 \begin{frame}[fragile,t]
@@ -1468,6 +1522,19 @@ type Fold  s a = |\fa| f. (Contravar't f, App've f) => (a -> f a) -> s -> f s
   \[ \frac{\text{Apply}}{\text{Applicative}} \approx \frac{\text{Semigroup}}{\text{Monoid}} \]
 \end{frame}
 
+{\setbeamertemplate{background}{}
+\begin{frame}[b]
+  \begin{center}
+    \includegraphics[width=5cm,keepaspectratio]{images/socke-gross.png} \\
+  \end{center}
+
+  \centering \small
+  \url{http://timbaumann.info/lens} \\
+  \url{https://github.com/timjb/presentations/tree/gh-pages/lens}
+
+  Danke an Carina für die Erlaubnis, Socke zu verwenden!
+\end{frame}}
+
 % TODO:
 % Funktionen: over, (&)
 % at :: Lens (Map a) (Maybe a)
@@ -1476,7 +1543,6 @@ type Fold  s a = |\fa| f. (Contravar't f, App've f) => (a -> f a) -> s -> f s
 
 % Bonusfolien:
 % * Zippers
-% * Plated
 % * Indexed Lenses/Traversals
 % * Typisomorphismen (da gibts doch so ein Paper...)
 
