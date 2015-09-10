@@ -13,7 +13,8 @@
   \setbeamertemplate{navigation symbols}{} % Keine Navigationslinks
 }
 
-\usepackage{graphicx}
+\usepackage{graphicx} % Zum Bilder-Einbinden
+\usepackage{mdframed} % Farbige Boxen
 
 % Damit die Tilde ~ im Code nicht hochgestellt dargestellt wird, muss man einen anderen Font verwenden, z.B.
 %\usepackage[T1]{fontenc}
@@ -466,6 +467,25 @@ evenIxs f (x:y:xs) = (\x' xs' -> x':y:xs')
   \end{onlyenv}
 \end{frame}
 
+\begin{frame}[fragile]
+  \frametitle{Wiederholung}
+  Eine \haskellinline{Lens' s a} gibt Lese- und Schreibzugriff auf ein \haskellinline{a} innerhalb eines \haskellinline{s}.
+
+  Ein \haskellinline{Traversal' s a} iteriert über kein, ein oder mehrere \haskellinline{a} innerhalb eines \haskellinline{s} (mit R/W-Zugriff).
+
+\begin{haskellcode*}{fontsize=\small,escapeinside=||}
+type Lens'      s a = |\fa| f.     Functor f => (a -> f a) -> s -> f s
+type Traversal' s a = |\fa| f. Applicative f => (a -> f a) -> s -> f s
+\end{haskellcode*}
+
+  Lenses sowie Traversals lassen sich mit der normalen Funktionskomposition \verb|(.)| verketten.
+
+\begin{haskellcode}
+(.^) :: s -> Lens' s a -> a
+(.~) :: Lens' s a -> a -> s -> s
+\end{haskellcode}
+\end{frame}
+
 \begin{frame}[t,fragile]
   \frametitle{Weitere optische Gerätschaften aus \haskellinline{lens}}
   \begin{center}
@@ -561,9 +581,10 @@ devoid :: Lens' Void a    united :: Lens' a ()
   \begin{onlyenv}<2>
 \begin{haskellcode*}{fontsize=\small}
 traverse :: Traversable t => Traversal' (t a) a
-beside :: Traversal' s a -> Traversal s' a b
-       -> Traversal' (s,s') a
+both :: Traversal' (s,s) s
+beside :: Traversal' s a -> Traversal s' a -> Traversal' (s,s') a
 taking :: Int -> Traversal' s a -> Traversal' s a
+ignored :: Traversal' s a -- trivial traversal
 \end{haskellcode*}
   \end{onlyenv}
 
@@ -710,17 +731,37 @@ traverse :: Traversable t => Traversal (t x) (t y) x y
 \end{frame}
 
 {\setbeamertemplate{background}{}
-\begin{frame}[b]
+\begin{frame}[fragile,b]
   \frametitle{Beispiel: Curry-Feed parsen}
   \inputminted[fontsize=\small]{haskell}{curry-termine/Main.hs}
   \note{Verwendete Packages: \verb|lens|, \verb|text|, \verb|xml-conduit|, \verb|wreq|, \verb|xml-lens|}
   \note{Es gibt auch Lenses für JSON-Daten. Diese waren früher in \verb|lens| enthalten, jetzt sind sie Teil des Pakets \verb|lens-aeson|.}
   \begin{visibleenv}<2->
     \vspace{-7cm}
-    \hfill \includegraphics[height=3cm]{images/lens-jquery.png}
-    \vspace{4cm}
+    \hfill \begin{minipage}{0.55 \linewidth}
+      \begin{mdframed}[backgroundcolor=yellow]
+\begin{haskellcode*}{fontsize=\footnotesize}
+responseBody
+  :: Lens' (Response body) body
+root :: Lens' Document Element
+nodes :: Lens' Element [Node]
+_Element :: Prism' Node Element
+named :: CI Text
+      -> Traversal' Element Element
+text :: Traversal' Element Text
+\end{haskellcode*}
+      \end{mdframed}
+    \end{minipage}
   \end{visibleenv}
-\end{frame}}
+  \begin{visibleenv}<3->
+    \vspace{-2cm}
+    \begin{center}
+      \includegraphics[height=3cm]{images/lens-jquery.png}
+    \end{center}
+    \vspace{8cm}
+  \end{visibleenv}
+\end{frame}
+}
 
 \begin{frame}[fragile,t]
   \frametitle{Wie bekomme ich Lenses für meine Datentypen?}
@@ -1205,7 +1246,11 @@ horizontalSides = lens getter setter
 
 \begin{frame}[fragile]
   \frametitle{Beispiel: \texttt{diagrams-rubiks-cube}}
-  \begin{haskellcode}
+  \begin{minipage}{0.3 \linewidth}
+    \includegraphics[width=3cm]{images/rubiks-cube.png}
+  \end{minipage}
+  \begin{minipage}{0.68 \linewidth}
+    \begin{haskellcode}
 upRows :: RowsLens a
 upRows = horizontalSides . liftVec4 topRow
 
@@ -1214,16 +1259,22 @@ moveU :: Aut (RubiksCube a)
 moveU =
   cong cube $ cong upRows cycleLeft
             . cong upSide rotateSideCW
-  \end{haskellcode}
+    \end{haskellcode}
+  \end{minipage}
 
-  Zur Erinnerung:
-  \begin{haskellcode*}{fontsize=\small}
+  \vspace{0.5cm}
+  \begin{minipage}{0.7 \linewidth}
+    \begin{mdframed}[backgroundcolor=yellow]
+      Zur Erinnerung:
+      \begin{haskellcode*}{fontsize=\footnotesize}
 cong :: Traversal' s a -> Aut a -> Aut s
 topRow :: Lens' (Side a) (Vec3 a)
 horizontalSides :: Lens' (Cube a) (Vec4 a)
 cycleLeft :: Aut (Vec4 a)
 rotateSideCW :: Aut (Side a)
-  \end{haskellcode*}
+      \end{haskellcode*}
+    \end{mdframed}
+  \end{minipage}
 \end{frame}
 
 \begin{frame}[fragile,t]
@@ -1247,7 +1298,7 @@ rotateSideCW :: Aut (Side a)
   \end{center}
 
   \centering \small
-  \url{http://timbaumann.info/presentations/lens/lens.pdf} \\
+  \url{http://timbaumann.info/lens} \\
   \url{https://github.com/timjb/presentations/tree/gh-pages/lens}
 \end{frame}}
 
@@ -1281,7 +1332,7 @@ data Pandoc = Pandoc Meta [Block]
 \end{frame}
 
 % TODO:
-% Funktionen: over, both, set, view, (&)
+% Funktionen: over, (&)
 % at :: Lens (Map a) (Maybe a)
 % Kombinatoren für 'Maybe-Lenses', z.B. (?~)
 % Was ist die Konvention mit "Of" am Ende des Namens einer Funktion?
@@ -1291,11 +1342,14 @@ data Pandoc = Pandoc Meta [Block]
 % * Zippers
 % * Plated
 % * Indexed Lenses/Traversals
+% * Typisomorphismen (da gibts doch so ein Paper...)
+% * Semigroups, Apply und Fold1, Traversal1 (siehe Lens over Tea #3)
 
 % Weitere Ideen aus Lens over Tea
 % * `Const m` ist ein Applicative wenn m ein Monoid ist. Indem man passende Monide wählt bekommt man view, toListOf, preview, has
 % * Typ-Synonyme wie `Getting`, `LensLike`
 % * Performance-Probleme bei naiver Implementierung von toListOf
 % * `each` bei Traversals
+% * `lens-action`
 
 \end{document}
