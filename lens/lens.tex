@@ -1449,6 +1449,23 @@ class Functor f => Applicative f where
   (<*>) :: f (a -> b) -> f a -> f b
   pure :: a -> f a
   \end{haskellcode*}
+  \note{Das ist der Unterschied zwischen Halbgruppen}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Fold1}
+  Analog gibt es auch \verb|Fold1|:
+  \begin{haskellcode*}{fontsize=\footnotesize, escapeinside=||}
+type Fold1 s a = |\fa| f. (Contravar't f, Apply  f) => (a -> f a) -> s -> f s
+               |$\cong$| |\fa| m. Semigroup m => (a -> m) -> s -> m
+
+type Fold  s a = |\fa| f. (Contravar't f, App've f) => (a -> f a) -> s -> f s
+               |$\cong$| |\fa| m. Monoid m => (a -> m) -> s -> m
+  \end{haskellcode*}
+
+  Es gilt also:
+
+  \[ \frac{\text{Apply}}{\text{Applicative}} \approx \frac{\text{Semigroup}}{\text{Monoid}} \]
 \end{frame}
 
 % TODO:
@@ -1462,7 +1479,6 @@ class Functor f => Applicative f where
 % * Plated
 % * Indexed Lenses/Traversals
 % * Typisomorphismen (da gibts doch so ein Paper...)
-% * Semigroups, Apply und Fold1, Traversal1 (siehe Lens over Tea #3)
 
 % Weitere Ideen aus Lens over Tea
 % * `Const m` ist ein Applicative wenn m ein Monoid ist. Indem man passende Monide wählt bekommt man view, toListOf, preview, has
