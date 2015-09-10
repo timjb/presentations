@@ -1381,12 +1381,55 @@ _AssertionFailed  :: Prism' SomeException String
   \end{minipage}
 \end{frame}
 
+\begin{frame}[fragile,t]
+  \frametitle{Anwendung: Defaultparameter}
+  Angenommen, wir schreiben eine HTTP-Library
+  {\tiny (Beispiel \href{https://ocharles.org.uk/blog/posts/2015-07-23-another-approach-to-default-variables.html}{geklaut von Oliver Charles})}
+  \begin{haskellcode*}{fontsize=\small}
+data HTTPSettings = HTTPSettings
+  { _httpKeepAlive :: Bool
+  , _httpCookieJar :: CookieJar
+  } deriving (Show, ...)
+makeLenses ''HTTPSettings
+  \end{haskellcode*}
+
+  \begin{haskellcode*}{fontsize=\small}
+defaultHTTPSettings :: HTTPSettings
+defaultHTTPSettings = HTTPSettings True emptyCookieJar
+  \end{haskellcode*}
+  \begin{onlyenv}<1>
+    \begin{haskellcode*}{fontsize=\small}
+httpRequest :: HTTPSettings -> HTTPRequest -> IO Response
+instance Default HTTPSettings where
+  def = defaultHTTPSettings
+
+httpRequest
+  (def & httpKeepAlive .~ True
+       & httpCookieJar .~ myCookieJar)
+  aRequest
+    \end{haskellcode*}
+    Kritik: \verb|Default| ist \href{http://phaazon.blogspot.fr/2015/07/dont-use-default.html}{eine gesetzlose Typklasse!}
+  \end{onlyenv}
+  \begin{onlyenv}<2->
+    \begin{haskellcode*}{fontsize=\small}
+httpRequest :: State HTTPSettings a -> HTTPRequest -> IO Response
+httpRequest mkState req =
+  let config = execState mkConfig defaultHttpSettings in ...
+
+httpRequest
+  (do httpKeepAlive .= True
+      httpCookieJar .= myCookieJar)
+  aRequest
+    \end{haskellcode*}
+    Besser!
+  \end{onlyenv}
+\end{frame}
+
 % TODO:
 % Funktionen: over, (&)
 % at :: Lens (Map a) (Maybe a)
 % Kombinatoren für 'Maybe-Lenses', z.B. (?~)
 % Was ist die Konvention mit "Of" am Ende des Namens einer Funktion?
-% Lenses für Defaultparameters (https://ocharles.org.uk/blog/posts/2015-07-23-another-approach-to-default-variables.html)
 
 % Bonusfolien:
 % * Zippers
