@@ -1283,6 +1283,7 @@ rotateSideCW :: Aut (Side a)
     \item \textbf{Das Lens-Wiki:} \url{https://github.com/ekmett/lens/wiki}
     \item Blogserie ``Lens over Tea'' \url{http://artyom.me/lens-over-tea-1}
     \item \href{https://skillsmatter.com/skillscasts/4251-lenses-compositional-data-access-and-manipulation}{Vortrag von Simon Peyton Jones bei Skills Matter}
+    \item \href{https://youtu.be/T88TDS7L5DY}{Vortrag von Edward Kmett: \\ ``The Unreasonable Effectiveness of Lenses for Business Applications''}
     \item \href{http://www.haskellforall.com/2013/05/program-imperatively-using-haskell.html}{Blogpost: ``Program imperatively using Haskell lenses''}
     \item \href{https://www.fpcomplete.com/school/to-infinity-and-beyond/pick-of-the-week/a-little-lens-starter-tutorial}{School of Haskell: ``A Little Lens Starter Tutorial''}
     \item Cheat Sheet für \verb|Control.Lens|: \\
@@ -1423,6 +1424,31 @@ httpRequest
     \end{haskellcode*}
     Besser!
   \end{onlyenv}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Traversal1}
+  Ein \verb|Traversal1 s a| ist ein \verb|Traversal s a|, dass immer mindestens über ein \verb|a| iteriert.
+  Dies lässt sich mit der Typklasse \verb|Apply| umsetzen:
+  \begin{haskellcode*}{fontsize=\footnotesize, escapeinside=||}
+type Traversal1 s t a b = |\fa| f. Apply f => (a -> f b) -> s -> f t
+type Traversal1' s a = Traversal1 s s a a
+
+class Functor f => Apply f where
+  (<.>) :: f (a -> b) -> f a -> f b
+  \end{haskellcode*}
+
+  \noindent\rule{\textwidth}{0.4pt}
+
+  Zur Erinnerung:
+  \begin{haskellcode*}{fontsize=\footnotesize, escapeinside=||}
+type Traversal s t a b = |\fa| f. Applicative f => (a -> f b) -> s -> f t
+type Traversal' s a = Traversal s s a a
+
+class Functor f => Applicative f where
+  (<*>) :: f (a -> b) -> f a -> f b
+  pure :: a -> f a
+  \end{haskellcode*}
 \end{frame}
 
 % TODO:
