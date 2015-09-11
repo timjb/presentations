@@ -73,6 +73,7 @@
 \newcommand{\ev}{$\rightsquigarrow$} % evaluates to
 \newcommand{\hl}[1]{\colorbox{yellow}{#1}} % highlight code
 \newcommand{\hll}[1]{\colorbox{yellow!50!white}{#1}} % highlight code (weaker)
+\newcommand{\nverb}[1]{\mintinline{text}{#1}} % verbatim that works even in \note{...} (LaTeX is such $%"§$&§""$& software)
 
 \begin{document}
 
@@ -158,7 +159,6 @@ address = Lens|\kreuz|
         \haskellinline{= setter l a}
         \item \haskellinline{s = setter l (getter l s) s}
       \end{enumerate}
-      \note{Das sind die ``costate comonad coalgebra'' Gesetze}
     \end{onlyenv}
   \end{columns}
 \begin{onlyenv}<4>
@@ -175,6 +175,10 @@ address = Lens|\kreuz|
 \end{haskellcode*}
 \end{onlyenv}
 \end{frame}
+
+\note{
+  Die Lens-Gesetze sind die ``costate comonad coalgebra''-Gesetze
+}
 
 \begin{frame}[fragile]
   \frametitle{Komponieren von Lenses}
@@ -249,19 +253,20 @@ last = Lens?\kreuz? getter setter
 \end{haskellcode*}
     \end{columns}
   \end{visibleenv}
-  \note{
-    Man kann diese Probleme auch anders lösen: Nämlich, indem man Lenses über die Store-Komonade definiert:
+\end{frame}
 
-\begin{haskellcode*}{}
+\note{
+  Man kann diese Probleme auch anders lösen: Nämlich, indem man Lenses über die Store-Komonade definiert:
+
+  \begin{semiverbatim}
 newtype Lens a b = Lens (a -> Store b a)
 data Store b a = Store (b -> a) b
-\end{haskellcode*}
+  \end{semiverbatim}
 
-    Das ermöglicht, die Datenstruktur nur einmal zu durchlaufen.
+  Das ermöglicht, die Datenstruktur nur einmal zu durchlaufen.
 
-    Dies macht das Paket \verb|data-lens| von Edward Kmett. (Das ist der Vorgänger seiner \verb|lens|-Library.)
-  }
-\end{frame}
+  Dies macht das Paket \nverb{data-lens} von Edward Kmett. (Das ist der Vorgänger seiner \nverb{lens}-Library.)
+}
 
 \begin{frame}[fragile,t]
   \frametitle{
@@ -313,8 +318,11 @@ data Lens|\kkreuz| s a = Lens|\kkreuz|
       \huge \haskellinline{modifyF} umfasst \haskellinline{getter} und \haskellinline{setter}!
     }
   \end{onlyenv}
-  \note<3->{Diese Einsicht hat Twan van Laarhoven 2009 im Blogartikel \href{http://twanvl.nl/blog/haskell/cps-functional-references}{``CPS based functional references''} veröffentlicht.}
 \end{frame}
+
+\note{
+  Diese Einsicht hat Twan van Laarhoven 2009 im Blogartikel \href{http://twanvl.nl/blog/haskell/cps-functional-references}{``CPS based functional references''} veröffentlicht.
+}
 
 \begin{frame}[fragile]
   \frametitle{
@@ -333,13 +341,13 @@ type Lens' s a = |\fa| f. Functor f => (a -> f a) -> s -> f s
     \item
     \begin{visibleenv}<2->
 \begin{haskellcode}
-(.^) :: s -> Lens' s a -> a
+(^.) :: s -> Lens' s a -> a
 \end{haskellcode}
     \end{visibleenv}
     \vspace{-0.8em}
     \begin{visibleenv}<7->
 \begin{haskellcode}
-s .^ l = getConst (l Const s)
+s ^. l = getConst (l Const s)
 \end{haskellcode}
     \end{visibleenv}
 
@@ -467,6 +475,7 @@ evenIxs f (x:y:xs) = (\x' xs' -> x':y:xs')
   \end{onlyenv}
 \end{frame}
 
+\iffalse
 \begin{frame}[fragile]
   \frametitle{Wiederholung}
   Eine \haskellinline{Lens' s a} gibt Lese- und Schreibzugriff auf ein \haskellinline{a} innerhalb eines \haskellinline{s}.
@@ -481,10 +490,11 @@ type Traversal' s a = |\fa| f. Applicative f => (a -> f a) -> s -> f s
   Lenses sowie Traversals lassen sich mit der normalen Funktionskomposition \verb|(.)| verketten.
 
 \begin{haskellcode}
-(.^) :: s -> Lens' s a -> a
+(^.) :: s -> Lens' s a -> a
 (.~) :: Lens' s a -> a -> s -> s
 \end{haskellcode}
 \end{frame}
+\fi
 
 \begin{frame}[t,fragile]
   \frametitle{Weitere optische Gerätschaften aus \haskellinline{lens}}
@@ -645,12 +655,15 @@ mapped :: Setter' (x -> a) a
       \item<11-> Viele Beispielfunktionen haben einen allgemeineren Typ als angegeben.
     \end{itemize}
   \end{onlyenv}}
-
-  \note{Prismen sind dual zu Lenses: Während eine \haskellinline{Lens' s a} den Typ \verb|s| als Produkt von \verb|a| und einem zweiten Typ darstellt, gibt ein \haskellinline{Prism' s a} eine Darsellung von \verb|s| als Summe von \verb|a| und einem zweiten Typ an.}
-  \note{Es gibt außerdem noch den Typ \haskellinline{Review t b}. Er entspricht einer Funktion \haskellinline{b -> t}. Unter der Dualität von \haskellinline{Lens'} und \haskellinline{Prism'} entspricht ein \haskellinline{Getter} einem \haskellinline{Review}. Insbesondere ist jedes \haskellinline{Prism' b t} ein \haskellinline{Review t b}.}
-
-  \note{\url{https://github.com/ekmett/lens/wiki/Derivation}{Das Lens-Wiki beschreibt} die Herleitung dieser Typen.}
 \end{frame}
+
+\note{
+  Prismen sind dual zu Lenses: Während eine \haskellinline{Lens' s a} den Typ \nverb{s} als Produkt von \nverb{a} und einem zweiten Typ darstellt, gibt ein \haskellinline{Prism' s a} eine Darsellung von \nverb{s} als Summe von \nverb{a} und einem zweiten Typ an.
+
+  Es gibt außerdem noch den Typ \haskellinline{Review t b}. Er entspricht einer Funktion \haskellinline{b -> t}. Unter der Dualität von \haskellinline{Lens'} und \haskellinline{Prism'} entspricht ein \haskellinline{Getter} einem \haskellinline{Review}. Insbesondere ist jedes \haskellinline{Prism' b t} ein \haskellinline{Review t b}.
+
+  \url{https://github.com/ekmett/lens/wiki/Derivation}{Das Lens-Wiki beschreibt} die Herleitung dieser Typen.
+}
 
 {\setbeamertemplate{background}{}
 \begin{frame}
@@ -715,8 +728,11 @@ type Traversal' s a = Traversal s s a a
 traverse :: Traversable t => Traversal (t x) (t y) x y
 \end{haskellcode*}
   \end{onlyenv}
-  \note{Polymorphe Updates wurden zum ersten Mal 2012 in \href{http://r6.ca/blog/20120623T104901Z.html}{einem Blogartikel} von Russell O'Connor beschrieben.}
 \end{frame}
+
+\note{
+  Polymorphe Updates wurden zum ersten Mal 2012 in \href{http://r6.ca/blog/20120623T104901Z.html}{einem Blogartikel} von Russell O'Connor beschrieben.
+}
 
 \begin{frame}
   \frametitle{Beispiel: Curry-Feed parsen}
@@ -734,8 +750,6 @@ traverse :: Traversable t => Traversal (t x) (t y) x y
 \begin{frame}[fragile,b]
   \frametitle{Beispiel: Curry-Feed parsen}
   \inputminted[fontsize=\small]{haskell}{curry-termine/Main.hs}
-  \note{Verwendete Packages: \verb|lens|, \verb|text|, \verb|xml-conduit|, \verb|wreq|, \verb|xml-lens|}
-  \note{Es gibt auch Lenses für JSON-Daten. Diese waren früher in \verb|lens| enthalten, jetzt sind sie Teil des Pakets \verb|lens-aeson|.}
   \begin{visibleenv}<2->
     \vspace{-7cm}
     \hfill \begin{minipage}{0.55 \linewidth}
@@ -761,6 +775,11 @@ text :: Traversal' Element Text
     \vspace{8cm}
   \end{visibleenv}
 \end{frame}
+}
+
+\note{
+  Verwendete Packages: \nverb{lens}, \nverb{text}, \nverb{xml-conduit}, \nverb{wreq}, \nverb{xml-lens}
+  Es gibt auch Lenses für JSON-Daten. Diese waren früher in \nverb{lens} enthalten, jetzt sind sie Teil des Pakets \nverb{lens-aeson}.
 }
 
 \begin{frame}[fragile,t]
@@ -856,7 +875,6 @@ biplate :: Traversal' Person Address
       {\small \color{dimgray}
       Vorteil: Keine Library benötigt! \\
       Nachteil: Boilerplate-Code}
-      \note{Im Lens-Wiki auf \lenswithoutdep wird erklärt, wie man Lenses, Traversals, Folds etc. schreiben kann, ohne auf Lens zu dependen.}
       \item<3-> Lenses generieren mit Template Haskell-Funktionen aus \haskellinline{lens} \\[0.2em]
       {\small \color{dimgray}
       Vorteil: Komfortabel \\
@@ -870,10 +888,17 @@ biplate :: Traversal' Person Address
       Nachteil: nur typgesteuerte Traversals möglich}
     \end{enumerate}
   \end{columns}
-  \note{Lenses bieten die Möglichkeit, die konkrete Implementierung eines Datentyps nach außen hin zu verstecken, aber dennoch Zugriff auf Felder zu gewähren. Dadurch gewinnt man die Freiheit, die Implementierung des Datentyps zu verbessern, ohne das Interface nach außen zu verändern.}
-  \note{\verb|Data.Data.Lens| und \verb|Control.Lens.Plated| basieren auf der \verb|uniplate|-Library für generisches Programmieren von Neil Mitchell.}
-  \note{Die Plated-Funktionalität von Lens kann besonders hilfreich für Compiler-Programmierer sein: Damit kann man nämlich z.B. mit wenig Code auf einem AST Transformationen durchführen.}
 \end{frame}
+
+\note{
+  Im Lens-Wiki auf \lenswithoutdep wird erklärt, wie man Lenses, Traversals, Folds etc. schreiben kann, ohne auf Lens zu dependen.
+
+  Lenses bieten die Möglichkeit, die konkrete Implementierung eines Datentyps nach außen hin zu verstecken, aber dennoch Zugriff auf Felder zu gewähren. Dadurch gewinnt man die Freiheit, die Implementierung des Datentyps zu verbessern, ohne das Interface nach außen zu verändern.
+
+  \nverb{Data.Data.Lens} und \nverb{Control.Lens.Plated} basieren auf der \nverb{uniplate}-Library für generisches Programmieren von Neil Mitchell.
+
+  Die Plated-Funktionalität von Lens kann besonders hilfreich für Compiler-Programmierer sein: Damit kann man nämlich z.B. mit wenig Code auf einem AST Transformationen durchführen.
+}
 
 {\setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{images/donald-detective-wolle-bg.jpg}}
 \setlength{\fboxsep}{2pt} % kaum Innenabstand in \colorbox'en
@@ -1289,8 +1314,11 @@ rotateSideCW :: Aut (Side a)
     \item Cheat Sheet für \verb|Control.Lens|: \\
     \url{https://github.com/anchor/haskell-cheat-sheets}
   \end{itemize}
-  \note{Auch ziemlich cool: \href{http://www.haskellforall.com/2015/01/total-100-exhaustive-pattern-matching.html}{total-1.0.0: Exhaustive pattern matching using traversals, prisms, and lenses}}
 \end{frame}
+
+\note{
+  Auch ziemlich cool: \href{http://www.haskellforall.com/2015/01/total-100-exhaustive-pattern-matching.html}{total-1.0.0: Exhaustive pattern matching using traversals, prisms, and lenses}
+}
 
 {\setbeamertemplate{background}{}
 \begin{frame}[b]
@@ -1503,7 +1531,6 @@ class Functor f => Applicative f where
   (<*>) :: f (a -> b) -> f a -> f b
   pure :: a -> f a
   \end{haskellcode*}
-  \note{Das ist der Unterschied zwischen Halbgruppen}
 \end{frame}
 
 \begin{frame}[fragile]
