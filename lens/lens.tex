@@ -771,8 +771,8 @@ text :: Traversal' Element Text
     \begin{onlyenv}<1-2>
       \begin{visibleenv}<2>
 \begin{haskellcode*}{stripnl=false,fontsize=\small}
-{-# LANGUAGE Rank2Types #-}
 -- keine Imports nötig
+
 
 \end{haskellcode*}
       \end{visibleenv}
@@ -822,7 +822,7 @@ data Person = Person
     \end{onlyenv}
     \begin{onlyenv}<2>
 \begin{haskellcode*}{fontsize=\small}
-address :: forall f. Functor f
+address :: Functor f
         => (Address -> f Address)
         -> Person -> f Person
 address f (Person first last addr) =
