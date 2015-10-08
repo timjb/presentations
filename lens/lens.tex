@@ -1114,7 +1114,7 @@ import Control.Lens
 
 diagram :: RubiksCubeBackend n b => Diagram b
 diagram =
-  let moves    = [B, R, F', R', D', F, F]
+  let moves    = [R, F', R', D', F, F]
       endPos   = solvedRubiksCube
       settings = with & showStart .~ True
   in drawMovesBackward settings endPos moves
@@ -1275,16 +1275,16 @@ horizontalSides = lens getter setter
     \includegraphics[width=3cm]{images/rubiks-cube.png}
   \end{minipage}
   \begin{minipage}{0.68 \linewidth}
-    \begin{haskellcode}
-upRows :: RowsLens a
+    \begin{haskellcode*}{fontsize=\footnotesize}
+upRows :: Lens' (Cube (Side a)) (Vec4 (Vec3 a))
 upRows = horizontalSides . liftVec4 topRow
 
--- Drehe die oberste Ebene im Uhrzeigersinn
+-- Drehe die oberste Ebene im UZS
 moveU :: Aut (RubiksCube a)
 moveU =
   cong cube $ cong upRows cycleLeft
             . cong upSide rotateSideCW
-    \end{haskellcode}
+    \end{haskellcode*}
   \end{minipage}
 
   \vspace{0.5cm}
