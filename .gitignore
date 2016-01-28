@@ -4,6 +4,8 @@
 *.out
 *.snm
 *.toc
+*.pyg
+*.vrb
 *.tm~
 .DS_Store
 .stack-work
