@@ -14,7 +14,6 @@
 }
 
 \usepackage{graphicx} % Zum Bilder-Einbinden
-\usepackage{mdframed} % Farbige Boxen
 
 % Damit die Tilde ~ im Code nicht hochgestellt dargestellt wird, muss man einen anderen Font verwenden, z.B.
 %\usepackage[T1]{fontenc}
@@ -28,23 +27,13 @@
 \usepackage{hyperref}
 \usepackage{url}
 
-\usepackage{bbm}
+\usepackage{bbm} % Buchstaben mit Doppelstrich
 \usepackage[normalem]{ulem} % Durchstreichen
 
 \renewcommand{\O}{\mathcal{O}} % Landau-O
 \newcommand{\N}{\mathbbm{N}} % natürliche Zahlen
+\newcommand{\ghci}{\textcolor{lightgray}{Prelude>}} % GHCI-Prompt
 
-\usepackage{tikz}
-\newcommand\marktikz[1]{%
-  \tikz[remember picture,overlay] \node[inner xsep=0pt] (#1) {};
-}
-\tikzstyle{typeline}=[yellow, very thick]
-\tikzstyle{typebox}=[black, fill=yellow, align=left]
-\tikzset{onslide/.code args={<#1>#2}{%
-  \only<#1>{\pgfkeysalso{#2}} % \pgfkeysalso doesn't change the path
-}}
-
-\definecolor{dimgray}{rgb}{0.41, 0.41, 0.41}
 \definecolor{greenncs}{rgb}{0.0, 0.62, 0.42}
 
 \defbeamertemplate*{title page}{customized}[1][]
@@ -66,22 +55,11 @@
 \institute[CCA]{Curry Club Augsburg}
 \date{28. Januar 2016}
 
-\newcommand{\hl}[1]{\colorbox{yellow}{#1}} % highlight code
-\newcommand{\hll}[1]{\colorbox{yellow!50!white}{#1}} % highlight code (weaker)
-\newcommand{\nverb}[1]{\mintinline{text}{#1}} % verbatim that works even in \note{...} (LaTeX is such $%"§$&§""$& software)
-
 \begin{document}
 
 \begin{frame}
   \titlepage
 \end{frame}
-
-\iffalse
-\begin{frame}
-  \frametitle{Übersicht}
-  \tableofcontents
-\end{frame}
-\fi
 
 \begin{frame}
   \frametitle{Literatur}
@@ -163,9 +141,9 @@ reverse = go []
   \frametitle{
     Banker's Queues
     \hfill
-    {
+    \visible<2->{
       \small \color{greenncs}
-      \visible<2->{\texttt{\{-\# LANGUAGE Strict \#-\}}}
+      \texttt{\{-\# LANGUAGE Strict \#-\}}
     }
   }
   \textit{Idee}: Speichere den vorderen und den hinteren Teil der Liste separat, den hinteren in umgekehrter Reihenfolge (damit man effizient anhängen kann).
@@ -205,15 +183,14 @@ snoc (BQueue f fl r rl) x = mkBQueue f fl (x:r) (rl+1)
   \vspace{0.5cm}
   \textit{Laufzeitanalyse}: Umdrehen der hinteren Liste und Anhängen an die vordere Liste dauert $\O(n)$ Zeit.
   Falls kein Umdrehen der Liste erforderlich ist, so benötigen \haskellinline{uncons} und \haskellinline{snoc} konstante Zeit.
-  \only<4-5>{Bevor das nächste Mal umgedreht werden muss, müssen weitere $n$ Operationen ausgeführt werden.}
-  \only<6->{\sout{Bevor das nächste Mal umgedreht werden muss, müssen weitere $n$ Operationen ausgeführt werden.}} 
+  \only<4-5>{Bevor das nächste Mal umgedreht werden muss, müssen weitere $n$ Operationen ausgeführt werden.}\only<6->{\sout{Bevor das nächste Mal umgedreht werden muss, müssen weitere $n$ Operationen ausgeführt werden.}}
   Wenn wir für jede dieser Operationen ein oder zwei Geldstücke in das Guthabenkonto legen, können wir für das nächste Mal Umdrehen bezahlen.
 \end{onlyenv}
 
 \begin{onlyenv}<5->
   \vspace{0.5cm}
   {\color{red} Dieses Argument ist falsch!}
-  \only<6->{Nicht im funktionalen/persistenten Setting: alte Zustände der Datenstruktur werden aufgehoben, es gibt mehrere Zukünfte!}
+  \only<6->{Dieser Satz stimmt nicht im funktionalen Setting: alte Zustände der Datenstruktur werden aufgehoben, es gibt mehrere Zukünfte!}
 \end{onlyenv}
 \end{frame}
 
@@ -236,7 +213,7 @@ snoc (BQueue f fl r rl) x = mkBQueue f fl (x:r) (rl+1)
 \begin{haskellcode}
 -- `appendAndReverse xs ys zs = xs ++ reverse ys ++ zs`
 -- Vorbedingung: `length xs = length ys`
-appendAndReverse :: [a] -> [a] -> [a]
+appendAndReverse :: [a] -> [a] -> [a] -> [a]
 appendAndReverse [] [] zs = zs
 appendAndReverse (x:xs) (y:ys) zs =
   x : appendAndReverse xs ys (y:zs)
@@ -258,5 +235,72 @@ appendAndReverse (x:xs) (y:ys) zs =
     Wir forcieren Teilschritte, indem wir die Ergebnisliste von \haskellinline{appendAndReverse xs ys zs} durchlaufen.
   \end{onlyenv}
 \end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Real-Time Queues}
+\begin{haskellcode}
+-- `appendAndReverse xs ys zs = xs ++ reverse ys ++ zs`
+appendAndReverse :: [a] -> [a] -> [a] -> [a]
+\end{haskellcode}
+{\noindent \color{gray} \rule{\textwidth}{0.4pt}}\begin{haskellcode}
+data RTQueue a =
+  RTQueue { front :: [a], rear :: [a], schedule :: [a] }
+-- Invariant: length front = length rear + length schedule
+\end{haskellcode}
+
+  (Damit sind die vordere und hintere Liste genau dann gleich lang, wenn \haskellinline{schedule} leer ist.
+  Wir müssen also die Längen von \haskellinline{front} und \haskellinline{rear} nicht explizit speichern.)
+
+\begin{haskellcode}
+empty :: RTQueue a
+empty = RTQueue [] [] []
+
+mkRTQueue :: [a] -> [a] -> [a] -> RTQueue a
+mkRTQueue f r [] = let f' = appendAndReverse f r []
+                   in RTQueue f' [] f'
+mkRTQueue f r (_:s') = RTQueue f r s'
+\end{haskellcode}
+
+\end{frame}
+
+\begin{frame}[t,fragile]
+  \frametitle{Real-Time Queues}
+\begin{haskellcode}
+data RTQueue a =
+  RTQueue { front :: [a], rear :: [a], schedule :: [a] }
+-- Invariant: length front = length rear + length schedule
+
+mkRTQueue :: [a] -> [a] -> [a] -> RTQueue a
+mkRTQueue f r [] = let f' = appendAndReverse f r []
+                   in RTQueue f' [] f'
+mkRTQueue f r (_:s') = RTQueue f r s'
+\end{haskellcode}
+{ \noindent \color{gray} \rule{\textwidth}{0.4pt}}\begin{haskellcode}
+uncons :: RTQueue a -> Maybe (a, RTQueue a)
+uncons (RTQueue [] _ _) = Nothing
+uncons (RTQueue (x:f') r s) =
+  Just (x, mkRTQueue f' r s)
+
+snoc :: RTQueue a -> a -> RTQueue a
+snoc (RTQueue f r s) x = mkRTQueue f (x:r) s
+\end{haskellcode}
+\end{frame}
+
+{\setbeamertemplate{background}{\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{lyah-caterpillar-end-bg.png}}
+\begin{frame}[fragile]
+\begin{haskellcode*}{fontsize=\Large,escapeinside=||}
+|\ghci| uncons presentation
+Nothing :: Maybe (Slide, RTQueue Slide)
+\end{haskellcode*}
+
+\vspace{6cm}
+
+{
+  \color{gray}
+  Interaktive Demo: \href{http://timbaumann.info/pfds-visualizations/}{\textit{timbaumann.info/pfds-visualizations}} \\
+  Tausendfüßler-Bild: Miran Lipovača, \textit{Learn You a Haskell for Great Good!}
+}
+\end{frame}
+}
 
 \end{document}
