@@ -132,7 +132,7 @@ instance Queue [] where
 \begin{haskellcode}
 reverse :: [a] -> [a]
 reverse = go []
-  where go as [] = as
+  where go as []     = as
         go as (x:bs) = go (x:as) bs
 \end{haskellcode}
 \end{frame}
@@ -159,7 +159,7 @@ empty = BQueue [] 0 [] 0
 
 mkBQueue :: [a] -> Int -> [a] -> Int
 mkBQueue f fl r rl = if
-  | fl > rl   = BQueue f fr r rl
+  | fl > rl   = BQueue f fl r rl
   | otherwise = BQueue (f ++ reverse r) (fl + rl) [] 0
 \end{haskellcode*}
 \end{onlyenv}
@@ -170,7 +170,7 @@ data BQueue a = BQueue { front :: [a], frontLen :: Int
 -- mkBQueue :: [a] -> Int -> [a] -> Int
 
 uncons :: BQueue a -> Maybe (a, BQueue a)
-uncons (BQueue [] _ _ _) = Nothing
+uncons (BQueue [] _ _ _)       = Nothing
 uncons (BQueue (x:xs) fl r rl) =
   Just (x, mkBQueue xs (fl-1) r rl)
 
@@ -190,7 +190,7 @@ snoc (BQueue f fl r rl) x = mkBQueue f fl (x:r) (rl+1)
 \begin{onlyenv}<5->
   \vspace{0.5cm}
   {\color{red} Dieses Argument ist falsch!}
-  \only<6->{Dieser Satz stimmt nicht im funktionalen Setting: alte Zustände der Datenstruktur werden aufgehoben, es gibt mehrere Zukünfte!}
+  \only<6->{Dieser Satz stimmt nicht im funktionalen Setting: Alte Zustände der Datenstruktur werden aufgehoben, es gibt mehrere Zukünfte!}
 \end{onlyenv}
 \end{frame}
 
@@ -214,7 +214,7 @@ snoc (BQueue f fl r rl) x = mkBQueue f fl (x:r) (rl+1)
 -- `appendAndReverse xs ys zs = xs ++ reverse ys ++ zs`
 -- Vorbedingung: `length xs = length ys`
 appendAndReverse :: [a] -> [a] -> [a] -> [a]
-appendAndReverse [] [] zs = zs
+appendAndReverse []     []     zs = zs
 appendAndReverse (x:xs) (y:ys) zs =
   x : appendAndReverse xs ys (y:zs)
 \end{haskellcode}
@@ -268,7 +268,7 @@ mkRTQueue f r (_:s') = RTQueue f r s'
 \begin{haskellcode}
 data RTQueue a =
   RTQueue { front :: [a], rear :: [a], schedule :: [a] }
--- Invariant: length front = length rear + length schedule
+-- Invariante: length front = length rear + length schedule
 
 mkRTQueue :: [a] -> [a] -> [a] -> RTQueue a
 mkRTQueue f r [] = let f' = appendAndReverse f r []
@@ -277,7 +277,7 @@ mkRTQueue f r (_:s') = RTQueue f r s'
 \end{haskellcode}
 { \noindent \color{gray} \rule{\textwidth}{0.4pt}}\begin{haskellcode}
 uncons :: RTQueue a -> Maybe (a, RTQueue a)
-uncons (RTQueue [] _ _) = Nothing
+uncons (RTQueue []     _ _) = Nothing
 uncons (RTQueue (x:f') r s) =
   Just (x, mkRTQueue f' r s)
 
