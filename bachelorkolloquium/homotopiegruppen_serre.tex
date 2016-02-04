@@ -1,0 +1,232 @@
+\documentclass{beamer}
+%
+% Choose how your presentation looks.
+%
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{default}      % or try Darmstadt, Madrid, Warsaw, ...
+  \usecolortheme{default} % or try albatross, beaver, crane, ...
+  \usefonttheme{default}  % or try serif, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+} 
+
+\usepackage[english,ngerman]{babel}
+\usepackage[utf8]{inputenc}
+
+\title{Der Endlichkeitssatz von Serre über \\ die Homotopiegruppen der Sphären}
+\author{Tim Baumann}
+\institute{Universität Augsburg}
+\date{4. Februar 2016}
+
+\usepackage{mathtools} % \coloneqq
+\usepackage{nicefrac}
+\usepackage{amsthm}
+\usepackage{enumitem} % bessere Aufzählungen
+
+\newcommand{\Z}{\mathbb{Z}} % Ganze Zahlen
+\newcommand{\SC}{\mathcal{C}} % Serre-Klasse
+\newcommand{\FG}{\mathcal{FG}} % Serre-Klasse der endlich erzeugten Gruppen
+\newcommand{\T}{\mathcal{T}} % Serre-Klasse der endlich erzeugten Gruppen, deren Ordnung nur durch Primzahlen in einer bestimmten Menge teilbar ist
+\newcommand{\F}{\mathcal{F}} % Serre-Klasse der endlichen Gruppen
+\DeclareMathOperator{\Tor}{Tor} % Tor-Funktor
+\newcommand{\Primes}{\mathbb{P}} % Menge der Primzahlen
+\DeclareMathOperator{\coker}{coker} % Kokern
+
+\theoremstyle{definition}
+\newtheorem*{defn}{Def} % Definition
+\newtheorem*{ziel}{Ziel}
+\newtheorem*{satz}{Satz}
+\newtheorem*{methode}{Methode}
+\newtheorem*{kor}{Kor} % Korollar
+\newtheorem*{bsp}{Bsp} % Beispiel
+\newtheorem*{axiom}{Axiom}
+\newtheorem*{lembspe}{Lem/Bspe} % Lemma/Beispiele
+
+% Färbe \emph{} violett
+\usepackage{color,graphicx,overpic}
+\definecolor{Emph}{rgb}{0.2,0.2,0.8}
+\renewcommand{\emph}[1]{\textcolor{Emph}{#1}}
+\newcommand{\Emph}[1]{\textcolor{Emph}{#1}}
+\newcommand{\TODO}[1]{\textcolor{orange}{TODO: #1}}
+
+% http://tex.stackexchange.com/a/33177
+\makeatletter
+\setbeamertemplate{theorem begin}
+{%
+  \vspace{0.5em}
+  \inserttheoremheadfont% \bfseries
+  \inserttheoremname \inserttheoremnumber
+  \ifx\inserttheoremaddition\@empty\else\ (\inserttheoremaddition)\fi%
+  \inserttheorempunctuation ~
+  \normalfont
+}
+\setbeamertemplate{theorem end}{%
+  % empty
+}
+\makeatother
+
+\begin{document}
+
+\selectlanguage{ngerman}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}[t]
+  Sei $X$ ein wegzusammenhängender topologischer Raum.
+  
+  \begin{onlyenv}<1->
+  \begin{defn}
+    Die \emph{$i$-te Homotopiegruppe} von $X$ ist
+    \[
+      \pi_i(X) \coloneqq [S^i, X] = \nicefrac{\{ \text{ stetige Abbildungen $S^i \to X$ } \}}{\text{Homotopie}}.
+    \]
+  \end{defn}
+  \end{onlyenv}
+  
+  \begin{onlyenv}<2->
+  \vspace{-1em}
+  \begin{ziel}
+    $\pi_i(S^n)$ studieren
+  \end{ziel}
+  \end{onlyenv}
+  
+  \begin{onlyenv}<3->
+  \begin{methode}
+    Verwende den \emph{Hurewicz-Homomorphismus}
+    \[
+      h_i : \pi_i(X) \to H_i(X), \quad
+      [f : S^i \to X] \mapsto f_*(\alpha),
+    \]
+    wobei $\alpha \in H_i(S^i)$ ein fester Erzeuger ist, und
+  \end{methode}
+  
+  \begin{satz}[Hurewicz-Thm]
+    Sei $n \geq 2$.
+
+    \begin{tabular}{l l}
+      Angenommen, & $\pi_i(X) = 0$ \enspace für $i < n$. \\
+      Dann gilt & $\widetilde{H}_i(X) = 0$ \enspace für $i < n$ \\
+      und & $h_n : \pi_n(X) \to H_n(X)$ ist ein Isomorphismus.
+    \end{tabular}
+  \end{satz}
+  \end{onlyenv}
+  
+  \begin{onlyenv}<4->
+    \begin{kor}
+      $\pi_i(S^n) = 0$ für $i < n$, \quad
+      $\pi_n(S^n) \cong \Z$ für $n \geq 2$.
+    \end{kor}
+  \end{onlyenv}
+\end{frame}
+
+\begin{frame}
+  \begin{satz}[Jean-Pierre Serre, 1951] \mbox{} \\
+    Die Gruppen $\pi_i(S^n)$, $i > n$, sind endlich bis auf die Gruppen $\pi_{2n-1}(S^n)$ für $n \geq 2$ gerade, welche isomorph zur direkten Summe von $\Z$ und einer endlichen Gruppe sind.
+  \end{satz}
+  
+  \begin{visibleenv}<2->
+  \begin{bsp}
+    Die Hopf-Faserung $\eta : S^3 \to S^2$ ist ein Element der Ordnung unendlich in $\pi_3(S^2)$.
+  \end{bsp}
+  \end{visibleenv}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Erste Verallgemeinerung: Serre-Klassen}
+  \begin{defn}
+    Eine Klasse $\SC$ von abelschen Gruppen heißt \emph{Serre-Klasse}, falls
+    \begin{enumerate}[label=(\Roman*)]
+      \item Für jede exakte Seq. $A \to B \to C$ von abelschen Gruppen gilt:
+      \[
+        B \in \SC \iff A, C \in \SC.
+      \]
+      \item Für $A, B \in \SC$ sind auch $A \otimes B \in \SC$ und $\Tor(A, B) \in \SC$.
+    \end{enumerate}
+  \end{defn}
+  \begin{axiom} \mbox{} \\
+    \begin{enumerate}[label=(\Roman*)]
+      \setcounter{enumi}{2}
+      \item Es sei $G \in \SC$.
+      Dann ist $K(G, n)$ $\SC$-azyklisch für alle $n \geq 1$.
+    \end{enumerate}
+  \end{axiom}
+
+  \begin{visibleenv}<2->
+  \begin{lembspe}
+    Folgendes sind Serre-Klassen, die Axiom (III) erfüllen:
+    \begin{enumerate}[label=\alph*)]
+      \item $\T_P \coloneqq \left\{ \begin{array}{l}
+        \text{endl. ab. Gruppen, deren Ordnung ein Produkt} \\
+        \text{von Primzahlen in $P \subseteq \Primes$ ist}
+      \end{array} \right\}$,
+      %wobei $\Primes$ die Menge aller Primzahlen bezeichnet,
+      \item $\F \coloneqq \T_\Primes = \{\, \text{endliche abelsche Gruppen} \,\}$
+      \item $\FG \coloneqq \{\, \text{endlich erzeugte abelsche Gruppen} \,\}$
+    \end{enumerate}
+  \end{lembspe}
+  \end{visibleenv}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Erste Verallgemeinerung: Serre-Klassen}
+  \begin{satz}[Hurewicz-mod-$\SC$-Thm] Es sei $n \geq 2$. \\
+    Es sei $\SC$ eine Serre-Klasse, die (III) erfüllt. \\
+    Es sei $X$ ein einfach zusammenhängender topologischer Raum. \\[0.5em]
+    
+    \begin{tabular}{l l}
+      Angenommen, & $\pi_i(X) \in \SC$ \enspace für $i < n$. \\
+      Dann gilt & $\widetilde{H}_i(X) \in \SC$ \enspace für $i < n$ \\
+      und & $h_n : \pi_n(X) \to H_n(X)$ ist ein Isomor. modulo $\SC$, \\
+      & d.\,h. $\ker(h_n) \in \SC$ und $\coker(h_n) \in \SC$.
+    \end{tabular}
+  \end{satz}
+  
+  \begin{visibleenv}<2->
+    \begin{kor}
+      Sei $n \geq 2$.
+      Dann sind die Homotopiegruppen $\pi_i(S^n)$, $i \geq 1$ endlich erzeugt.
+    \end{kor}
+  \end{visibleenv}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Zweite Verallgemeinerung: Relativität}
+
+  \begin{satz}[relatives Hurewicz-mod-$\SC$-Thm] Es sei $n \geq 2$. \\
+    Es sei $\SC$ eine Serre-Klasse, die (III) erfüllt. \\
+    Es sei $(X, A)$ ein einfach zusammenhängendes Raumpaar mit $A \neq \emptyset$ und $A$ einfach zusammenhängend. \\[0.5em]
+    
+    \begin{tabular}{l l}
+      Angenommen, & $\pi_i(X, A) \in \SC$ \enspace für $i < n$. \\
+      Dann gilt & $H_i(X, A) \in \SC$ \enspace für $i < n$ \\
+      und & $h_n : \pi_n(X, A) \to H_n(X, A)$ ist ein Isomor. modulo $\SC$.
+    \end{tabular}
+  \end{satz}
+  
+  \begin{visibleenv}<2->
+    \begin{kor}
+      Es sei $f : A \to B$ stetig, $A$ und $B$ nichtleer und einfach zusammenhängend.
+      Dann sind äquivalent:
+      \begin{enumerate}
+        \item[a)] $f_* : \pi_i(A) \to \pi_i(B)$ \enspace
+        \begin{minipage}[t]{0.65 \linewidth}
+          ist ein Isomorphismus mod~$\SC$ für $i < n$ \\
+          und ein Epimorphismus mod~$\SC$ für $i = n$.
+        \end{minipage}
+        \item[b)] $f_* : H_i(A) \to H_i(B)$ \enspace
+        \begin{minipage}[t]{0.65 \linewidth}
+          ist ein Isomorphismus mod~$\SC$ für $i < n$ \\
+          und ein Epimorphismus mod~$\SC$ für $i = n$.
+        \end{minipage}
+      \end{enumerate}
+    \end{kor}
+  \end{visibleenv}
+\end{frame}
+
+\end{document}
