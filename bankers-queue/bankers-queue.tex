@@ -84,9 +84,9 @@ class Queue q where
   -- vorne wegnehmen:
   uncons :: q a -> Maybe (a, q a)
   head :: q a -> Maybe a
-  head = fst <$> uncons
+  head = fmap fst . uncons
   tail :: q a -> Maybe (q a)
-  tail = snd <$> uncons
+  tail = fmap snd . uncons
 \end{haskellcode}
   \end{minipage}
   \begin{minipage}[t]{0.4 \linewidth}
