@@ -1,0 +1,110 @@
+\documentclass[10pt]{beamer}
+
+\mode<presentation>
+{
+  \usetheme{default}
+  \usecolortheme{default}
+  \usefonttheme{default}
+  \useoutertheme[]{smoothbars}
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+} 
+
+\usepackage[utf8x]{inputenc}
+\usepackage[ngerman]{babel}
+
+\usepackage{color}
+\usepackage{mathtools}
+
+\theoremstyle{definition}
+\newtheorem*{bsp}{Beispiel}
+\newtheorem*{prior}{Prior-Verteilung}
+\newtheorem*{inference}{Inferenz}
+
+\newcommand{\R}{\mathbb{R}} % Reelle Zahlen
+\DeclareMathOperator{\var}{Var} % Varianz
+%\DeclareMathOperator{\cov}{Cov} % Kovarianz
+%\DeclareMathOperator{\cor}{Cor} % Korrelation
+\newcommand{\Normal}{\mathcal{N}} % Gaußsche Normalverteilung
+
+\newcommand{\TODO}[1]{\textcolor{orange}{TODO: #1}}
+
+\definecolor{StepOneColor}{rgb}{0.7,0.2,0.0}
+\definecolor{StepTwoColor}{rgb}{0.2,0.7,0.0}
+\definecolor{TypeInfoColor}{rgb}{0.6,0.6,0.6}
+
+\newcommand{\stepOne}[1]{\textcolor{StepOneColor}{#1}}
+\newcommand{\stepTwo}[1]{\textcolor{StepTwoColor}{#1}}
+\newcommand{\typeInfo}[1]{\textcolor{TypeInfoColor}{#1}}
+
+\title{\TODO{Der Random-Walk Metropolis-Hastings-Algorithmus für Threshold-VAR-Modelle}}
+\author{Tim Baumann}
+\date{29. April 2016}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \tableofcontents
+  % TODO: mehr wie im Buch
+\end{frame}
+
+% 3.4. "The random walk MH algorithm used in a Threshold VAR model"
+
+\section[Threshold-VAR-Modell]{Der Random-Walk Metropolis-Hastings-Algorithmus für Threshold-VAR-Modelle}
+
+\begin{frame}[t]
+  \frametitle{Das Threshold-VAR-Modell}
+
+  % Kovarianz von $v_t$ schreiben (anstand Varianz)
+  \begin{align*}
+    \text{(TVAR)} \enspace
+    & \begin{cases}
+      Y_t = \stepOne{c_1} + \sum_{j=1}^P \stepOne{\beta_1} Y_{t-j} + v_t, \enspace
+      \var(v_t) = \stepOne{\Omega_1}
+      & \text{wenn } S_t \leq \stepTwo{Y^*} \\[4pt]
+      Y_t = \stepOne{c_2} + \sum_{j=1}^P \stepOne{\beta_2} Y_{t-j} + v_t, \enspace
+      \var(v_t) = \stepOne{\Omega_2}
+      & \text{wenn } S_t > \stepTwo{Y^*}
+    \end{cases} \\
+    & \text{wobei } S_t \coloneqq Y_{j, t-d} \enspace \text{(Threshold-Variable)} \\
+    & \typeInfo{
+      Y_t, v_t, c_1, c_2 \in \R^T, \enspace
+      \beta_1, \beta_2 \in \R^{T \times T}, \enspace
+      \Omega_1, \Omega_2 \in \R^{T \times T}
+    }
+  \end{align*}
+
+  Dabei wird die Threshold-Komponente~$j$ von~$Y$ und die Verzögerung~$d$ vom Anwender gewählt.
+
+  \begin{bsp}<2->
+    Makroökonomische Modellierung, wobei vermutet wird, dass die Stärke wirtschaftlicher Zusammenhänge (z.\,B. Multiplikator für Staatsausgaben) in Wirtschaftkrisen unterschiedlich groß ist wie in wirtschaftlich normalen oder guten Zeiten.
+  \end{bsp}
+\end{frame}
+
+\begin{frame}
+  \begin{prior}
+    $p(Y^*) \sim \Normal(\overline{Y}^*, \sigma_{Y^*})$
+    \TODO{Prior für die VAR-Parameter}
+  \end{prior}
+
+  \begin{inference}
+    \begin{enumerate}
+      \item Wähle Startwerte für die \stepOne{VAR-Parameter} und den Treshold $\stepTwo{Y^*}$ \\ (z.\.B. den Durschnitt oder den Median der Werte $S_t$).
+      \item Gibbs-Sampling: Wiederhole die Schritte
+      \begin{enumerate}
+        \item
+        \begin{itemize}
+          \item Teile die Daten in die zwei Regime $S_t \leq Y^*$ und $S_t > Y^*$ auf.
+        \end{itemize}
+      \end{enumerate}
+    \end{enumerate}
+    Ist $Y^*$ ebenfalls bekannt, so zerfällt das Modell in zwei einfache VAR-Modelle, eines für das Regime $S_t \leq Y^*$, eines für $S_t > Y^*$.
+  \end{inference}
+\end{frame}
+
+
+\end{document}
