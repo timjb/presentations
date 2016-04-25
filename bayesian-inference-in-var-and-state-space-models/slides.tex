@@ -2,13 +2,18 @@
 
 \mode<presentation>
 {
-  \usetheme{default}
-  \usecolortheme{default}
+  \usetheme{amsterdam}
+  %\usecolortheme{seahorse}
   \usefonttheme{default}
-  \useoutertheme[]{smoothbars}
+  %\useoutertheme[]{smoothbars}
   \setbeamertemplate{navigation symbols}{}
   \setbeamertemplate{caption}[numbered]
+  \setbeamersize{text margin left=0.7cm}
+  \setbeamersize{text margin right=0.7cm}
 } 
+
+\setlength{\leftmarginii}{8pt}
+\setlength{\leftmarginiii}{8pt}
 
 \usepackage[utf8x]{inputenc}
 \usepackage[ngerman]{babel}
@@ -26,16 +31,33 @@
 %\DeclareMathOperator{\cov}{Cov} % Kovarianz
 %\DeclareMathOperator{\cor}{Cor} % Korrelation
 \newcommand{\Normal}{\mathcal{N}} % Gaußsche Normalverteilung
+\newcommand{\Uniform}{\mathcal{U}} % Gaußsche Normalverteilung
+\newcommand{\InverseWishart}{\mathcal{IW}} % Inverse Wishart Distribution
+\DeclareMathOperator{\Vector}{vec} % Vektor (aus einer Matrix)
+
+\newcommand{\new}{\mathrm{new}} % neuer Wert
+\newcommand{\old}{\mathrm{old}} % alter Wert
 
 \newcommand{\TODO}[1]{\textcolor{orange}{TODO: #1}}
 
 \definecolor{StepOneColor}{rgb}{0.7,0.2,0.0}
 \definecolor{StepTwoColor}{rgb}{0.2,0.7,0.0}
-\definecolor{TypeInfoColor}{rgb}{0.6,0.6,0.6}
+\definecolor{TypeInfoColor}{rgb}{0.4,0.4,0.4}
 
 \newcommand{\stepOne}[1]{\textcolor{StepOneColor}{#1}}
 \newcommand{\stepTwo}[1]{\textcolor{StepTwoColor}{#1}}
 \newcommand{\typeInfo}[1]{\textcolor{TypeInfoColor}{#1}}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert} % Absolutwert
+
+\makeatletter
+\g@addto@macro\normalsize{%
+  \setlength\abovedisplayskip{2pt}
+  \setlength\belowdisplayskip{2pt}
+  \setlength\abovedisplayshortskip{2pt}
+  \setlength\belowdisplayshortskip{2pt}
+}
+\makeatother
 
 \title{\TODO{Der Random-Walk Metropolis-Hastings-Algorithmus für Threshold-VAR-Modelle}}
 \author{Tim Baumann}
@@ -59,7 +81,7 @@
 \begin{frame}[t]
   \frametitle{Das Threshold-VAR-Modell}
 
-  % Kovarianz von $v_t$ schreiben (anstand Varianz)
+  % TODO: Kovarianz von $v_t$ schreiben (anstand Varianz)
   \begin{align*}
     \text{(TVAR)} \enspace
     & \begin{cases}
@@ -70,11 +92,12 @@
       \var(v_t) = \stepOne{\Omega_2}
       & \text{wenn } S_t > \stepTwo{Y^*}
     \end{cases} \\
-    & \text{wobei } S_t \coloneqq Y_{j, t-d} \enspace \text{(Threshold-Variable)} \\
+    & \text{wobei } S_t \coloneqq Y_{j, t-d} \enspace \text{(\emph{Threshold-Variable})} \\
     & \typeInfo{
-      Y_t, v_t, c_1, c_2 \in \R^T, \enspace
-      \beta_1, \beta_2 \in \R^{T \times T}, \enspace
-      \Omega_1, \Omega_2 \in \R^{T \times T}
+      Y_t, v_t, c_1, c_2 \in \R^N, \enspace
+      \beta_1, \beta_2 \in \R^{N \times N}, \enspace
+      \Omega_1, \Omega_2 \in \R^{N \times N}, \enspace
+      Y^* \in \R
     }
   \end{align*}
 
@@ -86,24 +109,111 @@
 \end{frame}
 
 \begin{frame}
-  \begin{prior}
-    $p(Y^*) \sim \Normal(\overline{Y}^*, \sigma_{Y^*})$
-    \TODO{Prior für die VAR-Parameter}
-  \end{prior}
+  \frametitle{Bayessche Inferenz im Threshold-VAR-Modell}
+  % TODO: Kovarianz von $v_t$ schreiben (anstand Varianz)
+  \begin{align*}
+    \text{(TVAR)} \enspace
+    & \begin{cases}
+      Y_t = \stepOne{c_1} + \sum_{j=1}^P \stepOne{\beta_1} Y_{t-j} + v_t, \enspace
+      \var(v_t) = \stepOne{\Omega_1}
+      & \text{wenn } S_t \leq \stepTwo{Y^*} \\[4pt]
+      Y_t = \stepOne{c_2} + \sum_{j=1}^P \stepOne{\beta_2} Y_{t-j} + v_t, \enspace
+      \var(v_t) = \stepOne{\Omega_2}
+      & \text{wenn } S_t > \stepTwo{Y^*}
+    \end{cases} \\
+    & \text{wobei } S_t \coloneqq Y_{j, t-d} \enspace \text{(\emph{Threshold-Variable})}
+  \end{align*}
 
-  \begin{inference}
+  \begin{prior}<2->
+    \begin{itemize}
+      \item<3-> Für den Threshold: \quad $p(\stepTwo{Y^*}) \sim \Normal(\overline{Y}^*, \sigma_{Y^*})$
+      \item<4-> Für die \stepOne{VAR-Parameter}~$\stepOne{b_1}, \stepOne{b_2} \, \typeInfo{\in \R^{(1 + NP) \cdot N}}$ und $\stepOne{\Omega_1}, \stepOne{\Omega_2} \, \typeInfo{\in \R^{N \times N}}$ verwenden wir die Normal-Inverse-Wishart-Verteilung mit Dummy-Observations $X_{D,i} \, \typeInfo{\in \R^{k_i \times (1 + NP)}}$, $Y_{D,i} \, \typeInfo{\in \R^{k_i \times N}}$ ($i = 1,2$):
+      \[
+        \arraycolsep=1.5pt
+        \begin{array}{rcl}
+          p(b_i | \Omega_i) &\sim& \Normal(\Vector(B_{D,i}), \Omega_i \otimes (X_{D,i}^T X_{D,i})^{-1}), \\
+          p(\Omega_i) &\sim& \InverseWishart(S_{D,i}, \TODO{T_{D,i} - ???})
+        \end{array}
+      \]
+      \[
+        \begin{array}{rrl}
+          \text{wobei} \enspace
+          & B_{D,i} & \coloneqq (X_{D,i}^T X_{D,i})^{-1} (X_{D,i} Y_{D,i}) \, \typeInfo{\in \R^{(1 + NP) \times N}} \\
+          & S_{D,i} & \coloneqq (Y_{D,i} - X_{D,i} B_{D,i})^T (Y_{D,i} - X_{D,i} B_{D,i}) \, \typeInfo{\in \R^{N \times N}}
+        \end{array}
+      \]
+    \end{itemize}
+  \end{prior}
+\end{frame}
+
+\begin{frame}[t]
+  \frametitle{Bayessche Inferenz im Threshold-VAR-Modell}
+  \begin{enumerate}
+    \item<2->[A.] Initialisierung: Wähle einen Startwert für den Treshold $\stepTwo{Y^*}$ \only<1-13>{\\ \small (z.\,B. den Durschnitt oder den Median der Werte $S_t$)}
+    \item<3->[B.] Gibbs-Sampling: Wiederhole die Schritte
     \begin{enumerate}
-      \item Wähle Startwerte für die \stepOne{VAR-Parameter} und den Treshold $\stepTwo{Y^*}$ \\ (z.\.B. den Durschnitt oder den Median der Werte $S_t$).
-      \item Gibbs-Sampling: Wiederhole die Schritte
-      \begin{enumerate}
+      \item<4->[\stepOne{1.}] Sample die \stepOne{VAR-Parameter} gegeben dem Threshold~\stepTwo{$Y^*$}:
+      \begin{itemize}
         \item
-        \begin{itemize}
-          \item Teile die Daten in die zwei Regime $S_t \leq Y^*$ und $S_t > Y^*$ auf.
-        \end{itemize}
-      \end{enumerate}
+        \begin{onlyenv}<5-13>
+          Beobachtung: Ist $Y^*$ bekannt, so zerfällt das Modell in zwei einfache VAR-Modelle, eines für das Regime $S_t \leq Y^*$, eines für $S_t > Y^*$.
+        \end{onlyenv}
+        \item<6-> Seien $Y_{1,t}$, $X_{1,t}$ die zum Regime $S_t \leq Y^*$ und $Y_{2,t}$, $X_{2,t}$ die zum Regime $S_t > Y^*$ zugehörigen Daten.
+        \item
+        \begin{onlyenv}<7-8>
+        Ziehe \stepOne{$b_1, b_2, \Omega_1, \Omega_2$} aus der Posterior-Verteilung
+        \[
+          \begin{array}{rcl}
+            p(b_i | \Omega_i, Y_{i,t}) &\sim& \Normal(\Vector(B_{i}^{*}), \Omega_i \otimes ((X_{i}^{*})^T X_{i}^{*})^{-1}), \\
+            p(\Omega_i, Y_{i,t}) &\sim& \InverseWishart(S_{i}^{*}, \TODO{T_{i}^{*} - ???})
+          \end{array}
+        \]
+        \[
+          \arraycolsep=1.5pt
+          \begin{array}{rrcl}
+            \text{wobei} \enspace
+            & B_{i}^{*} &\coloneqq& ((X_{i}^{*})^T X_{i}^{*})^{-1} (X_{i}^{*} Y_{i}^{*}) \\
+            & S_{i}^{*} &\coloneqq& (Y_{i}^{*} - X_{i}^{*} B_{i}^{*})^T (Y_{i}^* - X_{i}^* B_{i}^*) \\
+            & Y_i^{*} &\coloneqq& [Y_{i,t}, Y_{D,i}] \\
+            & X_i^{*} &\coloneqq& [X_{i,t}, X_{D,i}]
+          \end{array}
+        \]
+        \end{onlyenv}
+        \item \begin{onlyenv}<9->
+        Ziehe \stepOne{$b_1, b_2, \Omega_1, \Omega_2$} aus der Posterior-Verteilung $p(b_i | \Omega_i, Y_{i,t})$, $p(\Omega_i, Y_{i,t})$.
+        \end{onlyenv}
+      \end{itemize}
+      \item<8->[\stepTwo{2.}] Führe einen Random-Walk-Metropolis-Hastings-Schritt für \stepTwo{$Y^*$} aus:
+      \begin{itemize}
+        \item<10-> Generiere eine Kandidaten $Y^{*}_{\new}$ durch einen Random-Walk-Schritt:
+        \[
+          Y^{*}_{\new} \coloneqq Y^{*}_{\old} + e, \quad
+          e \sim \Normal(0, \sigma)
+        \]
+        \item<11-> Berechne die Akzeptanz-Wahrscheinlichkeit
+        \begin{align*}
+          \only<-16>{
+            \alpha
+            &= \frac{\pi(\phi^{G+1})}{\pi(\phi^{G})} \cdot \frac{q(\phi^G \,|\, \phi^{G+1})}{q(\phi^{G+1} \,|\, \phi^{G})}
+            \visible<12->{
+              = \frac{p(Y^{*}_{\new} \,|\, b_1, \Omega_1, b_2, \Omega_2, Y_t)}{p(Y^{*}_{\old} \,|\, b_1, \Omega_1, b_2, \Omega_2, Y_t)}
+            } \\
+          }
+          \visible<13->{
+            \visible<17->{\alpha} &= \frac{p(Y_t \,|\, b_1, \Omega_1, b_2, \Omega_2, Y^{*}_{\new}) \cdot p(Y^{*}_{\new})}{p(Y_t \,|\, b_1, \Omega_1, b_2, \Omega_2, Y^{*}_{\old}) \cdot p(Y^{*}_{\old})}
+          }
+        \end{align*}
+        \vspace{-8pt}
+        \begin{onlyenv}<15->
+          \begin{align*}
+            & p(Y_t \,|\, b_1, \Omega_1, b_2, \Omega_2, Y^{*}) = p(Y_{1,t} \,|\, b_1, \Omega_1, Y^{*}) \cdot p(Y_{2,t} \,|\, b_2, \Omega_2, Y^{*}) \\[-2pt]
+            & \log p(Y_{i,t} \,|\, b_i, \Omega_i, Y^{*}) = \tfrac{T}{2} \log \abs{\Omega_i^{-1}} - \tfrac{1}{2} {\sum}_{t=1}^T (Y_{i,t} - X_{i,t} \tilde{b_i})^T \Omega_i^{-1} (Y_{i,t} - X_{i,t} \tilde{b_i})
+          \end{align*}
+        \end{onlyenv}
+        \item<16-> Ziehe $u \sim \Uniform(0,1)$. Behalte $Y^{*}_{\new}$, falls $u < \alpha$, ansonsten verwerfe $Y^{*}_{\new}$.
+      \end{itemize}
     \end{enumerate}
-    Ist $Y^*$ ebenfalls bekannt, so zerfällt das Modell in zwei einfache VAR-Modelle, eines für das Regime $S_t \leq Y^*$, eines für $S_t > Y^*$.
-  \end{inference}
+  \end{enumerate}
 \end{frame}
 
 
