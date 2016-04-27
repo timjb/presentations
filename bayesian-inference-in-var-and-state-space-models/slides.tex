@@ -24,7 +24,8 @@
 \theoremstyle{definition}
 \newtheorem*{bsp}{Beispiel}
 \newtheorem*{prior}{Prior-Verteilung}
-\newtheorem*{inference}{Inferenz}
+%\newtheorem*{inference}{Inferenz}
+\newtheorem*{nebenrechnung}{Nebenrechnung}
 
 \newcommand{\R}{\mathbb{R}} % Reelle Zahlen
 \DeclareMathOperator{\var}{Var} % Varianz
@@ -185,22 +186,22 @@
       \end{itemize}
       \item<8->[\stepTwo{2.}] Führe einen Random-Walk-Metropolis-Hastings-Schritt für \stepTwo{$Y^*$} aus:
       \begin{itemize}
-        \item<10-> Generiere eine Kandidaten $Y^{*}_{\new}$ durch einen Random-Walk-Schritt:
+        \item<10-> Generiere einen Kandidaten $Y^{*}_{\new}$ durch einen Random-Walk-Schritt:
         \[
           Y^{*}_{\new} \coloneqq Y^{*}_{\old} + e, \quad
           e \sim \Normal(0, \sigma)
         \]
-        \item<11-> Berechne die Akzeptanz-Wahrscheinlichkeit
+        \item<11-> Berechne die Akzeptanz-Wahrscheinlichkeit $\alpha = \min(1, r)$ mit
         \begin{align*}
           \only<-16>{
-            \alpha
+            r
             &= \frac{\pi(\phi^{G+1})}{\pi(\phi^{G})} \cdot \frac{q(\phi^G \,|\, \phi^{G+1})}{q(\phi^{G+1} \,|\, \phi^{G})}
             \visible<12->{
               = \frac{p(Y^{*}_{\new} \,|\, b_1, \Omega_1, b_2, \Omega_2, Y_t)}{p(Y^{*}_{\old} \,|\, b_1, \Omega_1, b_2, \Omega_2, Y_t)}
             } \\
           }
           \visible<13->{
-            \visible<17->{\alpha} &= \frac{p(Y_t \,|\, b_1, \Omega_1, b_2, \Omega_2, Y^{*}_{\new}) \cdot p(Y^{*}_{\new})}{p(Y_t \,|\, b_1, \Omega_1, b_2, \Omega_2, Y^{*}_{\old}) \cdot p(Y^{*}_{\old})}
+            \visible<17->{r} &= \frac{p(Y_t \,|\, b_1, \Omega_1, b_2, \Omega_2, Y^{*}_{\new}) \cdot p(Y^{*}_{\new})}{p(Y_t \,|\, b_1, \Omega_1, b_2, \Omega_2, Y^{*}_{\old}) \cdot p(Y^{*}_{\old})}
           }
         \end{align*}
         \vspace{-8pt}
@@ -216,5 +217,44 @@
   \end{enumerate}
 \end{frame}
 
+% 4. "The independence Metropolis Hastings algorithm"
+
+% 4.1. "Estimation of stochastic volatility models via the independence MH algorithm"
+
+\section{Stoch. Volatilitätsmodell}
+
+\begin{frame}
+  \frametitle{Das stochastische Volatilitätsmodell}
+  \[
+    \arraycolsep=2.5pt
+    \begin{array}{rclll}
+      y_t &=& \epsilon_t \sqrt{h_t}, & \epsilon_t \sim \Normal(0, 1) \quad & \text{(Beobachtungsgleichung)} \\
+      \ln h_t &=& \ln h_{t-1} + v_t, & v_t \sim \Normal(0, g) \quad & \text{(Zustandsgleichung)}
+    \end{array}
+  \]
+  \begin{bsp}<2->
+    \TODO{Aktien? Graphik?}
+  \end{bsp}
+  % Beobachtungsgleichung nicht linear => Algorithmus von Carter und Kohn kann nicht angewandt werden
+\end{frame}
+
+\begin{frame}
+  \frametitle{Bayesische Inferenz im stochastischen Volatilitätsmodell}
+
+  Vorüberlegung: Für alle Zeitpunkte $t$, außer Start- und Endzeitpunkt, gilt:
+  \begin{align*}
+    f(h_t \,|\, h_{-t}, \vec{y}) & = f(h_t \,|\, h_{t-1}, h_{t+1}, y_t) \\
+    & \visible<2->{\propto f(y_t \,|\, h_t) \cdot f(h_{t+1} \,|\, h_t) \cdot f(h_t \,|\, h_{t-1})} \\
+    & \visible<4->{\propto \tfrac{1}{\sqrt{h_t}} \exp \left( \tfrac{y_t^2}{2 h_t} \right) \tfrac{1}{h_t} \exp \left( \tfrac{(\ln h_t - \mu)^2}{2 \sigma_h} \right) } \\
+    & \visible<4->{\text{mit } \mu \coloneqq \tfrac{1}{2} (\ln h_{t+1} + \ln h_{t-1}), \quad \sigma_h \coloneqq \tfrac{1}{2} g}
+  \end{align*}
+  \begin{nebenrechnung}<3->
+    \begin{align*}
+      f(y_t \,|\, h_t) & = \tfrac{1}{\sqrt{2 \pi h_t}} \exp \left( \tfrac{y_t^2}{2 h_t} \right) \\
+      f(h_{t+1} \,|\, h_t) & \propto \tfrac{1}{h_t} \enspace\,\, \exp \left( \tfrac{(\ln h_{t+1} - \ln h_t)^2}{2 g} \right) \\
+      f(h_t \,|\, h_{t-1}) & \propto \tfrac{1}{h_{t-1}} \exp \left( \tfrac{(\ln h_t - \ln h_{t-1})^2}{2 g} \right)
+    \end{align*}
+  \end{nebenrechnung}
+\end{frame}
 
 \end{document}
