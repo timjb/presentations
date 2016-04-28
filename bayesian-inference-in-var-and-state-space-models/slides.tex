@@ -10,16 +10,30 @@
   \setbeamertemplate{caption}[numbered]
   \setbeamersize{text margin left=0.7cm}
   \setbeamersize{text margin right=0.7cm}
-} 
+  \setbeamertemplate{headline}{%
+    \begin{beamercolorbox}{section in head/foot}
+      \vspace{4pt}
+      \insertsectionnavigationhorizontal{\textwidth}{}{}
+      \vspace{4pt}
+    \end{beamercolorbox}%
+  }
+}
 
 \setlength{\leftmarginii}{8pt}
 \setlength{\leftmarginiii}{8pt}
+\makeatletter
+\addtobeamertemplate{block begin}{}{
+  \setlength\parindent{0pt} % Kein Einzug der ersten Zeile im Absatz
+}
+\makeatother
 
 \usepackage[utf8x]{inputenc}
 \usepackage[ngerman]{babel}
 
 \usepackage{color}
 \usepackage{mathtools}
+\usepackage{nicefrac}
+\usepackage[framemethod=tikz]{mdframed}
 
 \theoremstyle{definition}
 \newtheorem*{bsp}{Beispiel}
@@ -27,14 +41,19 @@
 %\newtheorem*{inference}{Inferenz}
 \newtheorem*{nebenrechnung}{Nebenrechnung}
 
+\newcommand{\blank}{\text{--}} % Platzhalter
+
 \newcommand{\R}{\mathbb{R}} % Reelle Zahlen
 \DeclareMathOperator{\var}{Var} % Varianz
 %\DeclareMathOperator{\cov}{Cov} % Kovarianz
 %\DeclareMathOperator{\cor}{Cor} % Korrelation
+\DeclareMathOperator{\Vector}{vec} % Vektor (aus einer Matrix)
+
+% Verteilungen
 \newcommand{\Normal}{\mathcal{N}} % Gaußsche Normalverteilung
 \newcommand{\Uniform}{\mathcal{U}} % Gaußsche Normalverteilung
 \newcommand{\InverseWishart}{\mathcal{IW}} % Inverse Wishart Distribution
-\DeclareMathOperator{\Vector}{vec} % Vektor (aus einer Matrix)
+\newcommand{\InverseGamma}{\mathcal{IG}} % Inverse Gamma Distribution
 
 \newcommand{\new}{\mathrm{new}} % neuer Wert
 \newcommand{\old}{\mathrm{old}} % alter Wert
@@ -42,15 +61,32 @@
 \newcommand{\TODO}[1]{\textcolor{orange}{TODO: #1}}
 
 \definecolor{StepOneColor}{rgb}{0.7,0.2,0.0}
-\definecolor{StepTwoColor}{rgb}{0.2,0.7,0.0}
+\definecolor{StepTwoColor}{rgb}{0.1,0.5,0.0}
 \definecolor{TypeInfoColor}{rgb}{0.4,0.4,0.4}
+\definecolor{VariantColor}{rgb}{0.7,0.1,0.7}
+\definecolor{ModelBgColor}{rgb}{0.95,0.85,0.75}
 
 \newcommand{\stepOne}[1]{\textcolor{StepOneColor}{#1}}
 \newcommand{\stepTwo}[1]{\textcolor{StepTwoColor}{#1}}
 \newcommand{\typeInfo}[1]{\textcolor{TypeInfoColor}{#1}}
+\newcommand{\variant}[1]{\textcolor{VariantColor}{#1}}
 
 \DeclarePairedDelimiter\abs{\lvert}{\rvert} % Absolutwert
 
+\newmdenv[
+  linewidth=0pt,
+  innerlinewidth=0pt,
+  outerlinewidth=0pt,
+  roundcorner=8pt,
+  backgroundcolor=ModelBgColor,
+  innerleftmargin=4pt,
+  innerrightmargin=4pt,
+  innertopmargin=4pt,
+  innerbottommargin=4pt,
+  skipbelow=10pt
+]{modelbox}
+
+% Abstand um Gleichungen herum
 \makeatletter
 \g@addto@macro\normalsize{%
   \setlength\abovedisplayskip{2pt}
@@ -60,7 +96,8 @@
 }
 \makeatother
 
-\title{\TODO{Der Random-Walk Metropolis-Hastings-Algorithmus für Threshold-VAR-Modelle}}
+\title{Gibbs-Sampling mit Metropolis-Hastings-Schritt für \\ Threshold-VAR-Modelle und \\ stochastische Volatilitätsmodelle}
+\institute{\href{http://timbaumann.info/gibbs-her}{timbaumann.info/gibbs-her}}
 \author{Tim Baumann}
 \date{29. April 2016}
 
@@ -77,30 +114,32 @@
 
 % 3.4. "The random walk MH algorithm used in a Threshold VAR model"
 
-\section[Threshold-VAR-Modell]{Der Random-Walk Metropolis-Hastings-Algorithmus für Threshold-VAR-Modelle}
+\section[Threshold-VAR-Modell]{Das Threshold-VAR-Modell}
 
 \begin{frame}[t]
   \frametitle{Das Threshold-VAR-Modell}
 
   % TODO: Kovarianz von $v_t$ schreiben (anstand Varianz)
-  \begin{align*}
-    \text{(TVAR)} \enspace
-    & \begin{cases}
-      Y_t = \stepOne{c_1} + \sum_{j=1}^P \stepOne{\beta_1} Y_{t-j} + v_t, \enspace
-      \var(v_t) = \stepOne{\Omega_1}
-      & \text{wenn } S_t \leq \stepTwo{Y^*} \\[4pt]
-      Y_t = \stepOne{c_2} + \sum_{j=1}^P \stepOne{\beta_2} Y_{t-j} + v_t, \enspace
-      \var(v_t) = \stepOne{\Omega_2}
-      & \text{wenn } S_t > \stepTwo{Y^*}
-    \end{cases} \\
-    & \text{wobei } S_t \coloneqq Y_{j, t-d} \enspace \text{(\emph{Threshold-Variable})} \\
-    & \typeInfo{
-      Y_t, v_t, c_1, c_2 \in \R^N, \enspace
-      \beta_1, \beta_2 \in \R^{N \times N}, \enspace
-      \Omega_1, \Omega_2 \in \R^{N \times N}, \enspace
-      Y^* \in \R
-    }
-  \end{align*}
+  \begin{modelbox}
+    \begin{align*}
+      \text{(TVAR)} \enspace
+      & \begin{cases}
+        Y_t = \stepOne{c_1} + \sum_{j=1}^P \stepOne{\beta_1} Y_{t-j} + v_t, \enspace
+        \var(v_t) = \stepOne{\Omega_1}
+        & \text{wenn } S_t \leq \stepTwo{Y^*} \\[4pt]
+        Y_t = \stepOne{c_2} + \sum_{j=1}^P \stepOne{\beta_2} Y_{t-j} + v_t, \enspace
+        \var(v_t) = \stepOne{\Omega_2}
+        & \text{wenn } S_t > \stepTwo{Y^*}
+      \end{cases} \\
+      & \text{wobei } S_t \coloneqq Y_{j, t-d} \enspace \text{\typeInfo{(\emph{Threshold-Variable})}} \\
+      & \typeInfo{
+        Y_t, v_t, c_1, c_2 \in \R^N, \enspace
+        \beta_1, \beta_2 \in \R^{N \times N}, \enspace
+        \Omega_1, \Omega_2 \in \R^{N \times N}, \enspace
+        Y^* \in \R
+      }
+    \end{align*}
+  \end{modelbox}
 
   Dabei wird die Threshold-Komponente~$j$ von~$Y$ und die Verzögerung~$d$ vom Anwender gewählt.
 
@@ -109,21 +148,25 @@
   \end{bsp}
 \end{frame}
 
+\subsection{Bayesische Inferenz (mit Random-Walk-MH)}
+
 \begin{frame}
   \frametitle{Bayessche Inferenz im Threshold-VAR-Modell}
   % TODO: Kovarianz von $v_t$ schreiben (anstand Varianz)
-  \begin{align*}
-    \text{(TVAR)} \enspace
-    & \begin{cases}
-      Y_t = \stepOne{c_1} + \sum_{j=1}^P \stepOne{\beta_1} Y_{t-j} + v_t, \enspace
-      \var(v_t) = \stepOne{\Omega_1}
-      & \text{wenn } S_t \leq \stepTwo{Y^*} \\[4pt]
-      Y_t = \stepOne{c_2} + \sum_{j=1}^P \stepOne{\beta_2} Y_{t-j} + v_t, \enspace
-      \var(v_t) = \stepOne{\Omega_2}
-      & \text{wenn } S_t > \stepTwo{Y^*}
-    \end{cases} \\
-    & \text{wobei } S_t \coloneqq Y_{j, t-d} \enspace \text{(\emph{Threshold-Variable})}
-  \end{align*}
+  \begin{modelbox}
+    \begin{align*}
+      \text{(TVAR)} \enspace
+      & \begin{cases}
+        Y_t = \stepOne{c_1} + \sum_{j=1}^P \stepOne{\beta_1} Y_{t-j} + v_t, \enspace
+        \var(v_t) = \stepOne{\Omega_1}
+        & \text{wenn } S_t \leq \stepTwo{Y^*} \\[4pt]
+        Y_t = \stepOne{c_2} + \sum_{j=1}^P \stepOne{\beta_2} Y_{t-j} + v_t, \enspace
+        \var(v_t) = \stepOne{\Omega_2}
+        & \text{wenn } S_t > \stepTwo{Y^*}
+      \end{cases} \\
+      & \text{wobei } S_t \coloneqq Y_{j, t-d} \enspace \text{\typeInfo{(\emph{Threshold-Variable})}}
+    \end{align*}
+  \end{modelbox}
 
   \begin{prior}<2->
     \begin{itemize}
@@ -219,42 +262,173 @@
 
 % 4. "The independence Metropolis Hastings algorithm"
 
-% 4.1. "Estimation of stochastic volatility models via the independence MH algorithm"
-
-\section{Stoch. Volatilitätsmodell}
+\section[Unabhängiger Metropolis-Hastings-Algorithmus]{Metropolis-Hastings mit unabhängiger Kandidatenverteilung}
 
 \begin{frame}
+  \frametitle{Metropolis-Hastings mit unabhängiger Kandidatenvert.}
+
+  \textbf{Ziel}: Ziehen von Zahlen gemäß einer Dichte
+  $
+    \pi(\Phi)
+    \visible<3->{\variant{\,\propto f(\Phi) \cdot g(\Phi)}}
+  $
+
+  \visible<3->{\variant{(wobei $f$ eine wohlbekannte Wahrscheinlichkeitsdichte ist)}}
+
+  \vspace{10pt}
+
+  \begin{visibleenv}<2->
+    \textbf{Erinnerung}: Beim Metropolis-Hastings-Algorithmus zieht man zunächst einen Kandidaten gemäß der Kandidatenverteilung
+    \[
+      q(\Phi^{G+1} \,|\, \Phi^G)
+      \visible<4->{\,\variant{\coloneqq f(\Phi^{G+1})}}
+      \qquad\qquad
+      \visible<4->{\typeInfo{\text{(unabhängig von $\Phi^G$!)}}}
+    \]
+    Dann berechnet man die Akzeptanzwahrscheinlichkeit $\alpha = \min(1, r)$ mit
+    \[
+      r \coloneqq \frac{\pi(\Phi^{G+1}) / q(\Phi^{G+1} \,|\, \Phi^G)}{\pi(\Phi^G) / q(\Phi^G \,|\, \Phi^{G+1})}
+      \visible<5->{\variant{\, = \frac{f(\Phi^{G+1}) \cdot g(\Phi^{G+1}) / f(\Phi^{G+1})}{f(\Phi^{G}) \cdot g(\Phi^{G}) / f(\Phi^{G})}}}
+      \visible<6->{\variant{\, = \frac{g(\Phi^{G+1})}{g(\Phi^G)}}}
+    \]
+    Zuletzt zieht man $u \sim \Uniform(0, 1)$ und man behält $\Phi^{G+1}$, falls $u < \alpha$. Ansonsten verwirft man $\Phi^{G+1}$.
+    \TODO{Sprache mit verwerfen ein wenig anpassen.}
+  \end{visibleenv}
+\end{frame}
+
+% 4.1. "Estimation of stochastic volatility models via the independence MH algorithm"
+
+\section[Stoch. Volatilitätsmodell]{Das stochastische Volatilitätsmodell}
+
+\begin{frame}[t]
   \frametitle{Das stochastische Volatilitätsmodell}
-  \[
-    \arraycolsep=2.5pt
-    \begin{array}{rclll}
-      y_t &=& \epsilon_t \sqrt{h_t}, & \epsilon_t \sim \Normal(0, 1) \quad & \text{(Beobachtungsgleichung)} \\
-      \ln h_t &=& \ln h_{t-1} + v_t, & v_t \sim \Normal(0, g) \quad & \text{(Zustandsgleichung)}
-    \end{array}
-  \]
+  \begin{modelbox}
+    \[
+      \arraycolsep=2.5pt
+      \begin{array}{rcllll}
+        y_t &=& \epsilon_t \sqrt{\stepOne{h_t}}, & \epsilon_t \sim \Normal(0, 1), & \typeInfo{t = 1, \ldots, T} \quad & \text{(\emph{Beobachtungsgl.})} \\
+        \ln \stepOne{h_t} &=& \ln \stepOne{h_{t-1}} + v_t, & v_t \sim \Normal(0, \stepTwo{g}), & \typeInfo{t = 1, \ldots, T} \quad & \text{(\emph{Zustandsgl.})}
+      \end{array}
+    \]
+  \end{modelbox}
+
   \begin{bsp}<2->
     \TODO{Aktien? Graphik?}
   \end{bsp}
   % Beobachtungsgleichung nicht linear => Algorithmus von Carter und Kohn kann nicht angewandt werden
 \end{frame}
 
-\begin{frame}
+\subsection{Bayesische Inferenz (mit unabhängigem MH)}
+
+\begin{frame}[t]
   \frametitle{Bayesische Inferenz im stochastischen Volatilitätsmodell}
 
-  Vorüberlegung: Für alle Zeitpunkte $t$, außer Start- und Endzeitpunkt, gilt:
-  \begin{align*}
-    f(h_t \,|\, h_{-t}, \vec{y}) & = f(h_t \,|\, h_{t-1}, h_{t+1}, y_t) \\
-    & \visible<2->{\propto f(y_t \,|\, h_t) \cdot f(h_{t+1} \,|\, h_t) \cdot f(h_t \,|\, h_{t-1})} \\
-    & \visible<4->{\propto \tfrac{1}{\sqrt{h_t}} \exp \left( \tfrac{y_t^2}{2 h_t} \right) \tfrac{1}{h_t} \exp \left( \tfrac{(\ln h_t - \mu)^2}{2 \sigma_h} \right) } \\
-    & \visible<4->{\text{mit } \mu \coloneqq \tfrac{1}{2} (\ln h_{t+1} + \ln h_{t-1}), \quad \sigma_h \coloneqq \tfrac{1}{2} g}
-  \end{align*}
-  \begin{nebenrechnung}<3->
-    \begin{align*}
-      f(y_t \,|\, h_t) & = \tfrac{1}{\sqrt{2 \pi h_t}} \exp \left( \tfrac{y_t^2}{2 h_t} \right) \\
-      f(h_{t+1} \,|\, h_t) & \propto \tfrac{1}{h_t} \enspace\,\, \exp \left( \tfrac{(\ln h_{t+1} - \ln h_t)^2}{2 g} \right) \\
-      f(h_t \,|\, h_{t-1}) & \propto \tfrac{1}{h_{t-1}} \exp \left( \tfrac{(\ln h_t - \ln h_{t-1})^2}{2 g} \right)
-    \end{align*}
-  \end{nebenrechnung}
+  \begin{modelbox}
+    \[
+      \arraycolsep=2.5pt
+      \begin{array}{rclll}
+        y_t &=& \epsilon_t \sqrt{\stepOne{h_t}}, & \epsilon_t \sim \Normal(0, 1), & \typeInfo{t = 1, \ldots, T} \\
+        \ln \stepOne{h_t} &=& \ln \stepOne{h_{t-1}} + v_t, & v_t \sim \Normal(0, \stepTwo{g}), & \typeInfo{t = 1, \ldots, T}
+      \end{array}
+    \]
+  \end{modelbox}
+
+  Vorüberlegung: Für alle Zeitpunkte~$t$, außer Start- und Endzeitpunkt, gilt:
+  \[
+    \arraycolsep=2.5pt
+    \begin{array}{rcl}
+      f(h_t \,|\, h_{-t}, \vec{y}, g) &=& f(h_t \,|\, h_{t-1}, h_{t+1}, y_t, g) \\
+      \visible<2->{&\propto& f(y_t \,|\, h_t, g) \cdot f(h_{t+1} \,|\, h_t, g) \cdot f(h_t \,|\, h_{t-1}, g)} \\
+      \visible<4->{&\propto& \tfrac{1}{\sqrt{h_t}} \exp \left( - \tfrac{y_t^2}{2 h_t} \right) \tfrac{1}{h_t} \exp \left( - \tfrac{(\ln h_t - \mu)^2}{2 \sigma_h} \right) } \\
+      \visible<4->{&& \text{mit } \mu \coloneqq \tfrac{1}{2} (\ln h_{t+1} + \ln h_{t-1}), \quad \sigma_h \coloneqq \tfrac{1}{2} g}
+    \end{array}
+  \]
+  \begin{onlyenv}<3-4>
+    \begin{nebenrechnung}
+      \[
+        \arraycolsep=2.5pt
+        \begin{array}{rcll}
+          f(y_t \,|\, h_t) &=& \tfrac{1}{\sqrt{2 \pi h_t}} \exp \left( \tfrac{- y_t^2}{2 h_t} \right) & \qquad \text{\typeInfo{(Normalverteilung)}} \\
+          f(h_{t+1} \,|\, h_t) &=& \tfrac{1}{\sqrt{2 \pi}} \cdot \tfrac{1}{h_{t+1}} \exp \left( \tfrac{- (\ln h_{t+1} - \ln h_t)^2}{2 g} \right) & \qquad \text{\typeInfo{(Log. Normalvert.)}} \\
+          f(h_t \,|\, h_{t-1}) &=& \tfrac{1}{\sqrt{2 \pi}} \tfrac{1}{h_{t}} \enspace\,\, \exp \left( \tfrac{- (\ln h_t - \ln h_{t-1})^2}{2 g} \right) & \qquad \text{\typeInfo{(Log. Normalvert.)}}
+        \end{array}
+      \]
+    \end{nebenrechnung}
+  \end{onlyenv}
+
+  \begin{onlyenv}<6->
+    Wir erfinden eine weitere Volatilitätsvariable $h_0$ hinzu.
+    Diese habe die Prior-Verteilung $h_0 \sim \Normal(\overline{\mu}, \overline{\sigma}^2)$.
+    \only<7->{Für den Posterior gilt:}
+  \end{onlyenv}
+  \begin{onlyenv}<7->
+    \[
+      \arraycolsep=2.5pt
+      \begin{array}{rcl}
+        f(h_0 \,|\, h_1) &\propto& f(h_0) \cdot f(h_1 \,|\, h_0) \\
+        \visible<7->{&\propto& \tfrac{1}{\sqrt{\overline{\sigma}^2}} \exp \left( \tfrac{- (h_0 - \overline{\mu})^2}{2 \overline{\sigma}^2} \right) \cdot \tfrac{1}{h_0} \exp \left( \tfrac{- (\ln h_1 - \ln h_0)^2}{2 g} \right)} \\
+        \visible<8->{&\propto& h_0^{-1}}
+      \end{array}
+    \]
+  \end{onlyenv}
+  \TODO{Behandlung von $h_T$}
+\end{frame}
+
+\begin{frame}[t]
+  \frametitle{Bayesische Inferenz im stochastischen Volatilitätsmodell}
+  \begin{enumerate}
+    \item[A.] Setze die Parameter der Prior-Vert. $h_0 \sim \Normal(\overline{\mu}, \overline{\sigma}^2)$ sowie $g \sim \InverseGamma(\tfrac{g_0}{2}, \tfrac{\nu}{2})$
+    \item[B.] Initialisierung: Wähle Startwerte für $h_0, \ldots, h_T$ und $g$
+    \item[C.] Gibbs-Sampling: Wiederhole die Schritte
+    \begin{enumerate}
+      \item[1.] \TODO{$t = 0$}
+      \item[2.] Für $t = 1, \ldots, T-1$ ziehe einen Kandidaten gemäß
+      \[
+        q(h_{t,\new}) = h_{t, \new}^{-1} \exp \left( \tfrac{- (\ln h_{t, \new} - \mu)^2}{2 \sigma_h} \right), \quad
+        \mu \coloneqq \tfrac{\ln h_{t-1} + \ln h_{t+1}}{2}, \enspace
+        \sigma_h \coloneqq \tfrac{g}{2}.
+      \]
+      Berechne die Akzeptanz-Wahrscheinlichkeit $\alpha = \min(1, r)$ mit
+      \[
+        r \coloneqq \frac{\tfrac{1}{\sqrt{h_{t,\new}}} \exp \left( \tfrac{-y_t^2}{2 h_{t, \new}} \right)}{\tfrac{1}{\sqrt{h_{t,\old}}} \exp \left( \tfrac{-y_t^2}{2 h_{t, \old}} \right)}
+      \]
+      Ziehe $u \sim \Uniform(0,1)$. Behalte $h_{t, \new}$, falls $u < \alpha$, ansonsten verwerfe $h_{t, \new}$.
+      \item[3.] \TODO{$T = t$}
+      \item[4.]
+    \end{enumerate}
+  \end{enumerate}
+\end{frame}
+
+\section[Erweitertes stoch. Volatilitätsmodell]{Erweiterte Version des stochastischen Volatilitätsmodells}
+
+\begin{frame}
+  \frametitle{Erweiterte Version des stochastischen Volatilitätsmodells}
+  \[
+    \arraycolsep=2.5pt
+    \begin{array}{rclll}
+      y_t &=& c_t + b_t y_{t-1} + \epsilon_t \sqrt{h_t}, & \epsilon_t \sim \Normal(0, 1), & \quad \typeInfo{t = 1, \ldots, T} \\
+      \ln h_t &=& \ln h_{t-1} + v_t, & v_t \sim \Normal(0, g), & \quad \typeInfo{t = 1, \ldots, T}
+    \end{array}
+  \]
+  Für die Regressions-Koeffizienten $B_t = \{ c_t, b_t \}$ gelte dabei
+  \[
+    B_t = B_{t-1} + e_t, \quad e_t \sim \Normal(0, Q), \enspace Q \in \R^{2 \times 2}.
+  \]
+  \TODO{Motivation}
+\end{frame}
+
+\subsection{Bayesische Inferenz (mit unabhängigem MH)}
+
+\begin{frame}[t]
+  \frametitle{Bayessche Inferenz im erw. stoch. Volatilitätsmodell}
+  \begin{enumerate}
+    \item[A.] Initialisierung: Wähle Startwerte für \TODO{???}
+    \item[B.] Gibbs-Sampling: Wiederhole die Schritte
+    \begin{enumerate}
+      \item[1.] Sample $h_0$, \ldots, $h_T$ gegeben $g$ und $B_1, \ldots B_T$:
+      Für $t = 1, \ldots, T-1$ führe einen MH-Schritt für $h_t$ aus
+    \end{enumerate}
+  \end{enumerate}
 \end{frame}
 
 \end{document}
