@@ -38,8 +38,6 @@
 \theoremstyle{definition}
 \newtheorem*{bsp}{Beispiel}
 \newtheorem*{prior}{Prior-Verteilung}
-%\newtheorem*{inference}{Inferenz}
-\newtheorem*{nebenrechnung}{Nebenrechnung}
 
 \newcommand{\blank}{\text{--}} % Platzhalter
 
@@ -65,6 +63,7 @@
 \definecolor{TypeInfoColor}{rgb}{0.4,0.4,0.4}
 \definecolor{VariantColor}{rgb}{0.7,0.1,0.7}
 \definecolor{ModelBgColor}{rgb}{0.95,0.85,0.75}
+\definecolor{NebenrechnungBgColor}{rgb}{0.886,0.918,0.945}
 
 \newcommand{\stepOne}[1]{\textcolor{StepOneColor}{#1}}
 \newcommand{\stepTwo}[1]{\textcolor{StepTwoColor}{#1}}
@@ -72,6 +71,13 @@
 \newcommand{\variant}[1]{\textcolor{VariantColor}{#1}}
 
 \DeclarePairedDelimiter\abs{\lvert}{\rvert} % Absolutwert
+
+% http://tex.stackexchange.com/a/52802
+\newcommand{\bignicefrac}[2]{%
+  \raise.5ex\hbox{$#1$}%
+  \kern-.1em {\Huge /} \kern-.15em%
+  \lower.25ex\hbox{$#2$}
+}
 
 \newmdenv[
   linewidth=0pt,
@@ -85,6 +91,19 @@
   innerbottommargin=4pt,
   skipbelow=10pt
 ]{modelbox}
+
+\newmdenv[
+  linewidth=0pt,
+  innerlinewidth=0pt,
+  outerlinewidth=0pt,
+  roundcorner=8pt,
+  backgroundcolor=NebenrechnungBgColor,
+  innerleftmargin=4pt,
+  innerrightmargin=4pt,
+  innertopmargin=4pt,
+  innerbottommargin=4pt,
+  skipbelow=10pt
+]{nebenrechnung}
 
 % Abstand um Gleichungen herum
 \makeatletter
@@ -148,7 +167,7 @@
   \end{bsp}
 \end{frame}
 
-\subsection{Bayesische Inferenz (mit Random-Walk-MH)}
+\subsection{Bayessche Inferenz (mit Random-Walk-MH)}
 
 \begin{frame}
   \frametitle{Bayessche Inferenz im Threshold-VAR-Modell}
@@ -306,8 +325,8 @@
     \[
       \arraycolsep=2.5pt
       \begin{array}{rcllll}
-        y_t &=& \epsilon_t \sqrt{\stepOne{h_t}}, & \epsilon_t \sim \Normal(0, 1), & \typeInfo{t = 1, \ldots, T} \quad & \text{(\emph{Beobachtungsgl.})} \\
-        \ln \stepOne{h_t} &=& \ln \stepOne{h_{t-1}} + v_t, & v_t \sim \Normal(0, \stepTwo{g}), & \typeInfo{t = 1, \ldots, T} \quad & \text{(\emph{Zustandsgl.})}
+        y_t &=& \epsilon_t \sqrt{\stepOne{h_t}}, & \epsilon_t \sim \Normal(0, 1), & \typeInfo{t = 1, \ldots, T} \quad & \text{\typeInfo{(\emph{Beobachtungsgl.})}} \\
+        \ln \stepOne{h_t} &=& \ln \stepOne{h_{t-1}} + v_t, & v_t \sim \Normal(0, \stepTwo{g}), & \typeInfo{t = 1, \ldots, T} \quad & \text{\typeInfo{(\emph{Zustandsgl.})}}
       \end{array}
     \]
   \end{modelbox}
@@ -318,10 +337,10 @@
   % Beobachtungsgleichung nicht linear => Algorithmus von Carter und Kohn kann nicht angewandt werden
 \end{frame}
 
-\subsection{Bayesische Inferenz (mit unabhängigem MH)}
+\subsection{Bayessche Inferenz (mit unabhängigem MH)}
 
 \begin{frame}[t]
-  \frametitle{Bayesische Inferenz im stochastischen Volatilitätsmodell}
+  \frametitle{Bayessche Inferenz im stochastischen Volatilitätsmodell}
 
   \begin{modelbox}
     \[
@@ -337,10 +356,17 @@
   \[
     \arraycolsep=2.5pt
     \begin{array}{rcl}
-      f(h_t \,|\, h_{-t}, \vec{y}, g) &=& f(h_t \,|\, h_{t-1}, h_{t+1}, y_t, g) \\
-      \visible<2->{&\propto& f(y_t \,|\, h_t, g) \cdot f(h_{t+1} \,|\, h_t, g) \cdot f(h_t \,|\, h_{t-1}, g)} \\
-      \visible<4->{&\propto& \tfrac{1}{\sqrt{h_t}} \exp \left( - \tfrac{y_t^2}{2 h_t} \right) \tfrac{1}{h_t} \exp \left( - \tfrac{(\ln h_t - \mu)^2}{2 \sigma_h} \right) } \\
-      \visible<4->{&& \text{mit } \mu \coloneqq \tfrac{1}{2} (\ln h_{t+1} + \ln h_{t-1}), \quad \sigma_h \coloneqq \tfrac{1}{2} g}
+      f(h_t \,|\, h_{-t}, \vec{y}, g)
+      \only<-8>{
+        &=& f(h_t \,|\, h_{t-1}, h_{t+1}, y_t, g) \\
+        \visible<2->{
+          &\propto& f(y_t \,|\, h_t, g) \cdot f(h_{t+1} \,|\, h_t, g) \cdot f(h_t \,|\, h_{t-1}, g)
+        } \\
+      }
+      \visible<4->{
+        &\propto& \tfrac{1}{\sqrt{h_t}} \exp \left( - \tfrac{y_t^2}{2 h_t} \right) \cdot \tfrac{1}{h_t} \exp \left( - \tfrac{(\ln h_t - \mu_t)^2}{2 \sigma_t} \right) \\
+        && \text{mit } \mu_t \coloneqq \tfrac{1}{2} (\ln h_{t+1} + \ln h_{t-1}), \quad \sigma_t \coloneqq \tfrac{1}{2} g
+      }
     \end{array}
   \]
   \begin{onlyenv}<3-4>
@@ -349,7 +375,7 @@
         \arraycolsep=2.5pt
         \begin{array}{rcll}
           f(y_t \,|\, h_t) &=& \tfrac{1}{\sqrt{2 \pi h_t}} \exp \left( \tfrac{- y_t^2}{2 h_t} \right) & \qquad \text{\typeInfo{(Normalverteilung)}} \\
-          f(h_{t+1} \,|\, h_t) &=& \tfrac{1}{\sqrt{2 \pi}} \cdot \tfrac{1}{h_{t+1}} \exp \left( \tfrac{- (\ln h_{t+1} - \ln h_t)^2}{2 g} \right) & \qquad \text{\typeInfo{(Log. Normalvert.)}} \\
+          f(h_{t+1} \,|\, h_t) &=& \tfrac{1}{\sqrt{2 \pi}} \tfrac{1}{h_{t+1}} \exp \left( \tfrac{- (\ln h_{t+1} - \ln h_t)^2}{2 g} \right) & \qquad \text{\typeInfo{(Log. Normalvert.)}} \\
           f(h_t \,|\, h_{t-1}) &=& \tfrac{1}{\sqrt{2 \pi}} \tfrac{1}{h_{t}} \enspace\,\, \exp \left( \tfrac{- (\ln h_t - \ln h_{t-1})^2}{2 g} \right) & \qquad \text{\typeInfo{(Log. Normalvert.)}}
         \end{array}
       \]
@@ -365,36 +391,77 @@
     \[
       \arraycolsep=2.5pt
       \begin{array}{rcl}
-        f(h_0 \,|\, h_1) &\propto& f(h_0) \cdot f(h_1 \,|\, h_0) \\
-        \visible<7->{&\propto& \tfrac{1}{\sqrt{\overline{\sigma}^2}} \exp \left( \tfrac{- (h_0 - \overline{\mu})^2}{2 \overline{\sigma}^2} \right) \cdot \tfrac{1}{h_0} \exp \left( \tfrac{- (\ln h_1 - \ln h_0)^2}{2 g} \right)} \\
-        \visible<8->{&\propto& h_0^{-1}}
+        f(h_0 \,|\, h_1, g)
+        \only<-8>{
+          &\propto& f(h_0) \cdot f(h_1 \,|\, h_0, g) \\
+          \visible<7->{
+            &\propto& \tfrac{1}{\sqrt{\overline{\sigma}^2}} \exp \left( \tfrac{- (h_0 - \overline{\mu})^2}{2 \overline{\sigma}^2} \right) \cdot \tfrac{1}{h_0} \exp \left( \tfrac{- (\ln h_1 - \ln h_0)^2}{2 g} \right)
+          } \\
+        }
+        \only<8-9>{
+          &\propto& \tfrac{1}{h_0} \exp \left( \tfrac{- (\ln h_0 - \mu_0)^2}{2 \sigma_0} \right) \\
+        }
+        \only<10->{
+          &=& \tfrac{1}{\sqrt{2 \pi}} \tfrac{1}{h_0} \exp \left( \tfrac{- (\ln h_0 - \mu_0)^2}{2 \sigma_0} \right) \\
+        }
+        \visible<8->{
+          && \text{mit } \sigma_0 \coloneqq \tfrac{\overline{\sigma} g}{\overline{\sigma} + g}, \quad \mu_0 \coloneqq \sigma_0 \left( \tfrac{\overline{\mu}}{\overline{\sigma}} + \tfrac{\ln h_1}{g} \right)
+        }
       \end{array}
     \]
   \end{onlyenv}
-  \TODO{Behandlung von $h_T$}
+
+  \begin{onlyenv}<11->
+    Für die letzte Volatilitätsvariable $h_T$ gilt
+    \[
+      \arraycolsep=2.5pt
+      \begin{array}{rcl}
+        f(h_T \,|\, h_{-T}, \vec{y}, g)
+        \only<-13>{
+          &=& f(h_T, h_{T-1}, y_T, g) \\
+          \visible<12->{
+            &\propto& f(y_T \,|\, h_t) \cdot f(h_T \,|\, h_{T-1}) \\
+          }
+        }
+        \visible<13->{
+          &\propto& \tfrac{1}{\sqrt{h_T}} \exp \left( - \tfrac{y_T^2}{2 h_T} \right) \cdot \tfrac{1}{h_T} \exp \left( \tfrac{- (\ln h_T - \mu_T)^2}{2 \sigma_T} \right) \\
+          && \text{mit } \mu_T \coloneqq \ln h_{T-1}, \quad \sigma_T \coloneqq g
+        }
+      \end{array}
+    \]
+    \only<14>{\,}
+  \end{onlyenv}
 \end{frame}
 
 \begin{frame}[t]
-  \frametitle{Bayesische Inferenz im stochastischen Volatilitätsmodell}
+  \frametitle{Bayessche Inferenz im stochastischen Volatilitätsmodell}
   \begin{enumerate}
-    \item[A.] Setze die Parameter der Prior-Vert. $h_0 \sim \Normal(\overline{\mu}, \overline{\sigma}^2)$ sowie $g \sim \InverseGamma(\tfrac{g_0}{2}, \tfrac{\nu}{2})$
-    \item[B.] Initialisierung: Wähle Startwerte für $h_0, \ldots, h_T$ und $g$
-    \item[C.] Gibbs-Sampling: Wiederhole die Schritte
+    \item<2->[A.] Setze die Parameter der Prior-Vert. $h_0 \sim \Normal(\overline{\mu}, \overline{\sigma}^2)$ sowie $g \sim \InverseGamma(\tfrac{g_0}{2}, \tfrac{\nu_0}{2})$
+    \item<3->[B.] Initialisierung: Wähle Startwerte für $h_0, \ldots, h_T$ und $g$
+    \item<4->[C.] Gibbs-Sampling: Wiederhole die Schritte
     \begin{enumerate}
-      \item[1.] \TODO{$t = 0$}
-      \item[2.] Für $t = 1, \ldots, T-1$ ziehe einen Kandidaten gemäß
-      \[
-        q(h_{t,\new}) = h_{t, \new}^{-1} \exp \left( \tfrac{- (\ln h_{t, \new} - \mu)^2}{2 \sigma_h} \right), \quad
-        \mu \coloneqq \tfrac{\ln h_{t-1} + \ln h_{t+1}}{2}, \enspace
-        \sigma_h \coloneqq \tfrac{g}{2}.
-      \]
-      Berechne die Akzeptanz-Wahrscheinlichkeit $\alpha = \min(1, r)$ mit
-      \[
-        r \coloneqq \frac{\tfrac{1}{\sqrt{h_{t,\new}}} \exp \left( \tfrac{-y_t^2}{2 h_{t, \new}} \right)}{\tfrac{1}{\sqrt{h_{t,\old}}} \exp \left( \tfrac{-y_t^2}{2 h_{t, \old}} \right)}
-      \]
-      Ziehe $u \sim \Uniform(0,1)$. Behalte $h_{t, \new}$, falls $u < \alpha$, ansonsten verwerfe $h_{t, \new}$.
-      \item[3.] \TODO{$T = t$}
-      \item[4.]
+      \item<5->[\stepOne{1.}] Führe einen Metropolis-Hastings-Schritt für \stepOne{$h_0, \ldots, h_T$} aus:
+      \begin{itemize}
+        \item<6-> Ziehe $h_0$ neu aus aus der logarithmischen Normalverteilung
+        \[
+          f(h_0 \,|\, h_1, g) = \tfrac{1}{\sqrt{2 \pi}} \tfrac{1}{h_0} \exp \left( \tfrac{- (\ln h_0 - \mu_0)^2}{2 \sigma_0} \right), \enspace
+          \sigma_0 \coloneqq \tfrac{\overline{\sigma} g}{\overline{\sigma} + g}, \enspace
+          \mu_0 \coloneqq \sigma_0 \left( \tfrac{\overline{\mu}}{\overline{\sigma}} + \tfrac{\ln h_1}{g} \right)
+        \]
+        \item<7-> Für $t = 1, \ldots, T$ ziehe einen Kandidaten $h_{t, \new}$ gemäß der log. NV
+        \[
+          q(h_{t,\new}) = \tfrac{1}{h_{t, \new}} \exp \left( \tfrac{- (\ln h_{t, \new} - \mu_t)^2}{2 \sigma_t} \right)
+        \]
+        mit $\mu_t$ und $\sigma_t$ wie auf der letzten Folie.
+
+        Berechne die Akzeptanz-Wahrscheinlichkeit $\alpha = \min(1, r)$ mit
+        \[
+          r \coloneqq \frac{h_{t,\new}^{-0,5} \exp \left( \nicefrac{-y_t^2}{2 h_{t, \new}} \right)}{h_{t,\old}^{-0,5} \exp \left( \nicefrac{-y_t^2}{2 h_{t, \old}} \right)}
+        \]
+        Ziehe $u \sim \Uniform(0,1)$. Behalte $h_{t, \new}$, falls $u < \alpha$, ansonsten verwerfe $h_{t, \new}$.
+      \end{itemize}
+      \item<8->[\stepTwo{2.}] Sample \stepTwo{$g$} gegeben \stepOne{$h_0, \ldots, h_T$}:
+      Ziehe ein neues $g$ aus der Posterior-Verteilung $\InverseGamma(\tfrac{g}{2}, \tfrac{\nu}{2})$ mit $g \coloneqq g_0 + \sum_{t=1}^T v_t = g_0 + \sum_{t=1}^T \ln h_t - \ln h_{t-1}$ und $\nu \coloneqq \nu_0 + T$.
     \end{enumerate}
   \end{enumerate}
 \end{frame}
@@ -417,7 +484,7 @@
   \TODO{Motivation}
 \end{frame}
 
-\subsection{Bayesische Inferenz (mit unabhängigem MH)}
+\subsection{Bayessche Inferenz (mit unabhängigem MH)}
 
 \begin{frame}[t]
   \frametitle{Bayessche Inferenz im erw. stoch. Volatilitätsmodell}
