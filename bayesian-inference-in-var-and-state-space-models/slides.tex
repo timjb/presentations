@@ -269,7 +269,7 @@
         \begin{onlyenv}<15->
           \begin{align*}
             & p(Y_t \,|\, b_1, \Omega_1, b_2, \Omega_2, Y^{*}) = p(Y_{1,t} \,|\, b_1, \Omega_1, Y^{*}) \cdot p(Y_{2,t} \,|\, b_2, \Omega_2, Y^{*}) \\[-2pt]
-            & \log p(Y_{i,t} \,|\, b_i, \Omega_i, Y^{*}) = C + \tfrac{T}{2} \log \abs{\Omega_i^{-1}} - \tfrac{1}{2} {\sum}_{t=1}^T (Y_{i,t} - X_{i,t} \tilde{b_i})^T \Omega_i^{-1} (Y_{i,t} - X_{i,t} \tilde{b_i})
+            & \log p(Y_{i,t} \,|\, b_i, \Omega_i, Y^{*}) = C - \tfrac{T}{2} \log \abs{\Omega_i^{-1}} - \tfrac{1}{2} {\sum}_{t=1}^T (Y_{i,t} - X_{i,t} \tilde{b_i})^T \Omega_i^{-1} (Y_{i,t} - X_{i,t} \tilde{b_i})
           \end{align*}
         \end{onlyenv}
         \item<16-> Ziehe $u \sim \Uniform(0,1)$. Akzeptiere $Y^{*}_{\new}$, falls $u < \alpha$, ansonsten behalte $Y^{*}_{\old}$.
