@@ -156,7 +156,7 @@ data Unit = unit
 \begin{onlyenv}<2->
 \begin{itemize}
   \item<2-> Regel: Jede Berechnung, die Interfaces verwendet, muss diese in eckigen Klammern vor dem Rückgabetyp angeben:
-  \frankinline{{t1 -> ... -> tn -> [I1, ..., Im]}}
+  \frankinline{{t1 -> ... -> tn -> [I1, ..., Im]r}}
 \end{itemize}
 \end{onlyenv}
 \end{frame}
@@ -218,7 +218,7 @@ indexer xs = map {x -> (x, next!)} xs
 state : S -> <State S>X -> X
 state _ x            = x
 state s <get -> k>   = state s (k s)
-  -- k : X -> <State S>X
+  -- k : S -> <State S>X
 state _ <put s -> k> = state s (k unit)
   -- k : Unit -> <State S>X
 \end{frankcode}
