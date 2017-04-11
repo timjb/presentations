@@ -1,0 +1,631 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage[a4paper]{geometry}
+
+\geometry{margin=2cm}
+\setlength{\parindent}{0pt}
+
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{stmaryrd} % \mapsfrom
+\usepackage{enumitem}
+
+\usepackage{tikz}
+%\usetikzlibrary{matrix,arrows,cd}
+\usetikzlibrary{matrix}
+
+\theoremstyle{definition}
+\newtheorem*{defn}{Definition}
+\newtheorem*{satz}{Satz}
+\newtheorem*{satzdefn}{Satz/Definition}
+\newtheorem*{lem}{Lemma}
+\newtheorem*{bsp}{Beispiel}
+\newtheorem*{bspe}{Beispiele}
+\newtheorem*{kor}{Korollar}
+\newtheorem*{kordefn}{Korollar/Definition}
+
+\theoremstyle{remark}
+\newtheorem*{erinnerung}{Erinnerung}
+\newtheorem*{bem}{Bemerkung}
+\newtheorem*{interp}{Interpretation}
+
+% Miscellanea
+\newcommand{\blank}{\text{--}} % Platzhalter
+\newcommand{\coloneqq}{:=} % Definitionsgleich
+% Schöne Mengen { #1 | #2 }
+% siehe http://tex.stackexchange.com/questions/13634/define-pretty-sets-in-latex-esp-how-to-do-the-condition-separator
+\usepackage{mathtools}
+\DeclarePairedDelimiterX\Set[2]{\lbrace}{\rbrace}%
+ { #1 \,\delimsize|\, #2 }
+\newcommand{\N}{\mathbb{N}} % Natürliche Zahlen
+
+% Konzepte
+\DeclareMathOperator{\Ob}{Ob} % Objekte (einer Kategorie)
+%\DeclareMathOperator{\Mor}{Mor} % Morphismenmenge / -klasse
+\DeclareMathOperator{\End}{End} % Endomorphismenmenge / -klasse
+\DeclareMathOperator{\Hom}{Hom} % Homomorphisms
+\DeclareMathOperator{\id}{id} % Identität
+%\DeclareMathOperator{\Nat}{Nat} % Natürliche Transformationen
+%\DeclareMathOperator{\dom}{dom} % Domain
+\DeclareMathOperator{\codom}{codom} % Codomain
+\newcommand{\op}{\mathrm{op}} % opposite category
+%\DeclareMathOperator{\Aut}{Aut} % Automorphismengruppe
+\newcommand{\ladj}{\dashv} % Links-adjungiert (left-adjoint)
+%\newcommand{\Lim}{\lim} % Limes
+%\DeclareMathOperator{\colim}{colim} % Kolimes
+%\newcommand{\Colim}{\colim} % Kolimes
+%\newcommand{\myint}[2]{{\textstyle \int\limits_{#1}^{#2}}}
+%\newcommand{\EndC}[2]{\myint{#1}{} #2} % Ende
+%\newcommand{\CoEndC}[2]{\myint{}{#1} #2} % Koende
+%\DeclareMathOperator{\Ran}{Ran} % Rechts-Kan-Erweiterung
+%\DeclareMathOperator{\Lan}{Lan} % Links-Kan-Erweiterung
+%\newcommand{\IHom}{\underline{\Hom}} % Inner Homomorphisms
+
+% Topostheorie
+\DeclareMathOperator{\Sub}{Sub} % Partialordnung der Subobjekte
+\DeclareMathOperator{\true}{true} % universeller Monomorphismus
+\newcommand{\clos}[1]{\overline{{#1}}} % "Abschluss" (im Lawvere-Tierney-Sinne)
+\newcommand{\sheafification}{\mathbf{a}} % sheafification, Garbifizierung
+
+% Populäre Kategorien
+\newcommand{\SetC}{\mathbf{Set}} % Kategorie der Mengen
+\newcommand{\FinSetC}{\mathbf{FinSet}} % Kategorie der endlichen Mengen
+%\newcommand{\kAlg}{k\text{-}\Alg} % Kategorie der k-Algebren
+\newcommand{\Sh}{\mathbf{Sh}} % Kategorie der Garben
+\newcommand{\FuncC}[2]{[{#1}, {#2}]} % Funktorkategorie
+
+% Bezeichnungen für Variablen, die für Kategorien stehen
+%\newcommand{\Aat}{\mathcal{A}} % Category-A
+%\newcommand{\Bat}{\mathcal{B}} % Category-B
+\newcommand{\Cat}{\mathcal{C}} % Category-C
+\newcommand{\Dat}{\mathcal{D}} % Category-D
+\newcommand{\Eat}{\mathcal{E}} % Category-E
+%\newcommand{\Fat}{\mathcal{F}} % Category-F
+%\newcommand{\Gat}{\mathcal{G}} % Category-G
+%\newcommand{\HatC}{\mathcal{H}} % Category-H
+%\newcommand{\Iat}{\mathcal{I}} % Category-I (Indexkategorie)
+%\newcommand{\Jat}{\mathcal{J}} % Category-J (Indexkategorie)
+%\newcommand{\Lat}{\mathcal{L}} % Category-L
+%\newcommand{\MatC}{\mathcal{M}} % Category-M
+%\newcommand{\NatC}{\mathcal{N}} % Category-N
+%\newcommand{\Sit}{\mathcal{S}} % Situs-S
+%\newcommand{\Sat}{\mathcal{S}} % Category-S
+%\newcommand{\Wat}{\mathcal{W}} % Category-W (whaaaatt?)
+%\newcommand{\Xat}{\mathcal{X}} % Category-X
+%\newcommand{\Yat}{\mathcal{Y}} % Category-Y
+
+% Makros für Adjunktionen. Geklaut von
+% http://sma.epfl.ch/~werndli/latex/adjunction.pdf
+% http://sma.epfl.ch/~werndli/latex/adjunction.tex
+\usepackage[all]{xy}
+\newcommand{\adj}[1][]{\def\ArgI{#1}\adjRelayI}
+\newcommand{\adjRelayI}[1][]{\def\ArgII{#1}\adjRelayII}
+\newcommand{\adjRelayII}[3][2.2em]{
+  \ensuremath{\SelectTips{lu}{10}\xymatrix@C=#1@1{
+    {#2\,}
+    \ar@<1ex>[r]^-{\ArgI}^-{}="1" &
+    {\,#3}
+    \ar@<1ex>[l]^-{\ArgII}^-{}="2"
+    \ar@{}"1";"2"|(.3){\hbox{}}="7"
+    \ar@{}"1";"2"|(.7){\hbox{}}="8"
+    \ar@{|-} "8" ;"7"
+  }}
+}
+\newcommand{\radj}[1][]{\def\ArgI{#1}\radjRelayI}
+\newcommand{\radjRelayI}[1][]{\def\ArgII{#1}\radjRelayII}
+\newcommand{\radjRelayII}[3][2.2em]{
+  \ensuremath{\SelectTips{lu}{10}\xymatrix@C=#1@1{
+  {#2\,}
+  \ar@<-1ex>[r]_-{\ArgI}^-{}="1" &
+  {\,#3}
+  \ar@<-1ex>[l]_-{\ArgII}^-{}="2"
+  \ar@{}"1";"2"|(.3){\hbox{}}="7"
+  \ar@{}"1";"2"|(.7){\hbox{}}="8"
+  \ar@{|-} "7" ;"8"
+  }}
+}
+
+% http://tex.stackexchange.com/a/49196
+\newcommand*\mycirc[1]{%
+  \begin{tikzpicture}[baseline=(C.base)]
+  \node[draw,circle,inner sep=1pt,minimum size=3ex](C) {#1};
+  \end{tikzpicture}
+}
+
+\title{Geometrische Morphismen; Eigenschaften von Topoi und Konstruktionen mit Topoi}
+\author{Tim Baumann}
+\date{13. April 2017}
+
+\begin{document}
+
+\maketitle
+
+\section{Geometrische Morphismen}
+
+\begin{defn}
+  Ein \emph{geometrischer Morphismus} $f : \Eat \to \Dat$ zwischen Topoi ist ein Paar
+  \[ \radj[f_*][f^*]{\Eat}{\Dat} \]
+  von adjungierten Funktoren, wobei $f^*$ linksexakt ist, d.\,h. $f^*$ bewahrt endliche Limiten. \\
+  Dabei heißt $f^*$ \emph{Urbildfunktor} und $f_*$ \emph{Direktes-Bild-Funktor}.
+\end{defn}
+
+\begin{erinnerung}
+  Außerdem bewahrt $f_*$ Limiten und $f^*$ Kolimiten, denn:
+  \begin{center}
+    \emph{
+      Left-Adjoints Preserve Colimits (LAPC), \quad
+      Right-Adjoints Preserve Limits (RAPL)
+    }
+  \end{center}
+\end{erinnerung}
+
+\begin{bem}
+  Aus dem Yoneda-Lemma folgt: Bei einer Adjunktion $F \ladj G$ ist $F$ eindeutig (bis auf Isomorphie) durch~$G$ bestimmt (und umgekehrt).
+  Die Daten eines geometrischen Morphismus sind also schon allein durch $f^*$ oder $f_*$ gegeben.
+\end{bem}
+
+\begin{defn}
+  Ein \emph{Punkt} eines Topos~$\Eat$ ist ein geometrischer Morphismus $\SetC \to \Eat$.
+\end{defn}
+
+\begin{bem}
+  Diese Definition ergibt Sinn, da für $\Eat = \Sh(X)$ geometrische Morphismen $\SetC = \Sh(\{ \heartsuit \}) \to \Sh(X)$ in 1-zu-1-Korrespondenz zu stetigen Abbildungen $\{ \heartsuit \} \to X$, also Punkten von~$X$, stehen.
+\end{bem}
+
+TODO: warum sind Punkte interessant?
+
+\begin{bsp}
+  Sei $\Eat$ ein kovollständiger Topos (z.\,B. ein Grothendiecktopos).
+  Dann hat der \emph{Globale-Schnitte-Funktor}
+  \[
+    \Gamma : \Eat \to \SetC, \quad
+    E \mapsto \Hom_\Eat(1, E)
+  \]
+  einen Linksadjungierten, nämlich
+  \[
+    \Delta : \SetC \to \Eat, \quad
+    S \mapsto \coprod_{s \in S} 1.
+  \]
+  Für diesen gelten
+  \begin{align*} 
+    \Delta(\{ \heartsuit \}) & =
+    \coprod_{s \in \{ \heartsuit \}} 1 \cong 1 \\
+    \Delta(S \times T) & =
+    \enspace \coprod_{\mathclap{(s, t) \in S \times T}} 1 \enspace \cong
+    \left( \coprod_{s \in S} 1 \right) \times \left( \coprod_{t \in T} 1 \right) =
+    \Delta(S) \times \Delta(T)
+  \end{align*} 
+  Außerdem kann man zeigen, dass $\Delta$ auch Differenzkerne und somit alle endlichen Limiten erhält.
+  Folglich ist
+  \[ \radj[\Gamma][\Delta]{\Eat}{\SetC} \]
+  ein geometrischer Morphismus.
+
+  Es gibt auch keinen anderen geometrischen Morphismus $f : \Eat \to \SetC$, denn für jeden solchen Morphismus und jedes Objekt $E \in \mathcal{E}$ gilt:
+  \[
+    f_* E \cong
+    \Hom_\SetC(1, f_* E) \cong
+    \Hom_\Eat(f^* 1, E) \cong
+    \Hom_\Eat(1, E) \cong
+    \Gamma(E).
+  \]
+\end{bsp}
+
+\section{Stetige Abbildungen induzieren geometrische Morphismen}
+
+TODO
+
+\section{Scheibenkategorien von Topoi sind Topoi}
+
+% siehe IV.7. The slice Category as a Topos
+
+\begin{satz}
+Sei $\Eat$ ein Topos, $B \in \Ob(\Eat)$.
+Dann ist auch die Scheibenkategorie $\Eat / B$ ein Topos.
+\end{satz}
+
+\begin{proof}
+Wir müssen die Toposaxiome nachrechnen:
+\begin{enumerate}[itemsep=10pt,label=\protect\mycirc{\arabic*}]
+\item $\Eat/B$ ist endlich vollständig:
+
+\begin{minipage}[t]{0.35 \linewidth}
+Der Differenzkern berechnet sich \\
+wie in~$\Eat$:
+
+\begin{tikzpicture}
+  \matrix (mat) [matrix of nodes, column sep=1cm, row sep=1cm]{
+    \node (K) {$K$}; &
+    \node (X) {$X$}; &&
+    \node (Y) {$Y$}; \\
+    && \node (B) {$B$}; \\
+  };
+  \draw[->] (K) to node [above] {} (X);
+  \draw[->, transform canvas={yshift=0.5ex}] (X) to node [above] {$f$} (Y);
+  \draw[->, transform canvas={yshift=-0.5ex}] (X) to node [below] {$g$} (Y);
+  \draw[->] (K) to node {} (B);
+  \draw[->] (X) to node {} (B);
+  \draw[->] (Y) to node {} (B);
+\end{tikzpicture}
+\end{minipage}
+\begin{minipage}[t]{0.3 \linewidth}
+Binäre Produkte in~$\Eat/B$ \\
+sind Pullbacks in~$\Eat$:
+
+\begin{tikzpicture}
+  \matrix (mat) [matrix of nodes, column sep=1cm, row sep=0.6cm]{
+    & \node (P) {$X \times_B Y$}; \\
+    \node (X) {$X$}; &&
+    \node (Y) {$Y$}; \\
+    & \node (B) {$B$}; \\
+  };
+  \draw[->] (P) to node {} (Y);
+  \draw[->] (P) to node {} (X);
+  \draw[->] (P) to node {} (B);
+  \draw[->] (X) to node {} (B);
+  \draw[->] (Y) to node {} (B);
+\end{tikzpicture}
+\end{minipage}
+\begin{minipage}[t]{0.35 \linewidth}
+Das terminale Objekt in~$\Eat/B$ \\
+ist der Morphismus $\id_B : B \to B$:
+
+\begin{tikzpicture}
+  \matrix (mat) [matrix of nodes, column sep=1.2cm, row sep=1cm]{
+    \node (X) {$X$}; &&
+    \node (B') {$B$}; \\
+    & \node (B) {$B$}; \\
+  };
+  \draw[->] (X) to node [above] {$f$} (B');
+  \draw[->] (X) to node [left] {$f$} (B);
+  \draw[->] (B') to node [right] {$\id_B$} (B);
+\end{tikzpicture}
+\end{minipage}
+
+\item $\Eat/B$ besitzt einen Unterobjektklassifizierer:
+
+Sei $U : \Eat/B -> \Eat$ der offensichtliche Vergissfunktor.
+Dieser Funktor ist linksadjungiert zum Funktor $(\blank \times B) : \Eat \to \Eat/B$, denn es gilt
+\[ \Hom_\Eat(X, Y) \Hom_{\Eat/B}(X \xrightarrow{f} B, Y \times B \xrightarrow{\pi_2} B) \]
+natürlich in $(X \xrightarrow{f} B) \in \Ob(\Eat/B)$ und $Y \in \Ob(\Eat)$.
+Da ein Morphismus~$f$ in~$\Eat/B$ genau dann ein Monomorphismus ist, wenn $U(f)$ ein solcher ist, gilt:
+\[
+  \Sub_{\Eat/B}(A \xrightarrow{f} B) \cong
+  \Sub_\Eat(A) \cong
+  \Hom_\Eat(A, \Omega_\Eat) \cong 
+  \Hom_{\Eat/B}(A \xrightarrow{f} B, \Omega_\Eat \times B \xrightarrow{\pi_2} B)
+\]
+Nach Proposition I.3.1 in SiGaL ist folglich $\Omega_{\Eat/B} = \Omega_\Eat \times B \xrightarrow{\pi_2} B$ der Unterobjektklassifizierer in~$\Eat/B$.
+Der universelle Monomorphismus $\true : 1 \to \Omega$ ist die Komposition
+
+\begin{center}\begin{tikzpicture}
+  \matrix (mat) [matrix of nodes, column sep=2cm, row sep=1cm]{
+    \node (B) {$B$}; &
+    \node (B') {$1 \times B$}; &
+    \node (Omega) {$\Omega \times B$}; \\
+    & \node (B'') {$B$}; \\
+  };
+  \draw[->] (B) to node [above] {${\cong}$} (B');
+  \draw[->] (B') to node [above] {$\true_\Eat \times \id_B$} (Omega);
+  \draw[->] (B) to node [left] {$\id_B$} (B'');
+  \draw[->] (B') to node [right] {$\pi_2$} (B'');
+  \draw[->] (Omega) to node [right] {$\pi_2$} (B'');
+\end{tikzpicture}\end{center}
+
+\item $\Eat/B$ ist kartesisch abgeschlossen:
+
+TODO: gibt es hierfür eine schöne Konstruktion mithilfe der internen Sprache?
+Die Konstruktion in SiGaL ist zu kompliziert und nimmt außerdem $Z = \Omega$ an.
+Vergleich mit Set: Dort gilt $Z^Y = \amalg_{b \in B} Z_b^{Y_b}$.
+
+\end{enumerate}
+
+\end{proof}
+
+TODO: Evtl. erwähnen wie Kolimiten berechnet werden
+
+\begin{defn}
+  Sei $k : B \to A$ ein Morphismus in~$\Eat$.
+  Dann erhalten wir einen Funktor
+  \[
+    \Sigma_k : \Eat/B \to \Eat/A, \quad
+    (X \xrightarrow{p_X} B) \mapsto (k \circ p_X : X \xrightarrow{p_X} B \xrightarrow{k} A)
+  \]
+  durch Komponieren mit~$k$ und einen \emph{Basiswechselfunktor}
+  \[
+    k^* : \Eat/A \to \Eat/B, \quad
+    (X \xrightarrow{p_X} A) \mapsto (B \times_A X \xrightarrow{\pi_B} B)
+  \]
+  durch Pullback entlang~$k$.
+\end{defn}
+
+\begin{lem}
+  $\Sigma_k \ladj k^*$
+\end{lem}
+
+\begin{proof}
+Wir müssen zeigen, dass
+\[
+  \Hom_{\Eat/A}(\Sigma_k(X \to B), Y \to A) \cong \Hom_{\Eat/B}(X \to B, k^*(Y \to A)).
+\]
+Betrachte das Diagramm
+
+\begin{center}\begin{tikzpicture}
+  \matrix (mat) [matrix of nodes, column sep=2cm, row sep=1cm]{
+    \node (X) {$X$}; \\
+    & \node (P) {$B \times_A Y$}; &
+    \node (Y) {$Y$}; \\
+    & \node (B) {$B$}; &
+    \node (A) {$A$}; \\
+  };
+  \draw[->] (X) to node {} (B);
+  \draw[->,dashed] (X) to node {} (P);
+  \draw[->,dashed] (X) to node {} (Y);
+  \draw[->] (P) to node {} (Y);
+  \draw[->] (P) to node {} (B);
+  \draw[->] (B) to node {$k$} (A);
+  \draw[->] (Y) to node {} (A);
+  %\draw[->] (B) to node [above] {${\cong}$} (B');
+\end{tikzpicture}\end{center}
+
+Elemente der linken Hom-Menge sind Morphismen $X \to Y$, die das äußere Viereck kommutieren lassen; Elemente der rechten Hom-Menge sind Morphismen $X \to B \times_A Y$, die das linke Dreieck kommutieren lassen.
+Zwischen solchen Elementen besteht eine 1-zu-1-Korrespondenz, gegeben durch die universelle Eigenschaft des Pullbacks~$B \times_A Y$.
+\end{proof}
+
+\begin{lem}
+  $k^*$ besitzt auch einen Rechtsadjungierten $\Pi_k : \Eat/B \to \Eat/A$.
+\end{lem}
+
+\begin{proof}
+  Wir dürfen annehmen, dass $A \cong 1$ und somit $\Eat/A \cong \Eat$. (Ansonsten verwende $\Eat' \coloneqq \Eat/A$ und $B' \coloneqq (B \xrightarrow{k} A) \in \Ob(\Eat')$ anstelle von~$\Eat$ bzw.~$B$. Beachte, dass $\Eat'/B' \simeq \Eat/B$.)
+
+  \begin{align*}
+    \Hom_{\Eat/B}(k^*(X), Y \xrightarrow{h} B)
+    & \cong \Hom_{\Eat/B}(X \times B \xrightarrow{\pi_B} B, Y \xrightarrow{h} B) \\
+    & \cong \Set{t \in \Hom_\Eat(X \times B, Y)}{h \circ t = \pi_B} \\
+    & \cong \Set{t' \in \Hom_\Eat(X, Y^B)}{h^B \circ t' = j \circ {!}} \\
+    & \cong \Hom_\Eat(X, \Set{g : Y^B}{h \circ g = \id_B})
+  \end{align*}
+  wobei $j : 1 \to B^B$ die Curryfizierung von $\id_B$ und $! : X \to 1$ ist.
+  Wir definieren somit $\Pi_k$ durch
+  \[
+    \Pi_k(k : Y \to B) \coloneqq \Set{g : Y^B}{h \circ g = \id_B}.
+    \qedhere
+  \]
+\end{proof}
+
+\begin{kor}
+  $\radj[\Sigma_k][k^*]{\Eat/B}{\Eat/A}$
+  ist ein geometrischer Morphismus. \\
+  Dieser ist \emph{wesentlich}, d.\,h. $k^*$ besitzt auch einen Linksadjungierten.
+\end{kor}
+
+\section{Lawvere-Tierney-Topologien und Garbifizierung}
+
+\begin{defn}
+  Eine \emph{Lawvere-Tierney-Topologie} auf einem Topos~$\Eat$ ist ein Morphismus $j : \Omega \to \Omega$, für den gilt:
+  \begin{center}
+  \begin{minipage}[t]{0.2 \linewidth}
+    (a) $j \circ \true = \true$
+
+    \begin{tikzpicture}
+      \matrix (mat) [matrix of nodes, column sep=1cm, row sep=1cm]{
+        \node (One) {$1$}; &
+        \node (Omega') {$\Omega$}; \\
+        & \node (Omega'') {$\Omega$}; \\
+      };
+      \draw[->] (One) to node [above] {$\true$} (Omega');
+      \draw[->] (One) to node [left] {$\true$} (Omega'');
+      \draw[->] (Omega') to node [right] {$j$} (Omega'');
+    \end{tikzpicture}
+  \end{minipage}
+  \begin{minipage}[t]{0.2 \linewidth}
+    (b) $j \circ j = j$
+
+    \begin{tikzpicture}
+      \matrix (mat) [matrix of nodes, column sep=1cm, row sep=1cm]{
+        \node (Omega) {$\Omega$}; &
+        \node (Omega') {$\Omega$}; \\
+        & \node (Omega'') {$\Omega$}; \\
+      };
+      \draw[->] (Omega) to node [above] {$j$} (Omega');
+      \draw[->] (Omega) to node [left] {$j$} (Omega'');
+      \draw[->] (Omega') to node [right] {$j$} (Omega'');
+    \end{tikzpicture}
+  \end{minipage}
+  \begin{minipage}[t]{0.2 \linewidth}
+    (b) $j \circ {\wedge} = \wedge \circ (j \times j)$
+
+    \begin{tikzpicture}
+      \matrix (mat) [matrix of nodes, column sep=1cm, row sep=1cm]{
+        \node (Omega2) {$\Omega \times \Omega$}; &
+        \node (Omega) {$\Omega$}; \\
+        \node (Omega2') {$\Omega \times \Omega$}; &
+        \node (Omega') {$\Omega$}; \\
+      };
+      \draw[->] (Omega2) to node [above] {$\wedge$} (Omega);
+      \draw[->] (Omega2') to node [above] {$\wedge$} (Omega');
+      \draw[->] (Omega2) to node [left] {$j \times j$} (Omega2');
+      \draw[->] (Omega) to node [left] {$j$} (Omega');
+    \end{tikzpicture}
+  \end{minipage}
+  \end{center}
+\end{defn}
+
+\begin{interp}
+  $j$ ist ein idempotenter, mit ${\wedge}$ und $\true$ verträglicher modaler Operator
+
+  Zum Beispiel: Sei $\varphi$ eine Aussage. Die anschauliche Bedeutung von $\square \varphi$ ist "`$\varphi$ gilt immer"'.
+  Dann sollten intuitiv auch folgende Regeln gelten:
+  \[
+    \square \top = \top, \qquad
+    \square \square \varphi \iff \square \varphi
+    \qquad \text{sowie} \qquad
+    (\square \varphi) \wedge (\square \psi) \iff \square (\varphi \wedge \psi)
+  \]
+  Solch ein Operator $\square$ sollte also eine Lawvere-Tierney-Topologie stiften.
+  Im Gegensatz dazu stiftet der Operator $\lozenge$ mit der Interpretation "`$\lozenge \varphi$ gilt, falls $\varphi$ möglich ist"', denn aus $\lozenge \varphi \wedge \lozenge \psi$ folgt i.\,A. nicht $\lozenge (\varphi \wedge \psi)$.
+\end{interp}
+
+\begin{defn}
+  Für ein Unterobjekt $A \hookrightarrow E$ ist $\clos{A} \hookrightarrow E$ dasjenige Unterobjekt mit
+  \[ \chi_{\clos{A}} = j \circ \chi_A : E \to \Omega. \]
+\end{defn}
+
+\begin{lem}
+  \begin{minipage}[t]{0.8 \linewidth}\begin{itemize}
+    \item
+      $A \subseteq \clos{A}$, \quad
+      $\clos{\clos{A}} = \clos{A}$, \quad
+      $\clos{A \cap B} = \clos{A} \cap \clos{B}$
+    \item $f^{-1}(\clos{A}) = \clos{f^{-1}(A)}$ \enspace (Natürlichkeit) \qquad
+  \end{itemize}\end{minipage}
+\end{lem}
+
+\begin{defn}
+  Sei $j$ eine Lawvere-Tierney-Topologie auf~$\Eat$.
+  \begin{itemize}[itemsep=0pt]
+    \item Ein Unterobjekt $A \hookrightarrow E$ heißt \emph{dicht}, falls $\clos{A} = E$.
+    \item
+      Eine \emph{$j$-Garbe} ist ein Objekt~$F \in \Ob(\Eat)$, für das gilt: \\
+      Für alle dichten Unterobjekte $A \xhookrightarrow{m} E$ ist $m^* : \Hom(E, F) \to \Hom(A, F)$ ein Isomorphismus.
+    \item $\Sh_j(\Eat)$ ist die volle Unterkategorie der $j$-Garben von~$\Eat$.
+  \end{itemize}
+\end{defn}
+
+% V.2.5
+\begin{satz}
+  $\Sh_j(\Eat)$ ist ein Topos.
+\end{satz}
+
+\begin{proof}[Beweisskizze]
+  Zeige:
+  \begin{itemize}
+    \item Die Unterkategorie $\Sh_j(\Eat)$ ist abgeschlossen unter der Bildung von Limiten und Exponentialobjekten.
+    \item
+      Sei $\Omega_j$ der Differenzkern
+
+      \begin{tikzpicture}
+        \matrix (mat) [matrix of nodes, column sep=1cm, row sep=1cm]{
+          \node (Omegaj) {$\Omega_j$}; &
+          \node (Omega) {$\Omega$}; &
+          \node (Omega') {$\Omega$}; \\
+        };
+        \draw[->] (Omegaj) to node {} (Omega);
+        \draw[->, transform canvas={yshift=0.5ex}] (Omega) to node [above] {$j$} (Omega');
+        \draw[->, transform canvas={yshift=-0.5ex}] (Omega) to node [below] {$\id$} (Omega');
+      \end{tikzpicture}
+
+      Nenne ein Subobjekt $A \hookrightarrow F$ \emph{abgeschlossen}, falls $\clos{A} = A$.
+      Für eine $j$-Garbe~$F$ zeige dann, dass
+      \[
+        \Sub_{\Sh_j(\Eat)}(F) =
+        \Set{A \in \Sub_\Eat(F)}{\text{$A$ abgeschlossen}} \cong
+        \Hom_\Eat(F, \Omega_j)
+      \]
+      und dass $\Omega_j$ eine $F$-Garbe ist.
+      Somit ist $\Omega_j$ der Unterobjektklassifizierer von~$\Sh_j(\Eat)$. \qedhere
+  \end{itemize}
+\end{proof}
+
+Sei $i : \Sh_j(\Eat) \to \Eat$ der Einbettungsfunktor.
+
+% V.3.1
+\begin{satzdefn}
+  \begin{minipage}[t]{0.99 \linewidth}
+    \begin{itemize}
+      \item $i$ hat einen Linksadjungierten, die \emph{$j$-Garbifizierung} $\sheafification : \Eat \to \Sh_j(\Eat)$.
+      \item $\sheafification$ ist linksexakt.
+    \end{itemize}
+  \end{minipage}
+\end{satzdefn}
+
+\begin{kordefn}
+  $\radj[i][\sheafification]{\Sh_j(\Eat)}{\Eat}$
+  ist ein geometrischer Morphismus. \\
+  Dieser ist eine \emph{geometrische Einbettung}, d.\,h. der Direktes-Bild-Funktor $i$ ist volltreu.
+  Dies macht $\Sh_j(\Eat)$ zu einem \emph{Untertopos} von~$\Eat$.
+\end{kordefn}
+
+\begin{bem}
+  Bis auf Kategorienäquivalenz ist jede geometrische Einbettung von dieser Form.
+\end{bem}
+
+\begin{bsp}
+  $\FinSetC$ ist kein Untertopos von~$\SetC$ vermöge der Inklusion $i : \FinSetC \to \SetC$, denn es gibt keine endliche Menge $X$ mit
+  \[ \Hom_\FinSetC(X, \{ \heartsuit, \diamondsuit \}) \cong \Hom_\SetC(\N, i(\{ \heartsuit, \diamondsuit \})). \]
+  Somit besitzt $i$ keinen Linksadjungierten.
+\end{bsp}
+
+% V.1.2, V.4.1
+\begin{satz}
+  Sei $\Cat$ eine kleine Kategorie und $\Eat \coloneqq \FuncC{\Cat^\op}{\SetC}$.
+  Dann gibt es eine 1-zu-1-Korrespondenz
+  \[
+    \begin{array}{r c l}
+      \{ \text{ Grothendieck-Topologien auf~$\Cat$ } \} & \leftrightarrow & \{ \text{ Lawvere-Tierney-Topologien auf~$\Eat$ } \} \\
+      J & \mapsto & j_J \coloneqq ((j_J)_C : S \mapsto \Set{g}{\codom(g) = C, \text{ $S$ überdeckt $g$}})_{C \in \Ob(\Cat)} \\
+      J_j \coloneqq j^*(1 \xhookrightarrow{\true} \Omega) & \mapsfrom & j
+    \end{array}
+  \]
+  (Erinnerung: $\Omega \in \Ob(\Eat)$ ist die Prägarbe mit $\Omega(C) \coloneqq \{ \text{ Siebe auf~$C$ } \}$.)
+\end{satz}
+
+% V.4.2
+\begin{satz}
+  Desweiteren gilt für eine Prägarbe $P \in \Ob(\Eat)$:
+  \[
+    \text{$P$ ist $j$-Garbe}
+    \iff
+    \text{$P$ ist Garbe bzgl. $J_j$, also $P \in \Ob(\Sh(\Eat, J_j))$}.
+  \]
+\end{satz}
+
+\begin{kor}
+  Die Garbifizierungen einer Prägarbe bzgl. der Lawvere-Tierney-Topologie~$j$ oder der zugehörigen Grothendieck-Topologie~$J_j$ sind isomorph.
+\end{kor}
+
+% Achtung: Der Begriff einer Grothendieck-Topologie wurde im Seminar noch nicht definiert.
+% Lukas hat am Anfang des zweiten Teils seines Vortrags den Begriff einer *Basis einer* Grothendieck-Topologie definiert.
+% Dieser verhält sich zu Grothendieck-Topologien wie "Basis eines topol. Raums" zu "Topologie (eines topol. Raums)".
+
+\section{Weitere Quellen für geometrische Morphismen}
+
+% VII.2.2
+\begin{satz}
+  Sei $\phi : \Cat \to \Dat$ ein Funktor.
+  Dann gibt es einen geometrischen Morphismus \\
+  $\radj[\phi_*][\phi^*]{\FuncC{\Cat^\op}{\SetC}}{\FuncC{\Dat^\op}{\SetC}}$
+  mit $\phi^*(P) \coloneqq (\Cat^\op \xrightarrow{\phi^\op} \Dat^\op \xrightarrow{P} \SetC)$.
+  Dieser ist wesentlich. % d.\,h. $\phi^*$ besitzt auch einen Linksadjungierten
+\end{satz}
+
+\end{document}
+
+TODO: Grothendieck-Topologie zu neg-neg (?)
+TODO: Untertopoi von Grothendiecktopoi sind Grothendiecktopoi (?)
+TODO: Faktorisierung von geometrischen Morphismen (?)
+TODO: Punkte von Grothendieck-Topoi (?)
+
+Geometrische Morphismen:
+* logische Interpretation: "Ein geom. Mor. F \to E macht F zu einem E-Topos; aus interner Sicht von E wird diese Situation zu F -> Set"
+* Eigenschaften von geometrischen Morphismen
+  * offen/abgeschlossen
+  * Surjektion
+
+Beispiele für geometrische Morphismen:
+* f : X -> Y  ~>  E/X -> E/Y (sogar wesentlich)
+  * insbesondere Speziallfall E/Y = E/1 = E
+* f : X -> Y stetig  ~>  (f^* \ladj f_*) : Sh(X) -> Sh(Y)
+  * für nüchterne Räume X und Y: 1-zu-1-Korrespondenz
+* F : E -> D Funktor  ~>  Psh(X) -> Psh(Y) (auch wesentlich)
+* j : \Omega -> \Omega Lawvere-Tierney-Topologie auf E  ~>  E_j -> E
+  * logische Interpretation
+  * j = \neg \neg
+  * j = (\varphi => _)
+  * j = (_ \vee \varphi)
+
+* TODO: Logische Morphismen (?)
+
+Fragen:
+* haben wesentliche geometrische Morphismen erwähnenswerte Eigenschaften
