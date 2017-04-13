@@ -20,6 +20,7 @@
 \newtheorem*{satz}{Satz}
 \newtheorem*{satzdefn}{Satz/Definition}
 \newtheorem*{lem}{Lemma}
+\newtheorem*{lemdefn}{Lemma/Definition}
 \newtheorem*{bsp}{Beispiel}
 \newtheorem*{bspe}{Beispiele}
 \newtheorem*{kor}{Korollar}
@@ -44,11 +45,12 @@
  { #1 \,\delimsize|\, #2 }
 \newcommand{\N}{\mathbb{N}} % Natürliche Zahlen
 \newcommand{\Powerset}{\mathcal{P}} % Potenzmenge (powerset)
+\renewcommand{\O}{\mathcal{O}} % Verband der offenen Teilmengen
 
 % Schöne Fürall- und Existenzquantoren
 \newcommand{\fa}[1]{\forall \, {#1} .\,}
 \newcommand{\ex}[1]{\exists \, {#1} .\,}
-\newcommand{\exu}[1]{\exists! \, {#1} \,:\,} % Eindeutige Existenz
+\newcommand{\exu}[1]{\exists! \, {#1} .\,} % Eindeutige Existenz
 
 % Konzepte
 \DeclareMathOperator{\Ob}{Ob} % Objekte (einer Kategorie)
@@ -176,7 +178,7 @@
 
 \begin{bem}
   Aus dem Yoneda-Lemma folgt: Bei einer Adjunktion $F \ladj G$ ist $F$ eindeutig (bis auf Isomorphie) durch~$G$ bestimmt (und umgekehrt).
-  Die Daten eines geometrischen Morphismus sind also schon allein durch $f^*$ oder $f_*$ gegeben.
+  Die Daten eines geometrischen Morphismus sind also schon allein durch~$f^*$ oder~$f_*$ gegeben.
 \end{bem}
 
 \begin{bem}
@@ -186,7 +188,7 @@
     \quad \rightsquigarrow \quad
     \radj[g_* \circ f_*][f^* \circ g^*]{\Eat}{\Fat},
   \]
-  da Paare adjungierte Funktoren komponieren und die Komposition $f^* \circ  g^*$ linksexakter Funktoren wieder linksexakt ist.
+  da Paare adjungierter Funktoren komponieren und die Komposition $f^* \circ  g^*$ linksexakter Funktoren wieder linksexakt ist.
   So erhalten wir eine Kategorie der Topoi.
   Diese wird sogar zu einer 2-Kategorie, wenn wir definieren:
 \end{bem}
@@ -225,7 +227,7 @@
   \[ \radj[\Gamma][\Delta]{\Eat}{\SetC} \]
   ein geometrischer Morphismus.
 
-  Es gibt auch keinen anderen geometrischen Morphismus $f : \Eat \to \SetC$, denn für jeden solchen Morphismus und jedes Objekt $E \in \mathcal{E}$ gilt:
+  Es gibt auch keinen anderen geometrischen Morphismus $f : \Eat \to \SetC$, denn für jeden solchen Morphismus und jedes Objekt $E \in \Ob(\Eat)$ gilt:
   \[
     f_* E \cong
     \Hom_\SetC(1, f_* E) \cong
@@ -237,8 +239,10 @@
 
 \begin{defn}
   Ein geometrischer Morphismus $f = (f^* \ladj f_*)$ heißt
-  \item \emph{(geom.) Einbettung}, falls $f_*$ volltreu ist und
-  \item \emph{(geom.) Surjektion}, falls $f^*$ volltreu ist.
+  \begin{itemize}
+    \item \emph{(geom.) Einbettung}, falls $f_*$ volltreu ist und
+    \item \emph{(geom.) Surjektion}, falls $f^*$ volltreu ist.
+  \end{itemize}
 \end{defn}
 
 \begin{bem}
@@ -248,6 +252,13 @@
 \begin{defn}
   Ein \emph{Untertopos von~$\Eat$} ist ein Topos~$\Dat$ zusammen mit einer geometrischen Einbettung $\Dat \to \Eat$.
 \end{defn}
+
+\begin{bsp}
+  $\FinSetC$ ist kein Untertopos von~$\SetC$ vermöge der Inklusion $i : \FinSetC \to \SetC$, denn es gibt keine endliche Menge $X$ mit
+  \[ \Hom_\FinSetC(X, \{ \heartsuit, \diamondsuit \}) \cong \Hom_\SetC(\N, i(\{ \heartsuit, \diamondsuit \})), \]
+  da die rechte Hom-Menge unendlich und die linke Hom-Menge für alle $X \in \Ob(\FinSetC)$ endlich ist.
+  Somit besitzt~$i$ keinen Linksadjungierten.
+\end{bsp}
 
 \section{Stetige Abbildungen induzieren geometrische Morphismen}
 
@@ -291,7 +302,7 @@ mit $f_*(\Fais)(U) = \Fais(f^{-1}(U))$ für alle $U \subseteq Y$.
     (E \xrightarrow{p} X) \mapsto (E \xrightarrow{f \circ p} Y)
   \]
   ist.
-  Man zeigt nun, dass für jeden topologischen Raum~$Z$ die Unterkategorie $\Etale(Z)$ in $\Bund(Z)$ abgeschlossen unter der Bildung von kleinen Limiten ist.
+  Man zeigt nun, dass für jeden topologischen Raum~$Z$ die Unterkategorie $\Etale(Z)$ in $\Bund(Z)$ abgeschlossen unter der Bildung von endlichen Limiten ist.
 \end{proof}
 
 \begin{kor}
@@ -301,7 +312,7 @@ mit $f_*(\Fais)(U) = \Fais(f^{-1}(U))$ für alle $U \subseteq Y$.
 
 % siehe Kapitel VII.1
 \begin{prop}
-  Seien~$X$ und~$Y$ nüchterne topologische Räume (z.\,B. Hausdorff-Räume).
+  Sei~$Y$ ein nüchterner topologischer Raum (z.\,B. ein Hausdorff-Raum in klassischer Metalogik).
   Dann gibt es eine 1-zu-1-Korrespondenz
   \[
     \begin{array}{r c l}
@@ -313,13 +324,13 @@ mit $f_*(\Fais)(U) = \Fais(f^{-1}(U))$ für alle $U \subseteq Y$.
 
 \begin{proof}[Beweisskizze]
   Da $f^*$ linksexakt ist, bildet $f^*$ Unterobjekte des terminalen Objektes auf Unterobjekte des terminalen Objekts ab.
-  Zusammen mit dem Isomorphismus $\Sub_{\Sh(Z)}(1) \cong \O(Z)$ (wobei $\O(Z)$ der Verband der offenen Teilmengen ist) erhalten wir eine Abbildung
+  Da außerdem für jeden topol. Raum~$Z$ ein Isomorphismus $\Sub_{\Sh(Z)}(1) \cong \O(Z)$ (wobei $\O(Z)$ der Verband der offenen Teilmengen ist) existiert, erhalten wir eine Abbildung
   \[ f^* : \O(Y) \to \O(X). \]
   Wir definieren nun eine Abbildung $f : X \to Y$ durch
   \[
     f(x) \coloneqq y
     \,\, :\!\!\iff
-    x \in f^*(V) \enspace \text{für alle offenen Umgebungen~$V$ von~$x$}.
+    x \in f^*(V) \enspace \text{für alle offenen Umgebungen~$V$ von~$y$}.
     \qedhere
   \]
 \end{proof}
@@ -329,7 +340,7 @@ mit $f_*(\Fais)(U) = \Fais(f^{-1}(U))$ für alle $U \subseteq Y$.
 \end{defn}
 
 \begin{bem}
-  Diese Definition ergibt Sinn, da für nüchterne topologische Räume~$X$ geometrische Morphismen $\SetC = \Sh(\{ \heartsuit \}) \to \Sh(X)$ in 1-zu-1-Korrespondenz zu stetigen Abbildungen $\{ \heartsuit \} \to X$, also Punkten von~$X$, stehen.
+  Diese Definition ergibt Sinn, da für nüchterne topologische Räume~$X$ geometrische Morphismen $\SetC = \Sh(\{ \heartsuit \}) \to \Sh(X)$ in 1-zu-1-Korrespondenz zu stetigen Abbildungen $\{ \heartsuit \} \to X$, also zu Punkten von~$X$, stehen.
 \end{bem}
 
 % siehe IV.7. The slice Category as a Topos
@@ -343,8 +354,9 @@ mit $f_*(\Fais)(U) = \Fais(f^{-1}(U))$ für alle $U \subseteq Y$.
 \begin{bem}
   Im Spezialfall $\Eat = \SetC$ lässt sich der Satz wie folgt beweisen:
   Sei $\Bat$ die diskrete Kategorie mit $\Ob(\Bat) = B$.
-  Dann gibt es eine Kategorienäquivalenz $\SetC/B \equiv \FuncC{\Bat}{\SetC} \equiv \FuncC{\Bat^\op}{\SetC}$ gegeben durch
+  Dann gibt es eine Kategorienäquivalenz $\SetC/B \simeq \FuncC{\Bat}{\SetC} \simeq \FuncC{\Bat^\op}{\SetC}$ gegeben durch
   \[
+    \SetC/B \to \FuncC{\Bat}{\SetC}, \quad  
     (X \xrightarrow{p} B) \mapsto (b \in \Ob(\Bat) \mapsto p^{-1}(b)).
   \]
 \end{bem}
@@ -355,8 +367,8 @@ Wir müssen die Toposaxiome nachrechnen:
 \item $\Eat/B$ ist endlich vollständig:
 
 \begin{minipage}[t]{0.35 \linewidth}
-Der Differenzkern berechnet sich \\
-wie in~$\Eat$:
+Der Differenzkern in~$\Eat/B$ \\
+berechnet sich wie in~$\Eat$:
 
 \begin{tikzpicture}
   \matrix (mat) [matrix of nodes, column sep=1cm, row sep=1cm]{
@@ -409,9 +421,9 @@ ist der Morphismus $\id_B : B \to B$:
 
 \item $\Eat/B$ besitzt einen Unterobjektklassifizierer:
 
-Sei $U : \Eat/B -> \Eat$ der offensichtliche Vergissfunktor.
+Sei $U : \Eat/B \to \Eat$ der offensichtliche Vergissfunktor.
 Dieser Funktor ist linksadjungiert zum Funktor $(\blank \times B) : \Eat \to \Eat/B$, denn es gilt
-\[ \Hom_\Eat(X, Y) \Hom_{\Eat/B}(X \xrightarrow{f} B, Y \times B \xrightarrow{\pi_2} B) \]
+\[ \Hom_\Eat(X, Y) \cong \Hom_{\Eat/B}(X \xrightarrow{f} B, Y \times B \xrightarrow{\pi_2} B) \]
 natürlich in $(X \xrightarrow{f} B) \in \Ob(\Eat/B)$ und $Y \in \Ob(\Eat)$.
 Da ein Morphismus~$f$ in~$\Eat/B$ genau dann ein Monomorphismus ist, wenn $U(f)$ ein solcher ist, gilt:
 \[
@@ -463,7 +475,7 @@ Diese Definition können wir mit der internen Sprache von~$\Eat$ imitieren:
     \end{array}
   \right\}
 \]
-(Interpretation: Elemente von $W$ sind Graphen~$G$ eines auf der Faser $Y_b$ definierten Morphismus in die Faser $Z_b$.)
+(Interpretation: Elemente von $W$ sind Tupel $(b, G)$ bestehend aus einem Index~$b \in B$ und dem Graphen eines Morphismus $Y_b \to Z_b$ als Teilmenge von $Y \times Z$.)
 \qedhere
 
 \end{enumerate}
@@ -480,10 +492,19 @@ Diese Definition können wir mit der internen Sprache von~$\Eat$ imitieren:
   durch Komponieren mit~$k$ und einen \emph{Basiswechselfunktor}
   \[
     k^* : \Eat/A \to \Eat/B, \quad
-    (X \xrightarrow{p_X} A) \mapsto (B \times_A X \xrightarrow{\pi_B} B)
+    (Y \xrightarrow{p_Y} A) \mapsto (B \times_A Y \xrightarrow{\pi_B} B)
   \]
   durch Pullback entlang~$k$.
 \end{defn}
+
+\begin{bem}
+  Im Spezialfall $\Eat = \SetC$, $k : B \to 1$ ist $k^*$ der Funktor, der eine Menge~$X$ auf die konstante Familie $(X)_{b \in B}$ von Mengen abbildet.
+  Man kann $\Sigma_B \coloneqq \Pi_k : \FuncC{\Bat}{\SetC} \to \SetC$ wie folgt konstruieren:
+  \[
+    \Sigma_B((X_b)_{b \in B}) \coloneqq \{ \text{ Tupel $(b, x)$ mit $b \in B$ und $x \in X_b$ } \}
+  \]
+  In Typtheorie heißt diese Konstruktion "`abhängige Summe"' (oder auch "`$\Sigma$-Typ"').
+\end{bem}
 
 \begin{lem}
   $\Sigma_k \ladj k^*$
@@ -515,13 +536,21 @@ Elemente der linken Hom-Menge sind Morphismen $X \to Y$, die das äußere Vierec
 Zwischen solchen Elementen besteht eine 1-zu-1-Korrespondenz, gegeben durch die universelle Eigenschaft des Pullbacks~$B \times_A Y$.
 \end{proof}
 
-\begin{lem}
+\begin{lemdefn}
   $k^*$ besitzt auch einen Rechtsadjungierten $\Pi_k : \Eat/B \to \Eat/A$.
-\end{lem}
+\end{lemdefn}
+
+\begin{bem}
+  Im Spezialfall $\Eat = \SetC$, $k : B \to 1$ kann $\Pi_B \coloneqq \Pi_k : \FuncC{\Bat}{\SetC} \to \SetC$ wie folgt konstruiert werden:
+  \[
+    \Pi_B((X_b)_{b \in B}) \coloneqq \{ \text{ Familien $(x_b \in X_b)_{b \in B}$ } \}
+  \]
+  In Typtheorie heißt diese Konstruktion "`abhängiges Produkt"' (oder auch "`$\Pi$-Typ"').
+\end{bem}
 
 \begin{proof}
   Wir dürfen annehmen, dass $A \cong 1$ und somit $\Eat/A \cong \Eat$. (Ansonsten verwende $\Eat' \coloneqq \Eat/A$ und $B' \coloneqq (B \xrightarrow{k} A) \in \Ob(\Eat')$ anstelle von~$\Eat$ bzw.~$B$. Beachte, dass $\Eat'/B' \simeq \Eat/B$.)
-
+  Es gilt:
   \begin{align*}
     \Hom_{\Eat/B}(k^*(X), Y \xrightarrow{h} B)
     & \cong \Hom_{\Eat/B}(X \times B \xrightarrow{\pi_B} B, Y \xrightarrow{h} B) \\
@@ -623,7 +652,10 @@ Zwischen solchen Elementen besteht eine 1-zu-1-Korrespondenz, gegeben durch die 
 \begin{interp}
   $\Box$ ist ein idempotenter, mit ${\wedge}$ und $\true$ verträglicher modaler Operator.
 
-  Zum Beispiel: Sei $\varphi$ eine Aussage. Die anschauliche Bedeutung von $\square \varphi$ in Modallogik ist "`$\varphi$ gilt immer"'.
+  Zum Beispiel: Sei $\varphi$ eine Aussage. Wir könnten die logische Aussage $\Box \varphi$ wie folgt interpretieren:
+  \begin{center}
+    ich weiß, dass~$\varphi$ / ich glaube, dass~$\varphi$ / lokal gilt~$\varphi$
+  \end{center}
   Dann sollten intuitiv auch folgende Regeln gelten:
   \[
     \square \top = \top, \qquad
@@ -631,8 +663,8 @@ Zwischen solchen Elementen besteht eine 1-zu-1-Korrespondenz, gegeben durch die 
     \qquad \text{sowie} \qquad
     (\square \varphi) \wedge (\square \psi) \iff \square (\varphi \wedge \psi)
   \]
-  Solch ein Operator $\square$ sollte also eine Lawvere-Tierney-Topologie stiften.
-  Im Gegensatz dazu stiftet der Operator $\lozenge$ mit der Interpretation "`$\lozenge \varphi$ gilt, falls $\varphi$ möglich ist"', denn aus $\lozenge \varphi \wedge \lozenge \psi$ folgt i.\,A. nicht $\lozenge (\varphi \wedge \psi)$.
+  Diese obigen Interpretationen sollten sich also als modale Operatoren in passenden Topoi umsetzen lassen.
+  Im Gegensatz dazu stiftet der modale Operator (im Sinne der Modallogik) $\lozenge$ mit der Interpretation "`$\lozenge \varphi$ gilt, falls $\varphi$ möglich ist"' keinen modalen Operator (im Sinne der Topostheorie), denn aus $(\lozenge \varphi) \wedge (\lozenge \psi)$ folgt i.\,A. nicht $\lozenge (\varphi \wedge \psi)$.
 \end{interp}
 
 \begin{defn}
@@ -656,14 +688,14 @@ Zwischen solchen Elementen besteht eine 1-zu-1-Korrespondenz, gegeben durch die 
     \item Ein Unterobjekt $A \hookrightarrow E$ heißt \emph{dicht}, falls $\clos{A} = E$.
     \item
       Eine \emph{$\Box$-Garbe} ist ein Objekt~$F \in \Ob(\Eat)$, für das gilt: \\
-      Für alle dichten Unterobjekte $A \xhookrightarrow{m} E$ ist $m^* : \Hom(E, F) \to \Hom(A, F)$ ein Isomorphismus.
+      Für alle dichten Unterobjekte $A \xhookrightarrow{m} E$ ist $\Hom(m, F) : \Hom(E, F) \to \Hom(A, F)$ ein Isomorphismus.
     \item $\Sh_\Box(\Eat)$ ist die volle Unterkategorie der $\Box$-Garben von~$\Eat$.
   \end{itemize}
 \end{defn}
 
 % V.2.5
 \begin{satz}
-  $\Sh_j(\Eat)$ ist ein Topos.
+  $\Sh_\Box(\Eat)$ ist ein Topos.
 \end{satz}
 
 \begin{proof}[Beweisskizze]
@@ -685,7 +717,7 @@ Zwischen solchen Elementen besteht eine 1-zu-1-Korrespondenz, gegeben durch die 
       \end{tikzpicture}
 
       Nenne ein Subobjekt $A \hookrightarrow F$ \emph{abgeschlossen}, falls $\clos{A} = A$.
-      Für eine $j$-Garbe~$F$ zeige dann, dass
+      Für eine $\Box$-Garbe~$F$ zeige dann, dass
       \[
         \Sub_{\Sh_\Box(\Eat)}(F) =
         \Set{A \in \Sub_\Eat(F)}{\text{$A$ abgeschlossen}} \cong
@@ -716,13 +748,6 @@ Sei $i : \Sh_\Box(\Eat) \to \Eat$ der Einbettungsfunktor.
 \begin{bem}
   Bis auf Kategorienäquivalenz ist jede geometrische Einbettung von dieser Form.
 \end{bem}
-
-\begin{bsp}
-  $\FinSetC$ ist kein Untertopos von~$\SetC$ vermöge der Inklusion $i : \FinSetC \to \SetC$, denn es gibt keine endliche Menge $X$ mit
-  \[ \Hom_\FinSetC(X, \{ \heartsuit, \diamondsuit \}) \cong \Hom_\SetC(\N, i(\{ \heartsuit, \diamondsuit \})), \]
-  da die rechte Hom-Menge unendlich und die linke Hom-Menge für alle $X \in \Ob(\FinSetC)$ endlich ist.
-  Somit besitzt $i$ keinen Linksadjungierten.
-\end{bsp}
 
 % V.1.2, V.4.1
 \begin{satz}
@@ -837,14 +862,9 @@ Dann entsprechen Subobjekte $J \hookrightarrow 1$ genau den offenen Teilmengen $
 TODO: warum sind Punkte interessant?
 TODO: Grothendieck-Topologie zu neg-neg (?)
 TODO: Untertopoi von Grothendiecktopoi sind Grothendiecktopoi (?)
-TODO: Faktorisierung von geometrischen Morphismen (?)
 TODO: Punkte von Grothendieck-Topoi (?)
 TODO: Logische Morphismen (?)
 TODO: Verband der Subtopoi (?)
 TODO: geometrische Aussagen transportieren (?)
-
-Geometrische Morphismen:
-* logische Interpretation: "Ein geom. Mor. F \to E macht F zu einem E-Topos; aus interner Sicht von E wird diese Situation zu F -> Set"
-* Eigenschaften von geometrischen Morphismen
-  * offen/abgeschlossen
-  * Surjektion
+TODO: logische Interpretation: "Ein geom. Mor. F \to E macht F zu einem E-Topos; aus interner Sicht von E wird diese Situation zu F -> Set"
+TODO: Eigenschaften von geometrischen Morphismen: offen/abgeschlossen
