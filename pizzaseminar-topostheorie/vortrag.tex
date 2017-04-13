@@ -846,6 +846,35 @@ Dann entsprechen Subobjekte $J \hookrightarrow 1$ genau den offenen Teilmengen $
     \]
 \end{itemize}
 
+\section{Geometrische Morphismen und Logik}
+
+\begin{defn}
+  \begin{itemize}
+  \item
+    Eine Formel heißt \emph{geometrisch}, falls sie nur folgende Operatoren enthält:
+    \[
+      \top \quad
+      \bot \quad
+      \wedge \quad
+      \vee \quad
+      \exists \quad
+      \bigvee
+    \]
+    Es sind also $\Rightarrow$ und $\forall$ verboten. Freie Variablen dürfen in~$\varphi$ vorkommen.
+  \item
+    Eine \emph{geometrische Sequenz} ist eine Sequenz der Form $\varphi \vdash \psi$, wobei~$\varphi$ und~$\psi$ geometrische Formeln sind.
+  \end{itemize}
+\end{defn}
+
+% TODO: Quelle?
+\begin{satz}
+  Sei $f : \Eat \to \Dat$ ein geometrischer Morphismus.
+  \begin{itemize}
+  \item Gilt $\varphi \vdash \psi$ in~$\Dat$, so gilt $f^*(\varphi) \vdash f^*(\psi)$ in~$\Eat$.
+  \item Ist $f$ eine Surjektion, so gilt auch die Umkehrung.
+  \end{itemize}
+\end{satz}
+
 \section{Weitere Quellen für geometrische Morphismen}
 
 % VII.2.2
@@ -865,6 +894,5 @@ TODO: Untertopoi von Grothendiecktopoi sind Grothendiecktopoi (?)
 TODO: Punkte von Grothendieck-Topoi (?)
 TODO: Logische Morphismen (?)
 TODO: Verband der Subtopoi (?)
-TODO: geometrische Aussagen transportieren (?)
 TODO: logische Interpretation: "Ein geom. Mor. F \to E macht F zu einem E-Topos; aus interner Sicht von E wird diese Situation zu F -> Set"
 TODO: Eigenschaften von geometrischen Morphismen: offen/abgeschlossen
