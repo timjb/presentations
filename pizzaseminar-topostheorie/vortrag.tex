@@ -201,7 +201,7 @@
   Es gibt eine natürliche Bijektion $\Nat(f^*, g^*) \cong \Nat(g_*, f_*)$.
 \end{bem}
 
-\begin{bsp}
+\begin{bsp}[siehe {\cite[Abschnitt VII.1]{sigal}}]
   Sei $\Eat$ ein kovollständiger Topos (z.\,B. ein Grothendiecktopos).
   Dann hat der \emph{Globale-Schnitte-Funktor}
   \[
@@ -284,13 +284,11 @@ mit $f_*(\Fais)(U) = \Fais(f^{-1}(U))$ für alle $U \subseteq Y$.
   \]
 \end{defn}
 
-% II.9.2
-\begin{lem}
+\begin{lem}[{\cite[II.9.2]{sigal}}]
   $f^* \ladj f_*$  
 \end{lem}
 
-% II.9.3
-\begin{lem}
+\begin{lem}[{\cite[II.9.3]{sigal}}]
   $f^* : \Sh(Y) \to \Sh(X)$ ist linksexakt
 \end{lem}
 
@@ -311,7 +309,7 @@ mit $f_*(\Fais)(U) = \Fais(f^{-1}(U))$ für alle $U \subseteq Y$.
 \end{kor}
 
 % siehe Kapitel VII.1
-\begin{prop}
+\begin{prop}[siehe {\cite[Abschnitte VII.1 und IX.2]{sigal}}]
   Sei~$Y$ ein nüchterner topologischer Raum (z.\,B. ein Hausdorff-Raum in klassischer Metalogik).
   Dann gibt es eine 1-zu-1-Korrespondenz
   \[
@@ -346,7 +344,7 @@ mit $f_*(\Fais)(U) = \Fais(f^{-1}(U))$ für alle $U \subseteq Y$.
 % siehe IV.7. The slice Category as a Topos
 \section{Scheibenkategorien von Topoi sind Topoi}
 
-\begin{satz}["`Fundamentalsatz der Topostheorie"'] \mbox{}\\
+\begin{satz}["`Fundamentalsatz der Topostheorie"', {\cite[IV.7.1]{sigal}}] \mbox{}\\
   Sei $\Eat$ ein Topos, $B \in \Ob(\Eat)$.
   Dann ist auch die Scheibenkategorie $\Eat / B$ ein Topos.
 \end{satz}
@@ -506,7 +504,7 @@ Diese Definition können wir mit der internen Sprache von~$\Eat$ imitieren:
   In Typtheorie heißt diese Konstruktion "`abhängige Summe"' (oder auch "`$\Sigma$-Typ"').
 \end{bem}
 
-\begin{lem}
+\begin{lem}[{\cite[I.9.4]{sigal}}]
   $\Sigma_k \ladj k^*$
 \end{lem}
 
@@ -536,7 +534,7 @@ Elemente der linken Hom-Menge sind Morphismen $X \to Y$, die das äußere Vierec
 Zwischen solchen Elementen besteht eine 1-zu-1-Korrespondenz, gegeben durch die universelle Eigenschaft des Pullbacks~$B \times_A Y$.
 \end{proof}
 
-\begin{lemdefn}
+\begin{lemdefn}[{\cite[I.9.4]{sigal}}]
   $k^*$ besitzt auch einen Rechtsadjungierten $\Pi_k : \Eat/B \to \Eat/A$.
 \end{lemdefn}
 
@@ -580,10 +578,10 @@ Zwischen solchen Elementen besteht eine 1-zu-1-Korrespondenz, gegeben durch die 
       \iff & 1 \models \fa{x:A} \varphi(x) \\
       \iff & \text{für alle $B \xrightarrow{p} 1$, $B \xrightarrow{x_0} A$ gilt} \enspace B \models \varphi(x_0) \\
       \iff & A \models \varphi(\id_A) \\
-      \iff & \Eat/A \models \varphi(\Delta), \\
+      \iff & \Eat/A \models (k^* \varphi)(\Delta), \\
     \end{array}
   \]
-  wobei $\Delta$ der Diagonalmorphismus in folgendem Diagramm ist:
+  wobei $k : A \to 1$ der eindeutige Morphismus und~$\Delta$ der Diagonalmorphismus in folgendem Diagramm ist:
   \begin{center}\begin{tikzpicture}
     \matrix (mat) [matrix of nodes, column sep=2cm, row sep=1cm]{
       \node (A) {$A$};
@@ -693,8 +691,7 @@ Zwischen solchen Elementen besteht eine 1-zu-1-Korrespondenz, gegeben durch die 
   \end{itemize}
 \end{defn}
 
-% V.2.5
-\begin{satz}
+\begin{satz}[{\cite[V.2.5]{sigal}}]
   $\Sh_\Box(\Eat)$ ist ein Topos.
 \end{satz}
 
@@ -730,8 +727,7 @@ Zwischen solchen Elementen besteht eine 1-zu-1-Korrespondenz, gegeben durch die 
 
 Sei $i : \Sh_\Box(\Eat) \to \Eat$ der Einbettungsfunktor.
 
-% V.3.1
-\begin{satzdefn}
+\begin{satzdefn}[{\cite[V.3.1]{sigal}}]
   \begin{minipage}[t]{0.99 \linewidth}
     \begin{itemize}
       \item $i$ hat einen Linksadjungierten, die \emph{$\Box$-Garbifizierung} $\sheafification : \Eat \to \Sh_\Box(\Eat)$.
@@ -749,8 +745,7 @@ Sei $i : \Sh_\Box(\Eat) \to \Eat$ der Einbettungsfunktor.
   Bis auf Kategorienäquivalenz ist jede geometrische Einbettung von dieser Form.
 \end{bem}
 
-% V.1.2, V.4.1
-\begin{satz}
+\begin{satz}[{\cite[V.1.2 und V.4.1]{sigal}}]
   Sei $\Cat$ eine kleine Kategorie und $\Eat \coloneqq \FuncC{\Cat^\op}{\SetC}$.
   Dann gibt es eine 1-zu-1-Korrespondenz
   \[
@@ -763,8 +758,7 @@ Sei $i : \Sh_\Box(\Eat) \to \Eat$ der Einbettungsfunktor.
   (Erinnerung: $\Omega \in \Ob(\Eat)$ ist die Prägarbe mit $\Omega(C) \coloneqq \{ \text{ Siebe auf~$C$ } \}$.)
 \end{satz}
 
-% V.4.2
-\begin{satz}
+\begin{satz}[{\cite[V.4.2]{sigal}}]
   Desweiteren gilt für eine Prägarbe $P \in \Ob(\Eat)$:
   \[
     \text{$P$ ist $\Box$-Garbe}
@@ -885,6 +879,17 @@ Dann entsprechen Subobjekte $J \hookrightarrow 1$ genau den offenen Teilmengen $
   mit $\phi^*(P) \coloneqq (\Cat^\op \xrightarrow{\phi^\op} \Dat^\op \xrightarrow{P} \SetC)$.
   Dieser ist wesentlich. % d.\,h. $\phi^*$ besitzt auch einen Linksadjungierten
 \end{satz}
+
+\begin{thebibliography}{9}
+
+\bibitem[SiGaL]{sigal}
+  Saunders MacLane, Ieke Moerdijk,
+  \emph{Sheaves in Geometry and Logic},
+  Springer-Verlag, New York,
+  1st edition,
+  1992.
+
+\end{thebibliography}
 
 \end{document}
 
