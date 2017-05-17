@@ -28,7 +28,7 @@
 %\usepackage{graphicx}
 
 \newcommand{\defeq}{:=} % Definitionsgleich
-\newcommand{\defiff}{:\Leftrightarrow} % Definitionsäquivalent
+\newcommand{\defiff}{:\xLeftrightarrow{\quad}} % Definitionsäquivalent
 \newcommand{\IsType}[1]{{#1}\,\,\text{type}}
 \newcommand{\IsCtx}[1]{{#1}\,\,\text{ctx}}
 \newcommand{\Bool}{\text{Bool}}
@@ -41,6 +41,9 @@
 \newcommand{\Terms}{\text{Terms}}
 \newcommand{\emptyCtx}{\bullet}
 \newcommand{\blank}{\text{--}} % Platzhalter
+\newcommand{\reducesTo}{\mathbin{\rightsquigarrow}} % Reduktionsrelation
+\newcommand{\ite}[3]{\text{\textbf{if }} #1 \text{\textbf{ then }} #2 \text{\textbf{ else }} #3}
+\newcommand{\obs}{\sim_\mathrm{obs}} % Observational equivalence
 
 \usepackage{mathtools}
 \usepackage{stmaryrd}
@@ -51,6 +54,7 @@
 \newcommand{\termInterp}[3]{\interp{#3}_{#1, #2}}
 \newcommand{\relInterp}[2]{\interp{#2}_{#1}}
 \newcommand{\Rel}[3]{#1 : #2 \Leftrightarrow #3}
+\newcommand{\funRel}[1]{\mathcal{R}_{#1}}
 
 % Populäre Typen
 \DeclareMathOperator{\Sum}{Sum}
@@ -153,7 +157,7 @@
   \frametitle{Terme in System F}
   Die Terme~$t$ in System F sind induktiv definiert durch
   \[
-    t \defeq \trueV \,|\, \falseV \,|\, \text{\textbf{if }} t_1 \text{\textbf{ then }} t_2 \text{\textbf{ else }} t_3 \,|\, \lam{x{:}\tau} t \,|\, t_1\,t_2 \,|\, \Lam{A} t \,|\, t\,\tau
+    t \defeq \trueV \,|\, \falseV \,|\, \ite{t_1}{t_2}{t_3} \,|\, \lam{x{:}\tau} t \,|\, t_1\,t_2 \,|\, \Lam{A} t \,|\, t\,\tau
   \]
   Ein Term $t$ hat Typ~$\tau$ in einem Kontext $\Delta; \Gamma$ (notiert $\Delta; \Gamma \vdash t : \tau$), falls
   \[ \DeclJdg{\Delta; \Gamma \vdash t : \tau}{\IsCtx{(\Delta; \Gamma)}} \qquad \]
@@ -171,7 +175,7 @@
       v \in \{ \trueV, \falseV \}
     } &
     \infer{
-      \Delta; \Gamma \vdash \text{\textbf{if }} b \text{\textbf{ then }} t \text{\textbf{ else }} e : \tau
+      \Delta; \Gamma \vdash \ite{b}{t}{e} : \tau
     }{
       \Delta; \Gamma \vdash b : \Bool \quad
       \Delta; \Gamma \vdash t : \tau \quad
@@ -221,6 +225,23 @@
     && \quad \Lam{Y} \lam{y{:}Y} \lam{f{:}A \to Y \to Y} \\
     && \quad\quad ys\,Y\,(xs\,Y\,y\,f)\,f
   \end{array}\]
+  \[\begin{array}{r l l}
+    \text{map} &:& \fa{A} \fa{B} (A \to B) \to \List(A) \to \List(B) \\
+    \text{map} &\defeq& \Lam{A} \Lam{B} \lam{g{:}A \to B} \lam{xs{:}\List(A)} \\
+    && \quad \Lam{Y} \lam{y{:}Y} \lam{f{:}B \to Y \to Y} \\
+    && \quad\quad xs\,Y\,y\,(\lam{a{:}A} f\,(g\,a))
+  \end{array}\]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Reduktion von Termen in System F}
+  Die Reduktionsrelation $\reducesTo$ auf der Menge der Terme ist die kleinste reflexive, transitive, kongruente Relation mit
+  \[\begin{array}{r c l}
+    \ite{\trueV}{t}{e} &\reducesTo& t \\
+    \ite{\falseV}{t}{e} &\reducesTo& e \\
+    (\lam{x} t) s &\reducesTo& t[s/x] \\
+    (\Lam{X} t) \tau &\reducesTo& t[\tau/X]
+  \end{array}\]
 \end{frame}
 
 \begin{frame}
@@ -257,7 +278,7 @@
   \[
     \begin{array}{r c l l}
       \termInterp{\vec{A}}{\vec{a}}{v} &\defeq& v & \info{(v \in \{ \trueV, \falseV \})} \\
-      \termInterp{\vec{A}}{\vec{a}}{\text{\textbf{if }} b \text{\textbf{ then }} t \text{\textbf{ else }} e} &\defeq& \text{\textbf{if }} \termInterp{\vec{A}}{\vec{a}}{b} \text{\textbf{ then }} \termInterp{\vec{A}}{\vec{a}}{t} \!\!&\!\! \text{\textbf{ else }} \termInterp{\vec{A}}{\vec{a}}{e} \\
+      \termInterp{\vec{A}}{\vec{a}}{\ite{b}{t}{e}} &\defeq& \mathrlap{\ite{\termInterp{\vec{A}}{\vec{a}}{b}}{\termInterp{\vec{A}}{\vec{a}}{t}}{\termInterp{\vec{A}}{\vec{a}}{e}}} \\
       \termInterp{\vec{A}}{\vec{a}}{\lam{x{:}\tau} t} &\defeq& \lam{x{:}\typeInterp{\vec{A}}{\tau}} \termInterp{\vec{A}}{\vec{a}}{t} & \text{\info{(\OE{} $x \not\in \Gamma \cup \Gamma'$)}} \\
       \termInterp{\vec{A}}{\vec{a}}{t_1 \, t_2} &\defeq& \termInterp{\vec{A}}{\vec{a}}{t_1} \, \termInterp{\vec{A}}{\vec{a}}{t_2} \\
       \termInterp{\vec{A}}{\vec{a}}{\Lam{X} t} &\defeq& \Lam{X} \termInterp{\vec{A}}{\vec{a}}{t} & \text{\info{(\OE{} $X \not\in \Delta \cup \Delta'$)}} \\
@@ -270,20 +291,12 @@
   \frametitle{Relationen zwischen Typen}
 
   Eine \emph{Relation} $\Rel{\mathcal{A}}{A}{A'}$ zwischen zwei Typen $A, A' \in \Types_\bullet$ ist eine Relation zwischen den Termen dieser beiden Typen, für die gilt:
-  \[\begin{array}{r c l}
-    \mathcal{A}(t_1[s_1/x_1], t_2[s_2/x_2]) &\implies&
-    \mathcal{A}((\lam{x_1:\tau_1} t_1)\,s_1, (\lam{x_2:\tau_2} t_2)\,s_2) \\
-    \mathcal{A}(t_1[\tau_1/X_1], t_2[\tau_2/X_2]) &\implies&
-    \mathcal{A}((\Lam{X_1} t_1)\,\tau_1, (\Lam{X_2} t_2)\,\tau_2)
-  \end{array}\]
-  für alle passenden $X_i, \tau_i, t_i, s_i$ sodass
   \[
-    \emptyCtx \vdash (\lam{x_i:\tau_i} t_i)\,s_i : A
-    \quad \text{bzw.} \quad
-    \emptyCtx \vdash (\Lam{X_i} t_i)\,\tau_i : A
-    \qquad (i = 1,2).
+    t_1 \reducesTo{} t_2, \enspace
+    t'_1 \reducesTo{} t'_2, \enspace
+    \mathcal{A}(t_2, t'_2) \implies
+    \mathcal{A}(t_1, t'_1).
   \]
-  TODO: verbessern!!!
 
   Eine \emph{Relation}~$\Rel{\vec{\mathcal{A}}}{\vec{A}}{\vec{A'}}$ zwischen Typumgebungen $\vec{A}$ und $\vec{A'}$ für~$\Delta$ ist eine Familie
   \[ (\Rel{\mathcal{A}_X}{\vec{A}(X)}{\vec{A'}(X)})_{X \in \Delta} \]
@@ -291,20 +304,60 @@
 \end{frame}
 
 \begin{frame}
+  \frametitle{Funktionen als Relationen}
+
+  Sei $A$ ein Typ.
+  Dann definiert
+  \[
+    t \obs t'
+    \enspace\defiff\enspace
+    \text{für alle $f : A \to \Bool$ gilt $f\,t \sim_{\Bool} f\,t'$}
+  \]
+  eine Relation (sogar eine Äquivalenzrelation) $\Rel{\obs}{A}{A}$.
+
+  Seien $A$ und $B$ Typen und $f : A \to B$.
+  Dann definiert
+  \[
+    \funRel{f}(x, y) \enspace\defiff\enspace f\,x \obs y
+  \]
+  eine Relation $\funRel{f}{A}{B}$.
+\end{frame}
+
+\begin{frame}
   \frametitle{Relationen zwischen Typen}
   Solch eine Relation $\Rel{\vec{\mathcal{A}}}{\vec{A}}{\vec{A'}}$ induziert für jeden Typ~$\tau$ im Typkontext~$\Delta$ eine Relation $\Rel{\relInterp{\vec{\mathcal{A}}}{\tau}}{\typeInterp{\vec{A}}{\tau}}{\typeInterp{\vec{A'}}{\tau}}$ wie folgt:
   \[
     \begin{array}{r c l}
-      \relInterp{\mathcal{A}}{\Bool} &\defeq& \Bool \\
-      \relInterp{\mathcal{A}}{X} &\defeq& \mathcal{A}_X \\
-      \relInterp{\mathcal{A}}{\tau_1 \to \tau_2} &\defeq& \relInterp{\mathcal{A}}{\tau_1} \to \relInterp{\mathcal{A}}{\tau_2} \\
-      \relInterp{\mathcal{A}}{\fa{X} \tau} &\defeq& \sim \text{ mit } g \sim g' \text{ genau dann wenn} \\
-      && \text{für alle $A, A' \in \Types_\emptyCtx$} \\
-      && \text{und Relationen $\Rel{\mathcal{A}}{A}{A'}$} \\
-      && \text{gilt } \relInterp{(\vec{\mathcal{A}} \cup \{X \mapsto \mathcal{A}\})}{\tau}(g\,A, g'\,A')
+      \relInterp{\vec{\mathcal{A}}}{\Bool} &\defeq& {\sim_\Bool} \text{ mit } t \sim_{\Bool} t' \text{ genau dann wenn} \\
+      %&& \exists\,v \in \{ \trueV, \falseV \} \,:\, t \reducesTo v, t' \reducesTo v \\
+      && \quad t \reducesTo \trueV \iff t' \reducesTo \trueV \\
+      \relInterp{\vec{\mathcal{A}}}{X} &\defeq& \mathcal{A}_X \\
+      \relInterp{\vec{\mathcal{A}}}{\tau_1 \to \tau_2} &\defeq& \relInterp{\mathcal{A}}{\tau_1} \to \relInterp{\mathcal{A}}{\tau_2} \\
+      \relInterp{\vec{\mathcal{A}}}{\fa{X} \tau} &\defeq& \sim \text{ mit } g \sim g' \text{ genau dann wenn} \\
+      && \quad \text{für alle $A, A' \in \Types_\emptyCtx$} \\
+      && \quad \text{und Relationen $\Rel{\mathcal{A}}{A}{A'}$} \\
+      && \quad \text{gilt } \relInterp{(\vec{\mathcal{A}} \cup \{X \mapsto \mathcal{A}\})}{\tau}(g\,A, g'\,A')
     \end{array}
   \]
   mit $(\mathcal{R}_1 \to \mathcal{R}_2)(f, f') \defiff \text{für alle $a$, $a'$ mit $\mathcal{R}_1(a, a')$ gilt $\mathcal{R}_2(f\,a, f'\,a')$}$.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Relationen zwischen Typen -- Ein Beispiel}
+  Sei $f : A \to B$ eine Funktion.
+  Dann ist
+  \[
+    \Rel{\relInterp{\{X \mapsto \funRel{f}\}}{\List(X)}}
+      {\typeInterp{\{ X \mapsto A \}}{\List(X)}}
+      {\typeInterp{\{ X \mapsto B \}}{\List(X)}}
+  \]
+  eine Relation zwischen $\List(A)$ und $\List(B)$.
+\end{frame}
+
+\begin{frame}
+  \begin{satz}[Parametrizität]
+    Für alle $\tau \in \Types_\bullet$ und $t : \tau$ gilt $\relInterp{\bullet}{\tau}(t, t)$
+  \end{satz}
 \end{frame}
 
 \begin{frame}
@@ -334,11 +387,47 @@
   Kurz: Interpretationen in relatierten Umgebungen sind relatiert.
 \end{frame}
 
+\begin{frame}[t]
+  \frametitle{Ein Isomorphismus}
+  Sei $A$ ein Typ. Definiere $\widehat{A} \defeq \fa{Y} (A \to Y) \to Y$.
+  Wir haben Funktionen
+  \[\begin{array}{l l}
+    i : A \to \widehat{A}, & i \defeq \lam{x{:}A} \Lam{Y} \lam{g{:}A \to Y} g\,x \\
+    j : \widehat{A} \to A, & j \defeq \lam{h{:}\widehat{A}} h\,A\,(\lam{x{:}a} x)
+  \end{array}\]
+  Es gilt $j\,(i\,x) \reducesTo x$, also $j\,(i\,x) \obs x$, aber stimmt auch $i\,(j\,h) \obs h$?
+  Parametricity to the rescue!
+  Für $h : \widehat{A}$, $f : A \to B$ und $b : B \to B'$ gilt
+  \begin{onlyenv}<2>
+  \[\begin{array}{r l}
+    & \relInterp{\emptyCtx}{\widehat{A}}(h, h) \\
+    \iff & \text{für alle $S, S'$ und $\Rel{\mathcal{S}}{S}{S'}$ gilt $\relInterp{\{ Y \mapsto \mathcal{S} \}}{(A \!\to\! Y) \!\to\! Y}(h\,S, h\,S')$} \\
+    \implies & \relInterp{\{ Y \mapsto \funRel{b} \}}{(A \to Y) \to Y}(h\,B, h\,B') \\
+    \iff & \text{für alle $g : A \to B$, $g' : A \to B'$ mit $\relInterp{\{ Y \mapsto \funRel{b} \}}{A \to Y}(g, g')$} \\
+    & \text{gilt $\relInterp{\{ Y \mapsto \funRel{b} \}}{Y}(h\,B\,g, h\,B'\,g')$} \\
+    \implies & \text{$\relInterp{\{ Y \mapsto \funRel{b} \}}{Y}(h\,B\,f, h\,B'\,(b \circ f))$} \\
+    \iff & b\,(h\,B\,f) \obs h\,B'\,(b \circ f)
+  \end{array}\]
+  \end{onlyenv}
+  \begin{onlyenv}<3->
+    \[ b\,(h\,B\,f) \obs h\,B'\,(b \circ f). \]
+  \end{onlyenv}
+  \begin{onlyenv}<4->
+  Es folgt mit $B = A$, $B' = X$, $b = g$ und $f = (\lam{x{:}A} x)$:
+  \[\begin{array}{r c l}
+    i\,(j\,h) &\obs& \Lam{X} \lam{g{:}A \to X} g\,(h\,A\,(\lam{x{:}A} x)) \\
+    &\obs& \Lam{X} \lam{g{:}A \to X} h\,X\,(g \circ (\lam{x{:}A} x)) \\
+    &\obs& \Lam{X} \lam{g{:}A \to X} h\,X\,g \\
+    &\obs& h
+  \end{array}\]
+  \end{onlyenv}
+\end{frame}
+
 \begin{frame}
-  TODO:
   \begin{itemize}
-    \item Beispiele für freie Theoreme
-    \item Ist ein primitiver Typ (wie Bool) überhaupt nötig?
+    \item \url{http://twitter.com/parametricity}
+    \item Philip Wadler, \textit{Theorems for Free!}, 4'th International Conference on Functional Programming and Computer Architecture, London, September 1989
+    \item Robert Harper, \textit{Practical Foundations for Programming Languages}, zweite Auflage, Kapitel 48
   \end{itemize}
 \end{frame}
 
