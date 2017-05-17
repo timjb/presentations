@@ -1,0 +1,345 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+
+\mode<presentation> {
+  %\setbeameroption{show notes} % Kommentare im fertigen PDF
+
+  \usetheme{Boadilla}
+  \usecolortheme{seagull}
+
+  \setbeamertemplate{footline}[page number] % Einfacher Folienzähler als Fußzeile
+  \setbeamertemplate{navigation symbols}{} % Keine Navigationslinks
+}
+
+\title{Theoreme für lau!}
+\author{Tim Baumann}
+\institute[CCA]{Curry Club Augsburg}
+\date{16. Mai 2017}
+
+\usepackage{proof}
+
+%\usepackage[outputdir=output]{minted} % Syntax-Highlighted Code; requires pygments to be installed
+%\newminted[frankcode]{agda}{}
+%\newmintinline[frankinline]{haskell}{}
+
+\usepackage{hyperref}
+%\usepackage{graphicx}
+
+\newcommand{\defeq}{:=} % Definitionsgleich
+\newcommand{\defiff}{:\Leftrightarrow} % Definitionsäquivalent
+\newcommand{\IsType}[1]{{#1}\,\,\text{type}}
+\newcommand{\IsCtx}[1]{{#1}\,\,\text{ctx}}
+\newcommand{\Bool}{\text{Bool}}
+\newcommand{\trueV}{\text{true}}
+\newcommand{\falseV}{\text{false}}
+\newcommand{\fa}[1]{\forall {#1}.\,}
+\newcommand{\lam}[1]{\lambda #1.\,}
+\newcommand{\Lam}[1]{\Lambda #1.\,}
+\newcommand{\Types}{\text{Types}}
+\newcommand{\Terms}{\text{Terms}}
+\newcommand{\emptyCtx}{\bullet}
+\newcommand{\blank}{\text{--}} % Platzhalter
+
+\usepackage{mathtools}
+\usepackage{stmaryrd}
+\DeclarePairedDelimiterX\Set[2]{\lbrace}{\rbrace}{ #1 \,\delimsize|\, #2 }
+\DeclarePairedDelimiterX\interp[1]{\llbracket}{\rrbracket}{ #1 }
+
+\newcommand{\typeInterp}[2]{\interp{#2}_{#1}}
+\newcommand{\termInterp}[3]{\interp{#3}_{#1, #2}}
+\newcommand{\relInterp}[2]{\interp{#2}_{#1}}
+\newcommand{\Rel}[3]{#1 : #2 \Leftrightarrow #3}
+
+% Populäre Typen
+\DeclareMathOperator{\Sum}{Sum}
+\DeclareMathOperator{\Product}{Product}
+\DeclareMathOperator{\List}{List}
+\DeclareMathOperator{\Nat}{Nat}
+
+% Färbe \emph{} violett
+\usepackage{color,xcolor,graphicx,overpic}
+\definecolor{Emph}{rgb}{0.2,0.2,0.8}
+\renewcommand{\emph}[1]{\textcolor{Emph}{#1}}
+
+\definecolor{dimgray}{rgb}{0.41, 0.41, 0.41}
+\newcommand{\info}[1]{\textcolor{dimgray}{#1}}
+
+\newtheorem*{satz}{Satz}
+
+% Macros copied from
+% https://github.com/jonsterling/latex-common-notation
+% https://github.com/jonsterling/forcing-bar-induction-in-system-t/blob/2bc8c69d849f03579470e5668e6b2a98af6c8054/macros.sty
+\newlength{\jmssavedboxsep}
+\newcommand\DeclBox[1]{%
+  \setlength{\jmssavedboxsep}{\fboxsep}%
+  \setlength{\fboxsep}{1.5pt}%
+  \fcolorbox{black!20}{white}{$\displaystyle #1$}%
+  \setlength{\fboxsep}{\jmssavedboxsep}%
+}
+
+\newcommand\DeclJdg[2]{\DeclBox{#1 \textit{ vorausgesetzt } #2}}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{System F a.k.a. Girard–Reynolds polymorphic $\lambda$-calculus}
+
+  Ein \emph{Typkontext} ist eine endliche Menge $\Delta = \{ X_1, \ldots, X_n \}$ von Typvariablen.
+  Die Typen sind durch die induktive Definition
+  \[
+    \tau \defeq X \,|\, \Bool \,|\, \tau_1 \to \tau_2 \,|\, \fa{X} \tau'
+  \]
+  gegeben.
+  Die Typen im Typkontext~$\Delta$ sind die Typen, deren freie Variablen in~$\Delta$ liegen. Formal:
+  \begin{gather*}
+    \DeclBox{\Delta \vdash \IsType{\tau}} \qquad
+    \infer{
+      \Delta \vdash \IsType{\Bool}
+    }{} \qquad
+    \infer{
+      \Delta \vdash \IsType{X}
+    }{
+      X \in \Delta
+    } \\[0.4cm]
+    \infer{
+      \Delta \vdash \IsType{\tau_1 \to \tau_2}
+    }{
+      \Delta \vdash \IsType{\tau_1} \quad
+      \Delta \vdash \IsType{\tau_2}
+    } \qquad
+    \infer{
+      \Delta \vdash \IsType{\fa{X} \tau}
+    }{
+      \Delta \cup \{ X \} \vdash \IsType{\tau}
+    }
+  \end{gather*}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Church-Kodierung in System F}
+  \[\begin{array}{r c l}
+    \Product(A, B) &\defeq& \fa{Y} (A \to B \to Y) \to Y \\
+    \Sum(A, B) &\defeq& \fa{Y} (A \to Y) \to (B \to Y) \to Y \\
+    \Nat &\defeq& \fa{Y} Y \to (Y \to Y) \to Y \\
+    \List(A) &\defeq& \fa{Y} Y \to (A \to Y \to Y) \to Y
+  \end{array}\]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Terme in System F}
+  Ein \emph{Wertekontext} ist eine endliche Menge $\Gamma = \{ x_1 : \tau_1, \ldots, x_m : \tau_m \}$, wobei $x_1, \ldots, x_m$ paarweise verschiedene \emph{Typvariablen} sind und $\tau_1, \ldots, \tau_m$ Typen sind.
+  Er bildet zusammen mit~$\Delta$ einen \emph{Kontext} $\Delta; \Gamma$ falls die freien Variablen der Typen $\tau_1, \ldots, \tau_m$ in~$\Delta$ liegen. Formal:
+  \[
+    \DeclBox{\IsCtx{(\Delta; \Gamma)}} \qquad
+    \infer{
+      \IsCtx{(\Delta; {\emptyCtx})}
+    }{} \qquad
+    \infer{
+      \IsCtx{(\Delta; \Gamma \cup \{x : \tau\})}
+    }{
+      \IsCtx{(\Delta; \Gamma)} \qquad
+      \Delta \vdash \IsType{\tau}
+    }
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Terme in System F}
+  Die Terme~$t$ in System F sind induktiv definiert durch
+  \[
+    t \defeq \trueV \,|\, \falseV \,|\, \text{\textbf{if }} t_1 \text{\textbf{ then }} t_2 \text{\textbf{ else }} t_3 \,|\, \lam{x{:}\tau} t \,|\, t_1\,t_2 \,|\, \Lam{A} t \,|\, t\,\tau
+  \]
+  Ein Term $t$ hat Typ~$\tau$ in einem Kontext $\Delta; \Gamma$ (notiert $\Delta; \Gamma \vdash t : \tau$), falls
+  \[ \DeclJdg{\Delta; \Gamma \vdash t : \tau}{\IsCtx{(\Delta; \Gamma)}} \qquad \]
+  \[
+    \infer{
+      \Delta; \Gamma \vdash x : \tau
+    }{
+      (x : \tau) \in \Gamma
+    }
+  \]
+  \[\begin{array}{c c}
+    \infer{
+      \Delta; \Gamma \vdash v : \Bool
+    }{
+      v \in \{ \trueV, \falseV \}
+    } &
+    \infer{
+      \Delta; \Gamma \vdash \text{\textbf{if }} b \text{\textbf{ then }} t \text{\textbf{ else }} e : \tau
+    }{
+      \Delta; \Gamma \vdash b : \Bool \quad
+      \Delta; \Gamma \vdash t : \tau \quad
+      \Delta; \Gamma \vdash e : \tau
+    } \\[0.3cm]
+    \infer{
+      \Delta; \Gamma \vdash \lam{x{:}\tau_1} t : \tau_1 \to \tau_2
+    }{
+      \Delta; \Gamma \cup \{ x : \tau_1 \} \vdash t : \tau_2
+    } &
+    \infer{
+      \Delta; \Gamma \vdash t_1\,t_2 : \tau_2
+    }{
+      \Delta; \Gamma \vdash t_1 : \tau_1 \to \tau_2 \quad
+      \Delta; \Gamma \vdash t_2 : \tau_1
+    } \\[0.3cm]
+    \infer{
+      \Delta; \Gamma \vdash \Lam{A} t : \fa{A} \tau
+    }{
+      \Delta \cup \{ A \}; \Gamma \vdash t : \tau
+    } &
+    \infer{
+      \Delta; \Gamma \vdash t\,\tau : \tau'[\tau/A]
+    }{
+      \Delta; \Gamma \vdash t : \fa{A} \tau' \quad
+      \Delta \vdash \IsType{\tau}
+    }
+  \end{array}\]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Beispielterme}
+  \[\begin{array}{r l l}
+    \text{null} &:& \fa{A} \List(A) \to \Bool \\
+    \text{null} &\defeq& \Lam{A} \lam{xs{:}\List(A)} \\
+    && \quad xs\,\Bool\,\trueV\,(\lam{a{:}A} \lam{b{:}\Bool} \falseV)
+  \end{array}\]
+  \[\begin{array}{r l l}
+    \text{pair} &:& \fa{A} \fa{B} A \to B \to \Product(A, B) \\
+    \text{pair} &\defeq& \Lam{A} \Lam{B} \lam{a{:}A} \lam{b{:}B} \\
+    && \quad \Lam{Y} \lam{f{:}A \to B \to Y} \\
+    && \quad\quad f\,a\,b
+  \end{array}\]
+  \[\begin{array}{r l l}
+    \text{append} &:& \fa{A} \List(A) \to \List(A) \to \List(A) \\
+    \text{append} &\defeq& \Lam{A} \lam{xs{:}\List(A)} \lam{ys{:}\List(A)} \\
+    && \quad \Lam{Y} \lam{y{:}Y} \lam{f{:}A \to Y \to Y} \\
+    && \quad\quad ys\,Y\,(xs\,Y\,y\,f)\,f
+  \end{array}\]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Interpretation von Typen}
+
+  Eine \emph{Typumgebung} für einen Typkontext~$\Delta$ ist eine Abbildung
+  \[ \vec{A} : \Delta \to \Types_\emptyCtx \]
+  (wobei $\Types_{\widetilde{\Delta}} \defeq \Set{\tau}{\widetilde{\Delta} \vdash \tau}$)
+
+  Jede Typumg. $\vec{A}$ induziert für jeden disjunkten Typkontext~$\Delta'$ eine Abb.
+  \[ \typeInterp{\vec{A}}{\blank} : \Types_{\Delta \sqcup \Delta'} \to \Types_{\Delta'} \]
+  rekursiv definiert durch
+  \[
+    \begin{array}{r c l l}
+      \typeInterp{\vec{A}}{\Bool} &\defeq& \Bool \\
+      \typeInterp{\vec{A}}{X} &\defeq& \vec{A}(X) \text{ falls $X \in \Delta$} \\
+      \typeInterp{\vec{A}}{X} &\defeq& X \text{ falls $X \in \Delta'$} \\
+      \typeInterp{\vec{A}}{\tau_1 \to \tau_2} &\defeq& \typeInterp{\vec{A}}{\tau_1} \to \typeInterp{\vec{A}}{\tau_2} \\
+      \typeInterp{\vec{A}}{\fa{X} \tau} &\defeq& \fa{X} \typeInterp{\vec{A}}{\tau} & \text{\info{(\OE{} $X \not\in \Delta \cup \Delta'$)}} \\
+    \end{array}
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Interpretation von Termen}
+
+  Eine \emph{Termumgebung} $\vec{a}$ für einen Kontext $\Delta; \Gamma$ bzgl. einer Typumgebung $\vec{A}$ für~$\Delta$ ist eine Familie
+  \[ (\vec{a}(x) : \typeInterp{\vec{A}}{\tau})_{(x : \tau) \in \Gamma}. \]
+
+  von Termen.
+  Jede solche Termumgebung induziert für jeden von $\Delta;\Gamma$ disjunkten Kontext $\Delta';\Gamma'$ eine Abbildung
+  \[ \termInterp{\vec{A}}{\vec{a}}{\blank} : \Terms_{\Delta \sqcup \Delta', \Gamma \sqcup \Gamma'} \to \Terms_{\Delta', \Gamma'} \]
+  rekursiv definiert durch
+  \[
+    \begin{array}{r c l l}
+      \termInterp{\vec{A}}{\vec{a}}{v} &\defeq& v & \info{(v \in \{ \trueV, \falseV \})} \\
+      \termInterp{\vec{A}}{\vec{a}}{\text{\textbf{if }} b \text{\textbf{ then }} t \text{\textbf{ else }} e} &\defeq& \text{\textbf{if }} \termInterp{\vec{A}}{\vec{a}}{b} \text{\textbf{ then }} \termInterp{\vec{A}}{\vec{a}}{t} \!\!&\!\! \text{\textbf{ else }} \termInterp{\vec{A}}{\vec{a}}{e} \\
+      \termInterp{\vec{A}}{\vec{a}}{\lam{x{:}\tau} t} &\defeq& \lam{x{:}\typeInterp{\vec{A}}{\tau}} \termInterp{\vec{A}}{\vec{a}}{t} & \text{\info{(\OE{} $x \not\in \Gamma \cup \Gamma'$)}} \\
+      \termInterp{\vec{A}}{\vec{a}}{t_1 \, t_2} &\defeq& \termInterp{\vec{A}}{\vec{a}}{t_1} \, \termInterp{\vec{A}}{\vec{a}}{t_2} \\
+      \termInterp{\vec{A}}{\vec{a}}{\Lam{X} t} &\defeq& \Lam{X} \termInterp{\vec{A}}{\vec{a}}{t} & \text{\info{(\OE{} $X \not\in \Delta \cup \Delta'$)}} \\
+      \termInterp{\vec{A}}{\vec{a}}{t\,\tau} &\defeq& \termInterp{\vec{A}}{\vec{a}}{t}\,\typeInterp{\vec{A}}{\tau} \\
+    \end{array}
+  \]
+\end{frame}
+
+\begin{frame}
+  \frametitle{Relationen zwischen Typen}
+
+  Eine \emph{Relation} $\Rel{\mathcal{A}}{A}{A'}$ zwischen zwei Typen $A, A' \in \Types_\bullet$ ist eine Relation zwischen den Termen dieser beiden Typen, für die gilt:
+  \[\begin{array}{r c l}
+    \mathcal{A}(t_1[s_1/x_1], t_2[s_2/x_2]) &\implies&
+    \mathcal{A}((\lam{x_1:\tau_1} t_1)\,s_1, (\lam{x_2:\tau_2} t_2)\,s_2) \\
+    \mathcal{A}(t_1[\tau_1/X_1], t_2[\tau_2/X_2]) &\implies&
+    \mathcal{A}((\Lam{X_1} t_1)\,\tau_1, (\Lam{X_2} t_2)\,\tau_2)
+  \end{array}\]
+  für alle passenden $X_i, \tau_i, t_i, s_i$ sodass
+  \[
+    \emptyCtx \vdash (\lam{x_i:\tau_i} t_i)\,s_i : A
+    \quad \text{bzw.} \quad
+    \emptyCtx \vdash (\Lam{X_i} t_i)\,\tau_i : A
+    \qquad (i = 1,2).
+  \]
+  TODO: verbessern!!!
+
+  Eine \emph{Relation}~$\Rel{\vec{\mathcal{A}}}{\vec{A}}{\vec{A'}}$ zwischen Typumgebungen $\vec{A}$ und $\vec{A'}$ für~$\Delta$ ist eine Familie
+  \[ (\Rel{\mathcal{A}_X}{\vec{A}(X)}{\vec{A'}(X)})_{X \in \Delta} \]
+  von Relationen zwischen den Typen $\vec{A}(X)$ und $\vec{A'}(X)$
+\end{frame}
+
+\begin{frame}
+  \frametitle{Relationen zwischen Typen}
+  Solch eine Relation $\Rel{\vec{\mathcal{A}}}{\vec{A}}{\vec{A'}}$ induziert für jeden Typ~$\tau$ im Typkontext~$\Delta$ eine Relation $\Rel{\relInterp{\vec{\mathcal{A}}}{\tau}}{\typeInterp{\vec{A}}{\tau}}{\typeInterp{\vec{A'}}{\tau}}$ wie folgt:
+  \[
+    \begin{array}{r c l}
+      \relInterp{\mathcal{A}}{\Bool} &\defeq& \Bool \\
+      \relInterp{\mathcal{A}}{X} &\defeq& \mathcal{A}_X \\
+      \relInterp{\mathcal{A}}{\tau_1 \to \tau_2} &\defeq& \relInterp{\mathcal{A}}{\tau_1} \to \relInterp{\mathcal{A}}{\tau_2} \\
+      \relInterp{\mathcal{A}}{\fa{X} \tau} &\defeq& \sim \text{ mit } g \sim g' \text{ genau dann wenn} \\
+      && \text{für alle $A, A' \in \Types_\emptyCtx$} \\
+      && \text{und Relationen $\Rel{\mathcal{A}}{A}{A'}$} \\
+      && \text{gilt } \relInterp{(\vec{\mathcal{A}} \cup \{X \mapsto \mathcal{A}\})}{\tau}(g\,A, g'\,A')
+    \end{array}
+  \]
+  mit $(\mathcal{R}_1 \to \mathcal{R}_2)(f, f') \defiff \text{für alle $a$, $a'$ mit $\mathcal{R}_1(a, a')$ gilt $\mathcal{R}_2(f\,a, f'\,a')$}$.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Parametrizität}
+
+  Seien $\vec{A}$ und $\vec{A'}$ Typumgebungen für~$\Delta$, $\Rel{\vec{\mathcal{A}}}{\vec{A}}{\vec{A'}}$ eine Relation.
+  Zwei Termumg. $\vec{a}$ und $\vec{a'}$ für $\Delta; \Gamma$ bzgl. $\vec{A}$ bzw.~$\vec{A'}$ sind \emph{relatiert} bzgl. $\vec{\mathcal{A}}$, falls
+  \[
+    \relInterp{\vec{\mathcal{A}}}{\tau}(\vec{a}(x), \vec{a'}(x))
+    \quad \text{für alle $(x : \tau) \in \Gamma$}.
+  \]
+  \[
+    \arraycolsep=2pt
+    \begin{array}{r c l l}
+    \Delta; \Gamma \models t : \tau &\defiff
+    &\text{für}& \text{alle Typumgebungen $\vec{A}$, $\vec{A'}$ von~$\Delta$ und} \\
+    &&& \text{alle Relationen $\Rel{\vec{\mathcal{A}}}{\vec{A}}{\vec{A'}}$ und} \\
+    &&& \text{alle relatierten Termumg. $\vec{a}$ bzgl.~$\vec{A}$ und $\vec{a'}$ bzgl. $\vec{A'}$} \\
+    &&\text{gilt}& \relInterp{\vec{\mathcal{A}}}{\tau}(\termInterp{\vec{A}}{\vec{a}}{t}, \termInterp{\vec{A'}}{\vec{a'}}{t})
+  \end{array}
+  \]
+
+  \begin{satz}[Parametrizität]
+    Aus $\Delta; \Gamma \vdash t : \tau$ folgt $\Delta; \Gamma \models t : \tau$
+  \end{satz}
+
+  Kurz: Interpretationen in relatierten Umgebungen sind relatiert.
+\end{frame}
+
+\begin{frame}
+  TODO:
+  \begin{itemize}
+    \item Beispiele für freie Theoreme
+    \item Ist ein primitiver Typ (wie Bool) überhaupt nötig?
+  \end{itemize}
+\end{frame}
+
+\end{document}
