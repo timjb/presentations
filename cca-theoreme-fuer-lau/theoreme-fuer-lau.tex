@@ -169,7 +169,7 @@
     \Sum(A, B) &\defeq& \fa{Y} (A \to Y) \to (B \to Y) \to Y \\
     \Nat &\defeq& \fa{Y} Y \to (Y \to Y) \to Y \\
     \List(A) &\defeq& \fa{Y} Y \to (A \to Y \to Y) \to Y \\
-    \visible<2->{\Bool'(A) &\defeq& \fa{Y} Y \to Y \to Y}
+    \visible<2->{\Bool' &\defeq& \fa{Y} Y \to Y \to Y}
   \end{array}\]
 \end{frame}
 
@@ -178,7 +178,7 @@
 
   Die Terme~$t$ in System F sind induktiv definiert durch
   \[
-    t \defeq \trueV \,|\, \falseV \,|\, \ite{t_1}{t_2}{t_3} \,|\, \lam{x{:}\tau} t \,|\, t_1\,t_2 \,|\, \Lam{A} t \,|\, t\,\tau
+    t \defeq \trueV \,|\, \falseV \,|\, x \,|\, \ite{t_1}{t_2}{t_3} \,|\, \lam{x{:}\tau} t \,|\, t_1\,t_2 \,|\, \Lam{A} t \,|\, t\,\tau
   \]
 
   \begin{onlyenv}<2-3>
@@ -300,12 +300,12 @@
   \[
     b \simeq b'
     \enspace\defiff\enspace
-    (t \reducesTo \trueV \iff t' \reducesTo \trueV).
+    (b \reducesTo \trueV \iff b' \reducesTo \trueV).
   \]}
 
   \visible<3->{
   Sei $A$ ein Typ.
-  Zwei Terme $t, t' \in A$ heißen \emph{beobachtungsäquivalent}, falls
+  Zwei Terme $t, t' : A$ heißen \emph{beobachtungsäquivalent}, falls
   \[
     t \obs t'
     \enspace\defiff\enspace
@@ -391,7 +391,7 @@
   \end{satz}
 
   \begin{satz}<2->
-    Für jeden Typ $\tau \in \Types_\emptyCtx$ und Terme $t, t' \in \tau$ gilt
+    Für jeden Typ $\tau \in \Types_\emptyCtx$ und Terme $t, t' : \tau$ gilt
     \[
       t \obs t' \iff \relInterp{\emptyCtx}{\tau}(t, t').
     \]
@@ -459,7 +459,7 @@
     \]
   \end{lem}
   \end{onlyenv}
-  \visible<3->{Seien $\fmap : \fa{X} \fa{Y} (X \to Y) \to (F(X) \to F(Y))$, Typen $A, A', B, B'$ und Funktionen $f_1 : A \to A'$, $f_2 : A' \to B'$, $g_1 : A \to B$, $g_2 : B \to B'$ mit $f_2 \circ f_1 \obs g_2' \circ g_1$ sowie $p : F(A)$ gegeben.
+  \visible<3->{Seien $\fmap : \fa{X} \fa{Y} (X \to Y) \to (F(X) \to F(Y))$, Typen $A, A', B, B'$ und Funktionen $f_1 : A \to A'$, $f_2 : A' \to B'$, $g_1 : A \to B$, $g_2 : B \to B'$ mit $f_2 \circ f_1 \obs g_2 \circ g_1$ sowie $p : F(A)$ gegeben.
   Dann gilt:}
   \begin{onlyenv}<4-8>\[\begin{array}{r l}
     \visible<4->{
